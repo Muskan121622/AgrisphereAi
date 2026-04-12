@@ -4,13 +4,14 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  envPrefix: ["VITE_", "GOOGLE_"],
   server: {
     host: "::",
     port: 8080,
     strictPort: false,
     hmr: {
       overlay: false,
-    }
+    },
   },
   plugins: [react()],
   resolve: {
@@ -19,13 +20,13 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
+    include: ["react", "react-dom"],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
+          "react-vendor": ["react", "react-dom"],
         },
       },
     },

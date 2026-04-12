@@ -31,6 +31,8 @@ const Navbar = () => {
     const { isAuthenticated, logout, user } = useAuthStore();
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const userRole = user?.role;
+    const isFarmer = isAuthenticated && userRole !== 'government' && userRole !== 'buyer';
 
     const handleLogout = async () => {
         await logout();
@@ -59,9 +61,19 @@ const Navbar = () => {
                     <span className="text-xl font-bold gradient-text">AgriSphere AI</span>
                 </motion.div>
 
+                {isFarmer && (
+                    <Button
+                        variant="outline"
+                        className="inline-flex border-primary/30 bg-primary/5 hover:bg-primary/10"
+                        onClick={() => navigate('/seed-finder')}
+                    >
+                        <MapPin className="mr-2 w-4 h-4 text-primary" />
+                        Seed Finder
+                    </Button>
+                )}
+
                 <nav className="hidden xl:flex items-center gap-6">
                     {(() => {
-                        const userRole = user?.role;
                         const isGov = userRole === 'government';
                         const isBuyer = userRole === 'buyer';
 
@@ -84,12 +96,11 @@ const Navbar = () => {
                             { name: t("nav.diseaseDetection"), path: "/disease-detection" },
                             { name: t("nav.yieldPrediction"), path: "/yield-prediction" },
                             { name: t("nav.digitalTwin"), path: "/digital-twin" },
+                            { name: "Seed Finder", path: "/seed-finder" },
                             { name: t("nav.voiceAssistant"), path: "/voice-assistant" },
                             { name: t("nav.fertilizerAi"), path: "/fertilizer-recommendation" },
                             { name: t("nav.pestForecast"), path: "/pest-prediction" },
                         ];
-
-                        const isFarmer = isAuthenticated && !isGov && !isBuyer;
 
                         return (
                             <>
