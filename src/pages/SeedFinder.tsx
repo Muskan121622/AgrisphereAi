@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     MapPin, Search, Sprout, Landmark, Store, FileText,
-    Navigation, Phone, ShieldCheck, CheckCircle, AlertCircle
+    Navigation, Phone, ShieldCheck, CheckCircle, AlertCircle, Link
 } from "lucide-react";
 import { SHOP_DATA, REQUIRED_DOCUMENTS, SEED_RECOMMENDATIONS } from "@/data/shopsData";
+import { NearbySuppliersMap } from "@/components/NearbySuppliersMap";
 import {
     Dialog,
     DialogContent,
@@ -57,61 +58,24 @@ const SeedFinder = () => {
 
                 setUserLocation({ city, state });
 
-                // Generate "Real-like" Shops for this location
-                // In a real app, we would fetch from backend using lat/long
-                const localShops = [
-                    {
-                        id: '1',
-                        name: `${city} Krishi Vigyan Kendra`,
-                        type: 'Government' as const,
-                        distance: '1.2',
-                        rating: 4.8,
-                        address: `Near Main Bus Stand, ${city}, ${state} - ${pincode}`,
-                        phone: '+91 1800-11-2345',
-                        availableSeeds: ['Wheat HD-3086', 'Mustard RH-725'],
-                        subsidies: ['50% Subsidy on Wheat', 'Free Soil Health Card']
-                    },
-                    {
-                        id: '2',
-                        name: `${city} Farmers Cooperative`,
-                        type: 'Government' as const,
-                        distance: '2.5',
-                        rating: 4.5,
-                        address: `Sector 4, ${city} Market Yard`,
-                        phone: '+91 11-2553-2553',
-                        availableSeeds: ['Urea', 'DAP', 'Certified Paddy Seeds'],
-                        subsidies: ['Fertilizer Subsidy Available']
-                    },
-                    {
-                        id: '3',
-                        name: `AgroStar Center ${city}`,
-                        type: 'Private' as const,
-                        distance: '0.8',
-                        rating: 4.2,
-                        address: `Shop 12, Grain Market, ${city}`,
-                        phone: '+91 98989-89898',
-                        availableSeeds: ['Hybrid Vegetables', 'Exotic Flower Seeds'],
-                    },
-                    {
-                        id: '4',
-                        name: 'National Seeds Corporation (NSC)',
-                        type: 'Government' as const,
-                        distance: '4.0',
-                        rating: 4.6,
-                        address: `Industrial Area, ${city}`,
-                        phone: '+91 11-2334-4556',
-                        availableSeeds: ['All Certified Seeds'],
-                        subsidies: ['Government Rates']
-                    }
-                ];
+                // Fetch REAL shops from our backend proxy
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const shopResponse = await fetch(`${API_URL}/nearby-suppliers?lat=${latitude}&lng=${longitude}`);
+                const fetchedShops = await shopResponse.json();
 
-                setShops(localShops);
+                if (Array.isArray(fetchedShops)) {
+                    setShops(fetchedShops.map(s => ({
+                        ...s,
+                        phone: s.phone || '+91 1800-11-2345',
+                        availableSeeds: s.availableSeeds || ['Certified Seeds', 'Fertilizer']
+                    })));
 
-                toast({
-                    title: t('seeds.toasts.found'),
-                    description: t('seeds.toasts.foundDesc', { city, state }),
-                    className: "bg-green-600 text-white border-none"
-                });
+                    toast({
+                        title: t('seeds.toasts.found'),
+                        description: t('seeds.toasts.foundDesc', { city, state }),
+                        className: "bg-green-600 text-white border-none"
+                    });
+                }
 
             } catch (error) {
                 console.error("Geocoding failed", error);
@@ -139,13 +103,13 @@ const SeedFinder = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
                     <div>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-sm font-medium mb-3 border border-green-500/20">
-                            <Sprout className="w-4 h-4" /> {t('common.agroAI', { defaultValue: 'Smart Agri-Inputs' })}
+                            <Link className="w-4 h-4" /> {t('seeds.heroBadge')}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
-                            {t('seeds.title')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{t('seeds.subtitle')}</span>
+                            {t('seeds.title')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">{t('seeds.titleProcurement')}</span>
                         </h1>
                         <p className="text-lg text-slate-400 max-w-2xl">
-                            {t('seeds.desc')}
+                            {t('seeds.heroDescription')}
                         </p>
                     </div>
                     <div className="flex gap-3">
@@ -209,6 +173,14 @@ const SeedFinder = () => {
                                 </Button>
                             </div>
                         </div>
+                        
+                        {/* Interactive Map */}
+                        <div className="w-full mb-6">
+                            <NearbySuppliersMap 
+                                suppliers={filteredShops as any} 
+                                userLocation={userLocation ? { lat: (userLocation as any).lat || 25.8673, lng: (userLocation as any).lng || 85.7766 } : undefined} 
+                            />
+                        </div>
 
                         {/* Shop Grid */}
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -231,58 +203,96 @@ const SeedFinder = () => {
                                         <CardDescription className="text-slate-400 flex items-start gap-2 mt-1">
                                             <MapPin className="w-4 h-4 mt-0.5 shrink-0" /> {shop.address}
                                         </CardDescription>
+
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {shop.ai_tags?.map((tag: string, i: number) => (
+                                                <Badge key={i} className="bg-yellow-500/20 text-yellow-500 border border-yellow-500/50">
+                                                    {tag === 'Lowest Price' ? `🔥 ${t('seeds.tags.lowestPrice')}` : tag === 'Nearest' ? `📍 ${t('seeds.tags.nearest')}` : tag}
+                                                </Badge>
+                                            ))}
+                                            {shop.blockchain_verified && (
+                                                <Badge className="bg-blue-500/20 text-blue-500 border border-blue-500/50">
+                                                    ⛓️ {t('seeds.tags.blockchainVerified')}
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
+                                        
+                                        <div className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+                                            <div>
+                                                <p className="text-xs text-slate-400">{t('seeds.currentPrice')}</p>
+                                                <p className="text-lg font-bold text-white">{shop.price || t('seeds.marketRate')}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs text-slate-400">{t('seeds.rating')}</p>
+                                                <p className="font-semibold text-yellow-500">⭐ {shop.rating || '4.0'}</p>
+                                            </div>
+                                        </div>
+
                                         <div>
-                                            <p className="text-sm font-semibold text-slate-300 mb-2">{t('seeds.inStock')}</p>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <p className="text-sm font-semibold text-slate-300">{t('seeds.inStock')}</p>
+                                                <span className={`text-xs px-2 py-0.5 rounded-full ${shop.stock === 'Out of Stock' ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                                    {shop.stock === 'Out of Stock' ? t('seeds.outOfStock') : t('seeds.inStock')}
+                                                </span>
+                                            </div>
                                             <div className="flex flex-wrap gap-2">
-                                                {shop.availableSeeds.map((seed, idx) => (
+                                                {shop.availableSeeds.map((seed: string, idx: number) => (
                                                     <Badge key={idx} variant="secondary" className="bg-slate-800 text-slate-300 hover:bg-slate-700">
                                                         {seed}
                                                     </Badge>
                                                 ))}
                                             </div>
                                         </div>
-                                        {shop.subsidies && (
+                                        {(shop.subsidies || shop.subsidy_available) && (
                                             <div className="bg-green-900/20 border border-green-900/50 p-3 rounded-lg">
                                                 <p className="text-green-400 text-sm font-medium flex items-center gap-2">
                                                     <ShieldCheck className="w-4 h-4" /> {t('seeds.subsidyAvailable')}
                                                 </p>
-                                                <p className="text-slate-400 text-xs mt-1">{shop.subsidies.join(", ")}</p>
+                                                <p className="text-slate-400 text-xs mt-1">{shop.subsidies ? shop.subsidies.join(", ") : 'Check with store'}</p>
                                             </div>
                                         )}
                                     </CardContent>
-                                    <CardFooter className="flex gap-3 pt-4 border-t border-slate-800">
-                                        <Button variant="outline" className="flex-1 border-slate-700 hover:bg-slate-800">
-                                            <Phone className="w-4 h-4 mr-2" /> {t('seeds.call')}
+                                    <CardFooter className="flex flex-col gap-3 pt-4 border-t border-slate-800">
+                                        <Button 
+                                            className="w-full bg-green-600 hover:bg-green-700 text-white"
+                                            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${shop.lat},${shop.lng}`, '_blank')}
+                                        >
+                                            <Navigation className="w-4 h-4 mr-2" /> {t('seeds.viewRoute')}
                                         </Button>
+                                        <div className="flex w-full gap-3">
+                                            <Button variant="outline" className="flex-1 border-slate-700 hover:bg-slate-800">
+                                                <Phone className="w-4 h-4 mr-2" /> {t('seeds.call')}
+                                            </Button>
 
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button className="flex-1 bg-slate-800 hover:bg-slate-700 text-white">
-                                                    <FileText className="w-4 h-4 mr-2" /> {t('seeds.docsNeeded')}
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="bg-slate-950 border-slate-800 text-white">
-                                                <DialogHeader>
-                                                    <DialogTitle>{t('seeds.requiredDocs')}</DialogTitle>
-                                                    <DialogDescription className="text-slate-400">
-                                                        {t('seeds.carryDocs', { shopName: shop.name })}
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="space-y-4 mt-4">
-                                                    {REQUIRED_DOCUMENTS[shop.type].map((doc, idx) => (
-                                                        <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-slate-900 border border-slate-800">
-                                                            <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-                                                            <div>
-                                                                <p className="font-semibold text-white">{doc.name}</p>
-                                                                <p className="text-sm text-slate-400">{doc.description}</p>
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button className="flex-1 bg-slate-800 hover:bg-slate-700 text-white">
+                                                        <FileText className="w-4 h-4 mr-2" /> {t('seeds.docsNeeded')}
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="bg-slate-950 border-slate-800 text-white">
+                                                    <DialogHeader>
+                                                        <DialogTitle>{t('seeds.requiredDocs')}</DialogTitle>
+                                                        <DialogDescription className="text-slate-400">
+                                                            {t('seeds.carryDocs', { shopName: shop.name })}
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="space-y-4 mt-4">
+                                                        {REQUIRED_DOCUMENTS[shop.type as keyof typeof REQUIRED_DOCUMENTS]?.map((doc, idx) => (
+                                                            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                                                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                                                                <div>
+                                                                    <p className="font-semibold text-white">{doc.name}</p>
+                                                                    <p className="text-sm text-slate-400">{doc.description}</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                                        ))}
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
                                     </CardFooter>
                                 </Card>
                             ))}

@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Leaf, Droplets, CloudRain, Thermometer, Volume2, Mic, StopCircle, ArrowLeft } from "lucide-react";
-import { simplifyTextForFarmer, speakText } from "@/services/voiceService";
+import { simplifyTextForFarmer, speakText, stopSpeech } from "@/services/voiceService";
 import axios from 'axios';
 
 import { useTranslation } from "react-i18next";
@@ -86,7 +86,7 @@ const PestPrediction = () => {
 
         // Stop if already speaking
         if (isSpeaking) {
-            window.speechSynthesis.cancel();
+            stopSpeech();
             setIsSpeaking(false);
             return;
         }
@@ -130,11 +130,9 @@ const PestPrediction = () => {
             setExplanation(text);
 
             setIsSpeaking(true);
-            speakText(text, voiceLang);
-
-            // Monitor speech end (simple timeout approximation)
-            const words = text.split(" ").length;
-            setTimeout(() => setIsSpeaking(false), words * 800); // 800ms for regional languages (slower)
+            speakText(text, voiceLang, () => {
+                setIsSpeaking(false);
+            });
 
         } catch (error) {
             console.error(error);

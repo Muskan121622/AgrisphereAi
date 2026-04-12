@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import BulletinCard from "@/components/BulletinCard";
 import { useTranslation } from "react-i18next";
 
 const Index = () => {
@@ -132,6 +133,8 @@ const Index = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
+            {/* Daily Agri-Bulletin */}
+            <BulletinCard />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

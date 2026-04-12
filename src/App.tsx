@@ -33,6 +33,8 @@ const AdvisoryHub = lazy(() => import("./pages/AdvisoryHub"));
 const BuyerDashboard = lazy(() => import("./pages/BuyerDashboard"));
 const CropLossForm = lazy(() => import("./pages/CropLossForm"));
 const YieldPrediction = lazy(() => import("./pages/YieldPrediction"));
+const SeedFinder = lazy(() => import("./pages/SeedFinder"));
+const BlockchainTraceability = lazy(() => import("./pages/BlockchainTraceability"));
 const AIChat = lazy(() => import("./components/AIChat"));
 const SeedFinder = lazy(() => import("./pages/SeedFinderLive"));
 
@@ -139,6 +141,8 @@ const App = () => {
                 }
               />
               <Route path="/advisory-hub" element={<AdvisoryHub />} />
+              <Route path="/seed-finder" element={<SeedFinder />} />
+              <Route path="/traceability" element={<BlockchainTraceability />} />
               {/* Protected routes */}
               <Route
                 path="/community"

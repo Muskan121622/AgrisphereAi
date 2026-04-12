@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Loader2, Sprout, Newspaper, PlaySquare, RefreshCw, Search, Mic } from "lucide-react";
+import { Loader2, Sprout, Newspaper, PlaySquare, RefreshCw, Search, Mic, MapPin, Star, Phone, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useDialect } from "@/lib/use-dialect";
 import { getDialectForState } from "@/lib/dialect-translator";
@@ -16,17 +16,21 @@ import { getEligibleSchemes } from "@/services/schemeEngine";
 import { fetchFarmingNews } from "@/services/newsService";
 import { fetchFarmingVideos } from "@/services/youtubeService";
 import { FarmerProfile, Scheme, NewsArticle, Video } from "@/types/advisory";
+import { useAuthStore } from "@/store/authStore";
+import { getProfileLocation } from "@/lib/profile-utils";
 
 // Components
 import { SchemeCard } from "@/components/Advisory/SchemeCard";
 import { NewsCard } from "@/components/Advisory/NewsCard";
 import { VideoCard } from "@/components/Advisory/VideoCard";
+import { NearbySuppliersMap } from "@/components/NearbySuppliersMap";
 const OfflineFertilizerCalculator = lazy(() => import("@/components/OfflineFertilizerCalculator"));
 
 // ... components
 
 const AdvisoryHub = () => {
     const { t, i18n } = useTranslation();
+    const { user } = useAuthStore();
     const { dialect } = useDialect();
     const language: "Hindi" | "English" = i18n.language === 'hi' ? "Hindi" : "English";
 
@@ -49,13 +53,15 @@ const AdvisoryHub = () => {
     // Search State
     const [searchQuery, setSearchQuery] = useState("");
     const [isListening, setIsListening] = useState(false);
+    const [nearbySuppliers, setNearbySuppliers] = useState<any[]>([]);
+    const [loadingSuppliers, setLoadingSuppliers] = useState(false);
 
     // Farmer Profile State
     const [profile, setProfile] = useState<FarmerProfile>({
-        state: "Bihar",
-        landSize: 2.5,
-        farmerType: "Small",
-        name: "Kisan Bhai"
+        state: localStorage.getItem(`profile_${user?.email}_state`) || "Bihar",
+        landSize: Number(localStorage.getItem(`profile_${user?.email}_farmSize`)) || 2.5,
+        farmerType: (localStorage.getItem(`profile_${user?.email}_farmerType`) as any) || "Small",
+        name: user?.name || "Kisan Bhai"
     });
 
     // Effects for Caching & Data
@@ -149,6 +155,72 @@ const AdvisoryHub = () => {
         };
         loadAiSchemes();
     }, [language]);
+
+    const fetchSuppliers = (lat: number, lng: number) => {
+        setLoadingSuppliers(true);
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        fetch(`${API_URL}/nearby-suppliers?lat=${lat}&lng=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setNearbySuppliers(data);
+            })
+            .catch(err => console.error("Failed to fetch suppliers", err))
+            .finally(() => setLoadingSuppliers(false));
+    };
+
+    const fetchSuppliersByAddress = (address: string) => {
+        setLoadingSuppliers(true);
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        fetch(`${API_URL}/nearby-suppliers?address=${encodeURIComponent(address)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setNearbySuppliers(data);
+            })
+            .catch(err => console.error("Failed to fetch suppliers", err))
+            .finally(() => setLoadingSuppliers(false));
+    };
+
+    const handleGetLocation = () => {
+        const profileLoc = getProfileLocation(user?.email);
+        
+        // 1. Fetch by profile address immediately if available
+        if (profileLoc?.fullAddress && nearbySuppliers.length === 0) {
+            fetchSuppliersByAddress(profileLoc.fullAddress);
+        }
+
+        // 2. Request precision GPS in background
+        if (!navigator.geolocation) {
+            if (!profileLoc?.fullAddress) {
+                toast.error("Geolocation not supported and no profile address found.");
+            }
+            return;
+        }
+
+        setLoadingSuppliers(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                // Precise GPS overrides profile baseline
+                fetchSuppliers(pos.coords.latitude, pos.coords.longitude);
+            },
+            (err) => {
+                console.error("GPS Error:", err);
+                if (!profileLoc?.fullAddress) {
+                    setLoadingSuppliers(false);
+                    toast.error("Please enable location or set your profile address.");
+                } else {
+                    setLoadingSuppliers(false);
+                }
+            },
+            { timeout: 8000 }
+        );
+    };
+
+    // Auto-fetch suppliers when tab is opened
+    useEffect(() => {
+        if (activeTab === 'suppliers' && nearbySuppliers.length === 0) {
+            handleGetLocation();
+        }
+    }, [activeTab]);
 
     // Fetch Data Effects - News & Videos
     useEffect(() => {
@@ -310,6 +382,7 @@ const AdvisoryHub = () => {
                         <TabsTrigger value="calculator" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">{t('advisoryHub.tabs.calculator')} <span className="ml-2 text-[10px] bg-green-900 text-green-400 px-1 rounded">{t('common.offline')}</span></TabsTrigger>
                         <TabsTrigger value="news" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">{t('advisoryHub.tabs.news')}</TabsTrigger>
                         <TabsTrigger value="videos" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">{t('advisoryHub.tabs.videos')}</TabsTrigger>
+                        <TabsTrigger value="suppliers" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white">{t('advisoryHub.tabs.suppliers', 'Nearby Suppliers')} 🔥</TabsTrigger>
                     </TabsList>
 
                     <div className="flex items-center gap-2">
@@ -515,6 +588,73 @@ const AdvisoryHub = () => {
                         <Suspense fallback={<div className="h-64 flex items-center justify-center text-slate-500">{t('advisoryHub.loading.loadingCalc')}</div>}>
                             <OfflineFertilizerCalculator />
                         </Suspense>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="suppliers" className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* List View */}
+                        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                             {loadingSuppliers ? (
+                                Array(6).fill(0).map((_, i) => (
+                                    <Card key={i} className="animate-pulse bg-slate-900 border-slate-800">
+                                        <div className="h-40 bg-slate-800 rounded-t-xl"></div>
+                                        <div className="p-4 space-y-3">
+                                            <div className="h-4 bg-slate-800 rounded w-3/4"></div>
+                                        </div>
+                                    </Card>
+                                ))
+                            ) : nearbySuppliers.length > 0 ? (
+                                nearbySuppliers.map((supplier) => (
+                                    <Card key={supplier.id} className="bg-slate-900 border-slate-800 hover:border-orange-500/50 transition-all group overflow-hidden">
+                                         <CardHeader className="pb-2">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${supplier.type === 'Government' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
+                                                    {supplier.type}
+                                                </span>
+                                                <div className="flex items-center gap-1 text-yellow-500 text-sm font-bold">
+                                                    <Star className="h-3 w-3 fill-current" /> {supplier.rating}
+                                                </div>
+                                            </div>
+                                            <CardTitle className="text-white text-lg group-hover:text-orange-400 transition-colors uppercase">{supplier.name}</CardTitle>
+                                            <CardDescription className="text-slate-400 text-xs flex items-start gap-1 mt-1">
+                                                <MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {supplier.address}
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4 pb-4">
+                                            <div className="flex items-center gap-2 text-[10px] text-slate-300 bg-slate-800/50 p-2 rounded">
+                                                <Sprout className="h-3 w-3 text-green-500" />
+                                                <span>{supplier.availableSeeds.join(", ")}</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button variant="outline" className="flex-1 h-8 text-[10px] border-slate-700 hover:bg-slate-800 text-slate-300" onClick={() => window.open(`tel:${supplier.phone}`)}>
+                                                    <Phone className="h-3 w-3 mr-1" /> Call
+                                                </Button>
+                                                <Button className="flex-1 h-8 text-[10px] bg-orange-600 hover:bg-orange-700 text-white" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(supplier.name + ' ' + supplier.address)}`, '_blank')}>
+                                                    <ExternalLink className="h-3 w-3 mr-1" /> Directions
+                                                </Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))
+                            ) : (
+                                <div className="text-center py-20 text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+                                    <MapPin className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                                    <p className="text-sm font-medium text-slate-400 mb-2">No suppliers found in this area.</p>
+                                    <Button size="sm" variant="outline" className="border-slate-700 text-slate-300" onClick={handleGetLocation}>
+                                        Retry Search
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Interactive Leaflet Map */}
+                        <div className="h-[600px] sticky top-24">
+                             <NearbySuppliersMap 
+                                suppliers={nearbySuppliers}
+                                userLocation={getProfileLocation(user?.email) || undefined}
+                             />
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>

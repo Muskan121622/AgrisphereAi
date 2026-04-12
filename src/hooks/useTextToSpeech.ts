@@ -1,34 +1,24 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { speakText, stopSpeech } from '@/services/voiceService';
 
 export const useTextToSpeech = () => {
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
     useEffect(() => {
         return () => {
-            window.speechSynthesis.cancel();
+            stopSpeech();
         };
     }, []);
 
     const speak = (text: string, lang = 'en-IN') => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Stop any current speech
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = 1.0;
-
-            utterance.onstart = () => setIsSpeaking(true);
-            utterance.onend = () => setIsSpeaking(false);
-            utterance.onerror = () => setIsSpeaking(false);
-
-            utteranceRef.current = utterance;
-            window.speechSynthesis.speak(utterance);
-        }
+        setIsSpeaking(true);
+        speakText(text, lang, () => {
+            setIsSpeaking(false);
+        });
     };
 
     const stop = () => {
-        window.speechSynthesis.cancel();
+        stopSpeech();
         setIsSpeaking(false);
     };
 

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { speakText, stopSpeech } from '@/services/voiceService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Send, X, Mic, MicOff, Volume2, Image as ImageIcon, X as XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -76,12 +77,12 @@ const AIChat = () => {
 
     // Cleanup speech synthesis on unmount
     return () => {
-      window.speechSynthesis.cancel();
+      stopSpeech();
     };
   }, []);
 
   const handleStopSpeech = () => {
-    window.speechSynthesis.cancel();
+    stopSpeech();
     setSpeakingMessageId(null);
     setIsPaused(false);
   };
@@ -206,88 +207,15 @@ const AIChat = () => {
   };
 
   const handleSpeak = (text: string, messageId: string) => {
-    if (!('speechSynthesis' in window)) return;
-
-    // If already speaking this message, pause/resume logic
-    if (speakingMessageId === messageId) {
-      if (isPaused) {
-        window.speechSynthesis.resume();
-        setIsPaused(false);
-      } else {
-        window.speechSynthesis.pause();
-        setIsPaused(true);
-      }
-      return;
-    }
-
     // New speech - cancel any ongoing
-    window.speechSynthesis.cancel();
+    stopSpeech();
     setIsPaused(false);
     setSpeakingMessageId(messageId);
 
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    // Language fallback priority map for Indian languages not widely supported
-    const langFallbackMap: Record<string, string[]> = {
-      'as-IN': ['as-IN', 'bn-IN', 'hi-IN', 'en-IN'],
-      'kn-IN': ['kn-IN', 'te-IN', 'hi-IN', 'en-IN'],
-      'bn-IN': ['bn-IN', 'hi-IN', 'en-IN'],
-      'hi-IN': ['hi-IN', 'en-IN'],
-      'en-IN': ['en-IN', 'en-US'],
-      'mr-IN': ['mr-IN', 'hi-IN', 'en-IN'],
-      'ta-IN': ['ta-IN', 'te-IN', 'en-IN'],
-      'te-IN': ['te-IN', 'ta-IN', 'en-IN'],
-    };
-
-    // Get voices - may be async loaded
-    const doSpeak = () => {
-      const voices = window.speechSynthesis.getVoices();
-      const fallbacks = langFallbackMap[selectedLanguage] || [selectedLanguage, 'hi-IN', 'en-IN'];
-
-      let selectedVoice: SpeechSynthesisVoice | null = null;
-      let chosenLang = 'en-IN';
-
-      // Try each fallback language until we find a voice
-      for (const lang of fallbacks) {
-        const voice = voices.find(v => v.lang === lang || v.lang.startsWith(lang.split('-')[0]));
-        if (voice) {
-          selectedVoice = voice;
-          chosenLang = lang;
-          break;
-        }
-      }
-
-      utterance.lang = chosenLang;
-      if (selectedVoice) utterance.voice = selectedVoice;
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-
-      utterance.onend = () => {
-        setSpeakingMessageId(null);
-        setIsPaused(false);
-      };
-
-      utterance.onerror = (e) => {
-        console.warn("TTS Error, retrying with en-IN:", e);
-        setSpeakingMessageId(null);
-        setIsPaused(false);
-        // Silent fallback - just stop
-      };
-
-      utteranceRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    };
-
-    // Voices may not be loaded yet (browser async)
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      doSpeak();
-    } else {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        doSpeak();
-      };
-    }
+    speakText(text, selectedLanguage, () => {
+      setSpeakingMessageId(null);
+      setIsPaused(false);
+    });
   };
 
   return (

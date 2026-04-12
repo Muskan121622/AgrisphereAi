@@ -100,6 +100,8 @@ const Navbar = () => {
                             { name: t("nav.voiceAssistant"), path: "/voice-assistant" },
                             { name: t("nav.fertilizerAi"), path: "/fertilizer-recommendation" },
                             { name: t("nav.pestForecast"), path: "/pest-prediction" },
+                            { name: t("nav.seedFinder", "Seed Finder"), path: "/seed-finder" },
+                            { name: t("nav.traceability", "Web3 Traceability"), path: "/traceability" },
                         ];
 
                         return (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Droplets, Sprout, CloudRain, Calculator, Leaf, Thermometer, Wind, Volume2, Mic, StopCircle } from "lucide-react";
-import { simplifyTextForFarmer, speakText } from "@/services/voiceService";
+import { simplifyTextForFarmer, speakText, stopSpeech } from "@/services/voiceService";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -78,7 +78,7 @@ const FertilizerRecommendation = () => {
 
     // Stop if already speaking
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      stopSpeech();
       setIsSpeaking(false);
       return;
     }
@@ -100,11 +100,9 @@ const FertilizerRecommendation = () => {
       setExplanation(text);
 
       setIsSpeaking(true);
-      speakText(text, lang === "Hindi" ? "hi-IN" : "en-US");
-
-      // Monitor speech end (simple timeout approximation or event listener could be better, but this is simple)
-      const words = text.split(" ").length;
-      setTimeout(() => setIsSpeaking(false), words * 600); // Approx duration
+      speakText(text, lang === "Hindi" ? "hi-IN" : "en-US", () => {
+        setIsSpeaking(false);
+      });
 
     } catch (error) {
       toast({

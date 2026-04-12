@@ -23,7 +23,9 @@ const resources = {
         "getStarted": "Get Started",
         "logout": "Logout",
         "saveProfile": "Save Profile",
-        "aiTools": "Smart Farming Tools"
+        "aiTools": "Smart Farming Tools",
+        "seedFinder": "Seed Finder",
+        "traceability": "Web3 Traceability"
       },
       "home": {
         "heroTitle1": "India's First",
@@ -91,6 +93,12 @@ const resources = {
           "accuracyRate": "Accuracy Rate",
           "fieldsMapped": "Fields Mapped",
           "yieldIncrease": "Yield Increase"
+        },
+        "bulletin": {
+          "liveUpdate": "Live Daily Bulletin",
+          "playBulletin": "Play Bulletin",
+          "stopAudio": "Stop Audio",
+          "generating": "Generating your daily insight..."
         },
         "advanced": {
           "title": "Advanced AI Intelligence",
@@ -991,48 +999,6 @@ const resources = {
           "safeDesc": "No severe weather threats detected."
         }
       },
-      "seeds": {
-        "title": "Seed Finder &",
-        "subtitle": "Shop Locator",
-        "desc": "Find high-quality seeds, locate government subsidies, and know exactly what documents you need.",
-        "verifySeedNet": "Verify on SeedNet (Govt)",
-        "locateShops": "Locate Nearby Shops",
-        "tabs": {
-          "findShops": "Find Shops",
-          "advisor": "Seed Advisor"
-        },
-        "searchPlaceholder": "Search for seeds (e.g., Wheat, Urea)...",
-        "all": "All",
-        "govtSubsidized": "Govt (Subsidized)",
-        "private": "Private",
-        "inStock": "In Stock",
-        "subsidyAvailable": "Subsidy Available",
-        "call": "Call",
-        "docsNeeded": "Docs Needed",
-        "requiredDocs": "Required Documents",
-        "carryDocs": "Carry these documents to {{shopName}} for purchase/subsidy.",
-        "advisorTitle": "Smart Recommendation",
-        "advisorDesc": "Select your current season to get expert-verified seed suggestions.",
-        "selectSeason": "Select Season",
-        "seasonRabi": "Rabi (Winter)",
-        "seasonKharif": "Kharif (Monsoon)",
-        "aiTip": "AI Tip: For best results, ensure soil testing is done before sowing.",
-        "selectSeasonPrompt": "Select a season to view recommendations",
-        "checkAvailability": "Check Availability",
-        "unit": {
-          "km": "km"
-        },
-        "toasts": {
-          "locating": "Locating...",
-          "locatingDesc": "Getting your precise location...",
-          "found": "Location Found",
-          "foundDesc": "Showing shops near {{city}}, {{state}}.",
-          "errorLoc": "Could not fetch city details.",
-          "permDenied": "Permission Denied",
-          "permDeniedDesc": "Please enable location access."
-        },
-        "qtyUnit": "kg"
-      },
       "voiceAssistant": {
         "hero": {
           "title": "Voice Assistant for Farmers",
@@ -1479,6 +1445,101 @@ const resources = {
           "spatialFeatures": "Spatial Analysis Features",
           "precisionBenefits": "Precision Agriculture Benefits"
         }
+      },
+      "seeds": {
+        "title": "Smart Seed",
+        "titleProcurement": "Procurement",
+        "heroBadge": "Blockchain Smart Procurement System (Beta)",
+        "heroDescription": "We don't just recommend seeds—we connect you to verified nearby suppliers with price intelligence and real-time accessibility.",
+        "verifySeedNet": "Verify on SeedNet",
+        "locateShops": "Locate Shops",
+        "searchPlaceholder": "Search for seeds or shops...",
+        "all": "All",
+        "govtSubsidized": "Govt Subsidized",
+        "private": "Private",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock",
+        "subsidyAvailable": "Subsidy Available",
+        "call": "Call Store",
+        "docsNeeded": "Docs Needed",
+        "requiredDocs": "Required Documents",
+        "carryDocs": "Please carry these documents to {{shopName}} to avail subsidies.",
+        "advisorTitle": "AI Seed Advisor",
+        "advisorDesc": "Get personalized seed recommendations based on your season and crop.",
+        "selectSeason": "Select Season",
+        "seasonRabi": "Rabi",
+        "seasonKharif": "Kharif",
+        "aiTip": "AI considers your current soil texture and micro-climate for these rankings.",
+        "selectSeasonPrompt": "Select a season to see AI recommendations",
+        "checkAvailability": "Check Availability",
+        "tags": {
+          "lowestPrice": "Lowest Price",
+          "nearest": "Nearest",
+          "blockchainVerified": "Blockchain Verified"
+        },
+        "currentPrice": "Current Price",
+        "marketRate": "Market Rate",
+        "rating": "Rating",
+        "viewRoute": "View Route",
+        "checkWithStore": "Check with store",
+        "unit": {
+          "km": "km"
+        },
+        "tabs": {
+          "findShops": "Find Shops",
+          "advisor": "Seed Advisor"
+        },
+        "toasts": {
+          "locating": "Locating you...",
+          "locatingDesc": "Fetching your GPS coordinates for nearby shops.",
+          "found": "Location Found",
+          "foundDesc": "Showing verified seed suppliers near {{city}}, {{state}}.",
+          "errorLoc": "Failed to fetch nearby shops.",
+          "permDenied": "Geolocation Denied",
+          "permDeniedDesc": "Please enable location to find nearby shops."
+        }
+      },
+      "trace": {
+        "title": "Web3 Traceability",
+        "subtitle": "Immutable, end-to-end crop tracking powered by Smart Contracts.",
+        "connectBtn": "Connect Wallet",
+        "connected": "Connected: {{account}}",
+        "walletConnected": "Wallet Connected",
+        "simulatedWallet": "Simulated Wallet Connected",
+        "simulatedWalletDesc": "No Web3 provider detected. Using demo account.",
+        "connectionFailed": "Connection Failed",
+        "trackTab": "Track a Crop",
+        "registerTab": "Register Batch",
+        "searchHint": "Enter Batch ID (e.g. BATCH-7241) or Scan QR",
+        "traceBtn": "Trace Data",
+        "recordFound": "Record Found",
+        "recordFoundDesc": "Immutable Web3 records retrieved.",
+        "recordNotFound": "Record Not Found",
+        "recordNotFoundDesc": "Batch ID {{id}} does not exist on the ledger.",
+        "verifiedBatchTrace": "Verified Batch Trace",
+        "authentic": "Authentic",
+        "signedBy": "Signed by:",
+        "queryHint": "Enter a Batch ID to query the blockchain.",
+        "ledgerInfo": "Data is strictly verified via Web3 Immutable Ledger.",
+        "mintTitle": "Mint New Crop Record",
+        "mintDesc": "Record your harvest on the blockchain. This data cannot be altered once submitted.",
+        "batchIdLabel": "Generated Batch ID",
+        "cropLabel": "Crop / Product Type",
+        "cropPlaceholder": "e.g. Basmati Rice, Organic Apples",
+        "originLabel": "Origin Location",
+        "originPlaceholder": "Farm Address or GPS Coordinates",
+        "qualityLabel": "Quality / Certification",
+        "signingNotice": "By submitting this transaction, you are signing a cryptographic proof. You will need to confirm the transaction in your Web3 wallet. Gas fees may apply.",
+        "mintingBtn": "Minting to Blockchain...",
+        "signRegisterBtn": "Sign & Register Crop",
+        "mintSuccess": "Minting Successful",
+        "mintSuccessDesc": "Batch {{id}} permanently minted to blockchain.",
+        "actions": {
+          "harvested": "Harvested & Registered",
+          "quality": "Quality Checked",
+          "transit": "In Transit",
+          "retailer": "Arrived at Retailer"
+        }
       }
     }
   },
@@ -1502,7 +1563,9 @@ const resources = {
         "getStarted": "शुरू करें",
         "logout": "लॉगआउट",
         "saveProfile": "प्रोफ़ाइल सहेजें",
-        "aiTools": "स्मार्ट खेती उपकरण"
+        "aiTools": "स्मार्ट खेती उपकरण",
+        "seedFinder": "बीज खोजक",
+        "traceability": "Web3 ट्रैसेबिलिटी"
       },
       "home": {
         "heroTitle1": "भारत का पहला",
@@ -1600,6 +1663,12 @@ const resources = {
           "accuracyRate": "सटीकता दर",
           "fieldsMapped": "मैप किए गए क्षेत्र",
           "yieldIncrease": "उपज वृद्धि"
+        },
+        "bulletin": {
+          "liveUpdate": "दैनिक लाइव बुलेटिन",
+          "playBulletin": "बुलेटिन सुनें",
+          "stopAudio": "ऑडियो बंद करें",
+          "generating": "आपकी दैनिक जानकारी तैयार की जा रही है..."
         },
         "advanced": {
           "title": "उन्नत AI इंटेलिजेंस",
@@ -2605,48 +2674,6 @@ const resources = {
           "safeDesc": "No severe weather threats detected."
         }
       },
-      "seeds": {
-        "title": "Seed Finder &",
-        "subtitle": "Shop Locator",
-        "desc": "Find high-quality seeds, locate government subsidies, and know exactly what documents you need.",
-        "verifySeedNet": "Verify on SeedNet (Govt)",
-        "locateShops": "Locate Nearby Shops",
-        "tabs": {
-          "findShops": "Find Shops",
-          "advisor": "Seed Advisor"
-        },
-        "searchPlaceholder": "Search for seeds (e.g., Wheat, Urea)...",
-        "all": "All",
-        "govtSubsidized": "Govt (Subsidized)",
-        "private": "Private",
-        "inStock": "In Stock",
-        "subsidyAvailable": "Subsidy Available",
-        "call": "Call",
-        "docsNeeded": "Docs Needed",
-        "requiredDocs": "Required Documents",
-        "carryDocs": "Carry these documents to {{shopName}} for purchase/subsidy.",
-        "advisorTitle": "Smart Recommendation",
-        "advisorDesc": "Select your current season to get expert-verified seed suggestions.",
-        "selectSeason": "Select Season",
-        "seasonRabi": "Rabi (Winter)",
-        "seasonKharif": "Kharif (Monsoon)",
-        "aiTip": "AI Tip: For best results, ensure soil testing is done before sowing.",
-        "selectSeasonPrompt": "Select a season to view recommendations",
-        "checkAvailability": "Check Availability",
-        "unit": {
-          "km": "km"
-        },
-        "toasts": {
-          "locating": "Locating...",
-          "locatingDesc": "Getting your precise location...",
-          "found": "Location Found",
-          "foundDesc": "Showing shops near {{city}}, {{state}}.",
-          "errorLoc": "Could not fetch city details.",
-          "permDenied": "Permission Denied",
-          "permDeniedDesc": "Please enable location access."
-        },
-        "qtyUnit": "kg"
-      },
       "voiceAssistant": {
         "hero": {
           "title": "किसानों के लिए वॉयस असिस्टेंट",
@@ -3098,6 +3125,101 @@ const resources = {
           "spatialFeatures": "Spatial Analysis Features",
           "precisionBenefits": "Precision Agriculture Benefits"
         }
+      },
+      "seeds": {
+        "title": "स्मार्ट बीज",
+        "titleProcurement": "खरीद",
+        "heroBadge": "ब्लॉकचेन स्मार्ट खरीद प्रणाली (बीटा)",
+        "heroDescription": "हम केवल बीजों की सिफारिश नहीं करते हैं—हम आपको मूल्य बुद्धिमत्ता और वास्तविक समय की पहुंच के साथ सत्यापित नजदीकी आपूर्तिकर्ताओं से जोड़ते हैं।",
+        "verifySeedNet": "SeedNet पर सत्यापित करें",
+        "locateShops": "दुकानें खोजें",
+        "searchPlaceholder": "बीज या दुकानों के लिए खोजें...",
+        "all": "सभी",
+        "govtSubsidized": "सरकारी सब्सिडी",
+        "private": "निजी",
+        "inStock": "स्टॉक में",
+        "outOfStock": "स्टॉक में नहीं",
+        "subsidyAvailable": "सब्सिडी उपलब्ध",
+        "call": "कॉल करें",
+        "docsNeeded": "दस्तावेजों की आवश्यकता",
+        "requiredDocs": "आवश्यक दस्तावेज",
+        "carryDocs": "सब्सिडी का लाभ उठाने के लिए कृपया इन दस्तावेजों को {{shopName}} ले जाएं।",
+        "advisorTitle": "AI बीज सलाहकार",
+        "advisorDesc": "अपने मौसम और फसल के आधार पर व्यक्तिगत बीज सिफारिशें प्राप्त करें।",
+        "selectSeason": "मौसम चुनें",
+        "seasonRabi": "रबी",
+        "seasonKharif": "खरीफ",
+        "aiTip": "AI इन रैंकिंग के लिए आपकी वर्तमान मिट्टी की बनावट और सूक्ष्म जलवायु पर विचार करता है।",
+        "selectSeasonPrompt": "AI सिफारिशें देखने के लिए एक मौसम चुनें",
+        "checkAvailability": "उपलब्धता की जांच करें",
+        "tags": {
+          "lowestPrice": "सबसे कम कीमत",
+          "nearest": "निकटतम",
+          "blockchainVerified": "ब्लॉकचेन सत्यापित"
+        },
+        "currentPrice": "वर्तमान मूल्य",
+        "marketRate": "बाजार दर",
+        "rating": "रेटिंग",
+        "viewRoute": "मार्ग देखें",
+        "checkWithStore": "स्टोर से जांचें",
+        "unit": {
+          "km": "किमी"
+        },
+        "tabs": {
+          "findShops": "दुकानें खोजें",
+          "advisor": "बीज सलाहकार"
+        },
+        "toasts": {
+          "locating": "आपकी स्थिति खोज रहे हैं...",
+          "locatingDesc": "नजदीकी दुकानों के लिए आपके जीपीएस निर्देशांक प्राप्त कर रहे हैं।",
+          "found": "स्थान मिल गया",
+          "foundDesc": "{{city}}, {{state}} के पास सत्यापित बीज आपूर्तिकर्ता दिखा रहा है।",
+          "errorLoc": "नजदीकी दुकानें प्राप्त करने में विफल।",
+          "permDenied": "जियोलोकेशन अस्वीकार कर दिया गया",
+          "permDeniedDesc": "नजदीकी दुकानें खोजने के लिए कृपया स्थान सक्षम करें।"
+        }
+      },
+      "trace": {
+        "title": "Web3 ट्रैसेबिलिटी",
+        "subtitle": "स्मार्ट कॉन्ट्रैक्ट्स द्वारा संचालित एंड-टु-एंड फसल ट्रैकिंग।",
+        "connectBtn": "वॉलेट कनेक्ट करें",
+        "connected": "कनेक्टेड: {{account}}",
+        "walletConnected": "वॉलेट कनेक्ट हो गया",
+        "simulatedWallet": "सिमुलेटेड वॉलेट कनेक्टेड",
+        "simulatedWalletDesc": "कोई Web3 प्रदाता नहीं मिला। डेमो एकाउंट का उपयोग कर रहे हैं।",
+        "connectionFailed": "कनेक्शन विफल",
+        "trackTab": "फसल ट्रैक करें",
+        "registerTab": "बैच रजिस्टर करें",
+        "searchHint": "बैच आईडी दर्ज करें (जैसे BATCH-7241) या क्यूआर स्कैन करें",
+        "traceBtn": "डेटा ट्रैक करें",
+        "recordFound": "रिकॉर्ड मिला",
+        "recordFoundDesc": "Web3 रिकॉर्ड सफलतापूर्वक प्राप्त किए गए।",
+        "recordNotFound": "रिकॉर्ड नहीं मिला",
+        "recordNotFoundDesc": "बैच आईडी {{id}} लेज़र पर मौजूद नहीं है।",
+        "verifiedBatchTrace": "सत्यापित बैच ट्रैक",
+        "authentic": "प्रामाणिक",
+        "signedBy": "द्वारा हस्ताक्षरित:",
+        "queryHint": "ब्लॉकचेन को क्वेरी करने के लिए बैच आईडी दर्ज करें।",
+        "ledgerInfo": "डेटा Web3 अपरिवर्तनीय लेज़र के माध्यम से सत्यापित है।",
+        "mintTitle": "नया फसल रिकॉर्ड मिंट करें",
+        "mintDesc": "ब्लॉकचेन पर अपनी फसल रिकॉर्ड करें। एक बार सबमिट करने के बाद इसे बदला नहीं जा सकता।",
+        "batchIdLabel": "जनरेट किया गया बैच आईडी",
+        "cropLabel": "फसल / उत्पाद प्रकार",
+        "cropPlaceholder": "जैसे बासमती चावल, जैविक सेब",
+        "originLabel": "मूल स्थान",
+        "originPlaceholder": "फार्म का पता या जीपीएस निर्देशांक",
+        "qualityLabel": "गुणवत्ता / प्रमाणीकरण",
+        "signingNotice": "इस लेनदेन को सबमिट करके, आप एक हस्ताक्षर कर रहे हैं। आपको अपने वॉलेट में पुष्टि करनी होगी।",
+        "mintingBtn": "ब्लॉकचेन पर मिंट हो रहा है...",
+        "signRegisterBtn": "साइन और रजिस्टर करें",
+        "mintSuccess": "मिंटिंग सफल",
+        "mintSuccessDesc": "बैच {{id}} स्थायी रूप से ब्लॉकचेन पर मिंट हो गया।",
+        "actions": {
+          "harvested": "कटा हुआ और पंजीकृत",
+          "quality": "गुणवत्ता की जाँच की गई",
+          "transit": "पारगमन में",
+          "retailer": "खुदरा विक्रेता के पास पहुँचा"
+        }
       }
     }
   },
@@ -3121,7 +3243,9 @@ const resources = {
         "getStarted": "শুরু করুন",
         "logout": "Logout",
         "saveProfile": "Save Profile",
-        "aiTools": "Smart Farming Tools"
+        "aiTools": "স্মার্ট ফার্মিং টুলস",
+        "seedFinder": "বীজ অনুসন্ধান",
+        "traceability": "Web3 ট্রেসেবিলিটি"
       },
       "home": {
         "heroTitle1": "ভারতের প্রথম",
@@ -3974,48 +4098,6 @@ const resources = {
           "safeDesc": "No severe weather threats detected."
         }
       },
-      "seeds": {
-        "title": "Seed Finder &",
-        "subtitle": "Shop Locator",
-        "desc": "Find high-quality seeds, locate government subsidies, and know exactly what documents you need.",
-        "verifySeedNet": "Verify on SeedNet (Govt)",
-        "locateShops": "Locate Nearby Shops",
-        "tabs": {
-          "findShops": "Find Shops",
-          "advisor": "Seed Advisor"
-        },
-        "searchPlaceholder": "Search for seeds (e.g., Wheat, Urea)...",
-        "all": "All",
-        "govtSubsidized": "Govt (Subsidized)",
-        "private": "Private",
-        "inStock": "In Stock",
-        "subsidyAvailable": "Subsidy Available",
-        "call": "Call",
-        "docsNeeded": "Docs Needed",
-        "requiredDocs": "Required Documents",
-        "carryDocs": "Carry these documents to {{shopName}} for purchase/subsidy.",
-        "advisorTitle": "Smart Recommendation",
-        "advisorDesc": "Select your current season to get expert-verified seed suggestions.",
-        "selectSeason": "Select Season",
-        "seasonRabi": "Rabi (Winter)",
-        "seasonKharif": "Kharif (Monsoon)",
-        "aiTip": "AI Tip: For best results, ensure soil testing is done before sowing.",
-        "selectSeasonPrompt": "Select a season to view recommendations",
-        "checkAvailability": "Check Availability",
-        "unit": {
-          "km": "km"
-        },
-        "toasts": {
-          "locating": "Locating...",
-          "locatingDesc": "Getting your precise location...",
-          "found": "Location Found",
-          "foundDesc": "Showing shops near {{city}}, {{state}}.",
-          "errorLoc": "Could not fetch city details.",
-          "permDenied": "Permission Denied",
-          "permDeniedDesc": "Please enable location access."
-        },
-        "qtyUnit": "kg"
-      },
       "voiceAssistant": {
         "hero": {
           "title": "কৃষকদের জন্য ভয়েস সহকারী",
@@ -4462,6 +4544,95 @@ const resources = {
           "spatialFeatures": "Spatial Analysis Features",
           "precisionBenefits": "Precision Agriculture Benefits"
         }
+      },
+      "seeds": {
+        "title": "স্মার্ট বীজ",
+        "titleProcurement": "সংগ্ৰহ",
+        "heroBadge": "ব্লকচেইন স্মার্ট সংগ্ৰহ প্ৰণালী (বিটা)",
+        "heroDescription": "আমরা শুধু বীজের সুপারিশ করি না—আমরা আপনাকে মূল্য বুদ্ধিমত্তা এবং রিয়েল-টাইম অ্যাক্সেসযোগ্যতার সাথে যাচাইকৃত নিকটস্থ সরবরাহকারীদের সাথে সংযুক্ত করি।",
+        "verifySeedNet": "SeedNet-এ যাচাই করুন",
+        "locateShops": "দোকান খুঁজুন",
+        "searchPlaceholder": "বীজ বা দোকানের জন্য অনুসন্ধান করুন...",
+        "all": "সব",
+        "govtSubsidized": "সরকারি ভর্তুকি",
+        "private": "বেসরকারি",
+        "inStock": "স্টক আছে",
+        "outOfStock": "স্টক নেই",
+        "subsidyAvailable": "ভর্তুকি উপলব্ধ",
+        "call": "কল করুন",
+        "docsNeeded": "নথিপত্র প্রয়োজন",
+        "requiredDocs": "প্রয়োজনীয় নথিপত্র",
+        "carryDocs": "ভর্তুকি পেতে দয়া করে এই নথিপত্রগুলি {{shopName}}-এ নিয়ে যান।",
+        "advisorTitle": "AI বীজ উপদেষ্টা",
+        "advisorDesc": "আপনার মরসুম এবং ফসলের উপর ভিত্তি করে ব্যক্তিগতকৃত বীজের সুপারিশ পান।",
+        "selectSeason": "মরসুম নির্বাচন করুন",
+        "seasonRabi": "রবি",
+        "seasonKharif": "খরিফ",
+        "aiTip": "AI এই র‍্যাঙ্কিংয়ের জন্য আপনার বর্তমান মাটির গঠন এবং মাইক্রো-ক্লাইমেট বিবেচনা করে।",
+        "selectSeasonPrompt": "AI সুপারিশ দেখতে একটি মরসুম নির্বাচন করুন",
+        "checkAvailability": "উপলব্ধতা পরীক্ষা করুন",
+        "tags": {
+          "lowestPrice": "সর্বনিম্ন মূল্য",
+          "nearest": "নিকটতম",
+          "blockchainVerified": "ব্লকচেইন যাচাইকৃত"
+        },
+        "currentPrice": "বর্তমান মূল্য",
+        "marketRate": "বাজার দর",
+        "rating": "রেটিং",
+        "viewRoute": "রুট দেখুন",
+        "checkWithStore": "দোকানে পরীক্ষা করুন",
+        "unit": {
+          "km": "কিমি"
+        },
+        "tabs": {
+          "findShops": "দোকান খুঁজুন",
+          "advisor": "বীজ উপদেষ্টা"
+        },
+        "toasts": {
+          "locating": "আপনার অবস্থান খুঁজছি...",
+          "locatingDesc": "নিকটস্থ দোকানের জন্য আপনার GPS স্থানাঙ্ক সংগ্রহ করছি।",
+          "found": "অবস্থান পাওয়া গেছে",
+          "foundDesc": "{{city}}, {{state}}-এর কাছে যাচাইকৃত বীজ সরবরাহকারী দেখানো হচ্ছে।",
+          "errorLoc": "নিকটস্থ দোকান পেতে ব্যর্থ।",
+          "permDenied": "জিওলোকেশন অস্বীকার করা হয়েছে",
+          "permDeniedDesc": "নিকটস্থ দোকান খুঁজে পেতে দয়া করে অবস্থান সক্ষম করুন।"
+        }
+      },
+      "trace": {
+        "title": "Web3 ট্রেসেবিলিটি",
+        "subtitle": "স্মার্ট কন্ট্রাক্ট দ্বারা পরিচালিত এন্ড-টু-এন্ড ফসল ট্র্যাকিং।",
+        "connectBtn": "ওয়ালেট সংযুক্ত করুন",
+        "connected": "সংযুক্ত: {{account}}",
+        "walletConnected": "ওয়ালেট সংযুক্ত হয়েছে",
+        "simulatedWallet": "সিমুলেটেড ওয়ালেট সংযুক্ত",
+        "simulatedWalletDesc": "কোনো Web3 প্রদানকারী পাওয়া যায়নি। ডেমো অ্যাকাউন্ট ব্যবহার করা হচ্ছে।",
+        "connectionFailed": "সংযোগ ব্যর্থ হয়েছে",
+        "trackTab": "ফসল ট্র্যাক করুন",
+        "registerTab": "ব্যাচ রেজিস্টার করুন",
+        "searchHint": "ব্যাচ আইডি দিন (যেমন BATCH-7241) বা কিউআর স্ক্যান করুন",
+        "traceBtn": "ডেটা ট্র্যাক করুন",
+        "recordFound": "রেকর্ড পাওয়া গেছে",
+        "recordFoundDesc": "Web3 রেকর্ড সফলভাবে উদ্ধার করা হয়েছে।",
+        "recordNotFound": "রেকর্ড পাওয়া যায়নি",
+        "recordNotFoundDesc": "ব্যাচ আইডি {{id}} লেজারে নেই।",
+        "verifiedBatchTrace": "যাচাইকৃত ব্যাচ ট্রেস",
+        "authentic": "প্রামাণিক",
+        "signedBy": "দ্বারা স্বাক্ষরিত:",
+        "queryHint": "ব্লকচেইন কুয়েরি করতে ব্যাচ আইডি দিন।",
+        "ledgerInfo": "ডেটা Web3 অপরিবর্তনীয় লেজারের মাধ্যমে যাচাই করা হয়েছে।",
+        "mintTitle": "নতুন শস্য রেকর্ড তৈরি করুন",
+        "mintDesc": "ব্লকচেইনে আপনার ফসল রেকর্ড করুন। একবার জমা দিলে এটি পরিবর্তন করা যাবে না।",
+        "batchIdLabel": "তৈরি করা ব্যাচ আইডি",
+        "cropLabel": "ফসলের প্রকার",
+        "cropPlaceholder": "যেমন বাসমতি চাল, জৈব আপেল",
+        "originLabel": "উৎপত্তিস্থল",
+        "originPlaceholder": "খামারের ঠিকানা বা GPS স্থানাঙ্ক",
+        "qualityLabel": "গুণমান / শংসাপত্র",
+        "signingNotice": "এই লেনদেনটি জমা দিয়ে, আপনি একটি স্বাক্ষর করছেন। আপনাকে ওয়ালেটে নিশ্চিত করতে হবে।",
+        "mintingBtn": "ব্লকচেইনে তৈরি হচ্ছে...",
+        "signRegisterBtn": "সাইন এবং রেজিস্টার করুন",
+        "mintSuccess": "তৈরি সফল",
+        "mintSuccessDesc": "ব্যাচ {{id}} স্থায়ীভাবে ব্লকচেইনে নথিভুক্ত করা হয়েছে।"
       }
     }
   },
@@ -4485,7 +4656,9 @@ const resources = {
         "getStarted": "আৰম্ভ কৰক",
         "logout": "Logout",
         "saveProfile": "Save Profile",
-        "aiTools": "Smart Farming Tools"
+        "aiTools": "স্মাৰ্ট ফাৰ্মিং টুলছ",
+        "seedFinder": "বীজ অনুসন্ধান",
+        "traceability": "Web3 ট্রেসেবিলিটি"
       },
       "home": {
         "heroTitle1": "ভাৰতৰ প্ৰথম",
@@ -5338,48 +5511,6 @@ const resources = {
           "safeDesc": "No severe weather threats detected."
         }
       },
-      "seeds": {
-        "title": "Seed Finder &",
-        "subtitle": "Shop Locator",
-        "desc": "Find high-quality seeds, locate government subsidies, and know exactly what documents you need.",
-        "verifySeedNet": "Verify on SeedNet (Govt)",
-        "locateShops": "Locate Nearby Shops",
-        "tabs": {
-          "findShops": "Find Shops",
-          "advisor": "Seed Advisor"
-        },
-        "searchPlaceholder": "Search for seeds (e.g., Wheat, Urea)...",
-        "all": "All",
-        "govtSubsidized": "Govt (Subsidized)",
-        "private": "Private",
-        "inStock": "In Stock",
-        "subsidyAvailable": "Subsidy Available",
-        "call": "Call",
-        "docsNeeded": "Docs Needed",
-        "requiredDocs": "Required Documents",
-        "carryDocs": "Carry these documents to {{shopName}} for purchase/subsidy.",
-        "advisorTitle": "Smart Recommendation",
-        "advisorDesc": "Select your current season to get expert-verified seed suggestions.",
-        "selectSeason": "Select Season",
-        "seasonRabi": "Rabi (Winter)",
-        "seasonKharif": "Kharif (Monsoon)",
-        "aiTip": "AI Tip: For best results, ensure soil testing is done before sowing.",
-        "selectSeasonPrompt": "Select a season to view recommendations",
-        "checkAvailability": "Check Availability",
-        "unit": {
-          "km": "km"
-        },
-        "toasts": {
-          "locating": "Locating...",
-          "locatingDesc": "Getting your precise location...",
-          "found": "Location Found",
-          "foundDesc": "Showing shops near {{city}}, {{state}}.",
-          "errorLoc": "Could not fetch city details.",
-          "permDenied": "Permission Denied",
-          "permDeniedDesc": "Please enable location access."
-        },
-        "qtyUnit": "kg"
-      },
       "voiceAssistant": {
         "hero": {
           "title": "কৃষকৰ বাবে ভইচ সহায়ক",
@@ -5826,6 +5957,95 @@ const resources = {
           "spatialFeatures": "Spatial Analysis Features",
           "precisionBenefits": "Precision Agriculture Benefits"
         }
+      },
+      "seeds": {
+        "title": "স্মাৰ্ট বীজ",
+        "titleProcurement": "সংগ্ৰহ",
+        "heroBadge": "ব্লকচেইন স্মাৰ্ট সংগ্ৰহ প্ৰণালী (বিটা)",
+        "heroDescription": "আমি কেৱল বীজৰ পৰামৰ্শ নিদিওঁ—আমি আপোনাক মূল্য বুদ্ধিমত্তা আৰু ৰিয়েল-টাইম প্ৰৱেশযোগ্যতাৰ সৈতে সত্যাপন কৰা ওচৰৰ যোগানধৰোতাৰ সৈতে সংযোগ কৰো।",
+        "verifySeedNet": "SeedNetত পৰীক্ষা কৰক",
+        "locateShops": "দোকান বিচাৰক",
+        "searchPlaceholder": "বীজ বা দোকানৰ বাবে অনুসন্ধান কৰক...",
+        "all": "সকলো",
+        "govtSubsidized": "চৰকাৰী ৰাজসাহায্য",
+        "private": "ব্যক্তিগত",
+        "inStock": "ষ্টকত আছে",
+        "outOfStock": "ষ্টকত নাই",
+        "subsidyAvailable": "ৰাজসাহায্য উপলব্ধ",
+        "call": "কল কৰক",
+        "docsNeeded": "নথিৰ প্ৰয়োজন",
+        "requiredDocs": "প্ৰয়োজনীয় নথিপত্ৰ",
+        "carryDocs": "ৰাজসাহায্য লাভ কৰিবলৈ অনুগ্ৰহ কৰি এই নথিপত্ৰসমূহ {{shopName}}লৈ লৈ যাওক।",
+        "advisorTitle": "AI বীজ উপদেষ্টা",
+        "advisorDesc": "আপোনাৰ বতৰ আৰু শস্যৰ ওপৰত আধাৰিত কৰি ব্যক্তিগতকৃত বীজৰ পৰামৰ্শ লাভ কৰক।",
+        "selectSeason": "বতৰ বাছনি কৰক",
+        "seasonRabi": "ৰবি",
+        "seasonKharif": "খাৰিফ",
+        "aiTip": "AIয়ে এই ৰেংকিংৰ বাবে আপোনাৰ বৰ্তমানৰ মাটিৰ গঠন আৰু সূক্ষ্ম জলবায়ু বিবেচনা কৰে।",
+        "selectSeasonPrompt": "AI পৰামৰ্শ চাবলৈ এটা বতৰ বাছনি কৰক",
+        "checkAvailability": "উপলভ্যতা পৰীক্ষা কৰক",
+        "tags": {
+          "lowestPrice": "সৰ্বনিম্ন মূল্য",
+          "nearest": "ওচৰৰ",
+          "blockchainVerified": "ব্লকচেইন সত্যাপিত"
+        },
+        "currentPrice": "বৰ্তমানৰ মূল্য",
+        "marketRate": "বজাৰ দৰ",
+        "rating": "ৰেটিং",
+        "viewRoute": "ৰাস্তা চাওক",
+        "checkWithStore": "দোকানত পৰীক্ষা কৰক",
+        "unit": {
+          "km": "কিমি"
+        },
+        "tabs": {
+          "findShops": "দোকান বিচাৰক",
+          "advisor": "বীজ উপদেষ্টা"
+        },
+        "toasts": {
+          "locating": "আপোনাৰ অৱস্থিতি বিচাৰি থকা হৈছে...",
+          "locatingDesc": "ওচৰৰ দোকানৰ বাবে আপোনাৰ GPS স্থানাংক সংগ্ৰহ কৰি থকা হৈছে।",
+          "found": "স্থান পোৱা গৈছে",
+          "foundDesc": "{{city}}, {{state}}ৰ ওচৰৰ সত্যাপিত বীজ যোগানধৰোতা দেখুওৱা হৈছে।",
+          "errorLoc": "ওচৰৰ দোকান বিচাৰি পোৱাত ব্যৰ্থ।",
+          "permDenied": "জিঅ’লকেচন অস্বীকাৰ কৰা হৈছে",
+          "permDeniedDesc": "ওচৰৰ দোকান বিচাৰিবলৈ অনুগ্ৰহ কৰি স্থান সক্ষম কৰক।"
+        }
+      },
+      "trace": {
+        "title": "Web3 ট্ৰেছেবিলিটি",
+        "subtitle": "স্মাৰ্ট কনট্ৰেক্টৰ দ্বাৰা পৰিচালিত এণ্ড-টু-এণ্ড শস্য ট্ৰেকিং।",
+        "connectBtn": "ৱালেট সংযোগ কৰক",
+        "connected": "সংযোগ কৰা হৈছে: {{account}}",
+        "walletConnected": "ৱালেট সংযোগ কৰা হৈছে",
+        "simulatedWallet": "চিমুলেটেড ৱালেট সংযোগ কৰা হৈছে",
+        "simulatedWalletDesc": "কোনো Web3 প্ৰদানকাৰী পোৱা নগ’ল। ডেম’ একাউণ্ট ব্যৱহাৰ কৰা হৈছে।",
+        "connectionFailed": "সংযোগ ব্যৰ্থ হৈছে",
+        "trackTab": "শস্য ট্ৰেক কৰক",
+        "registerTab": "বেচ পঞ্জীয়ন কৰক",
+        "searchHint": "বেচ আইডি দিয়ক (যেনে BATCH-7241) বা কিউআৰ স্কেন কৰক",
+        "traceBtn": "ডেটা ট্ৰেক কৰক",
+        "recordFound": "ৰেকৰ্ড পোৱা গৈছে",
+        "recordFoundDesc": "Web3 ৰেকৰ্ড সফলতাৰে উদ্ধাৰ কৰা হৈছে।",
+        "recordNotFound": "ৰেকৰ্ড পোৱা নগ’ল",
+        "recordNotFoundDesc": "বেচ আইডি {{id}} লেজাৰত নাই।",
+        "verifiedBatchTrace": "সত্যাপিত বেচ ট্ৰেচ",
+        "authentic": "প্ৰামাণিক",
+        "signedBy": "দ্বাৰা স্বাক্ষৰিত:",
+        "queryHint": "ব্লকচেইন কুৱেৰী কৰিবলৈ বেচ আইডি দিয়ক।",
+        "ledgerInfo": "ডেটা Web3 অপৰিৱৰ্তনীয় লেজাৰৰ জৰিয়তে সত্যাপন কৰা হৈছে।",
+        "mintTitle": "নতুন শস্যৰ ৰেকৰ্ড সৃষ্টি কৰক",
+        "mintDesc": "ব্লকচেইনত আপোনাৰ শস্য ৰেকৰ্ড কৰক। এবাৰ জমা দিয়াৰ পিছত ইয়াক সলনি কৰিব নোৱাৰি।",
+        "batchIdLabel": "সৃষ্টি কৰা বেচ আইডি",
+        "cropLabel": "শস্যৰ প্ৰকাৰ",
+        "cropPlaceholder": "যেনে বাচমতী চাউল, জৈৱিক আপেল",
+        "originLabel": "উৎপত্তিৰ স্থান",
+        "originPlaceholder": "ফাৰ্মৰ ঠিকনা বা GPS স্থানাংক",
+        "qualityLabel": "গুণমান / প্ৰমাণপত্ৰ",
+        "signingNotice": "এই লেনদেনটো জমা দি আপুনি এটা স্বাক্ষৰ কৰিছে। আপুনি ৱালেটত নিশ্চিত কৰিব লাগিব।",
+        "mintingBtn": "ব্লকচেইনত সৃষ্টি কৰি থকা হৈছে...",
+        "signRegisterBtn": "চাইন আৰু পঞ্জীয়ন কৰক",
+        "mintSuccess": "সৃষ্টি সফল হৈছে",
+        "mintSuccessDesc": "বেচ {{id}} স্থায়ীভাৱে ব্লকচেইনত পঞ্জীয়ন কৰা হৈছে।"
       }
     }
   },
@@ -5849,7 +6069,9 @@ const resources = {
         "getStarted": "ಪ್ರಾರಂಭಿಸಿ",
         "logout": "Logout",
         "saveProfile": "Save Profile",
-        "aiTools": "Smart Farming Tools"
+        "aiTools": "ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ಉಪಕರಣಗಳು",
+        "seedFinder": "ಬೀಜ ಹುಡುಕುವವನು",
+        "traceability": "Web3 ಟ್ರೇಸಿಬಿಲಿಟಿ"
       },
       "home": {
         "heroTitle1": "ಭಾರತದ ಮೊದಲ",
@@ -6702,48 +6924,6 @@ const resources = {
           "safeDesc": "No severe weather threats detected."
         }
       },
-      "seeds": {
-        "title": "Seed Finder &",
-        "subtitle": "Shop Locator",
-        "desc": "Find high-quality seeds, locate government subsidies, and know exactly what documents you need.",
-        "verifySeedNet": "Verify on SeedNet (Govt)",
-        "locateShops": "Locate Nearby Shops",
-        "tabs": {
-          "findShops": "Find Shops",
-          "advisor": "Seed Advisor"
-        },
-        "searchPlaceholder": "Search for seeds (e.g., Wheat, Urea)...",
-        "all": "All",
-        "govtSubsidized": "Govt (Subsidized)",
-        "private": "Private",
-        "inStock": "In Stock",
-        "subsidyAvailable": "Subsidy Available",
-        "call": "Call",
-        "docsNeeded": "Docs Needed",
-        "requiredDocs": "Required Documents",
-        "carryDocs": "Carry these documents to {{shopName}} for purchase/subsidy.",
-        "advisorTitle": "Smart Recommendation",
-        "advisorDesc": "Select your current season to get expert-verified seed suggestions.",
-        "selectSeason": "Select Season",
-        "seasonRabi": "Rabi (Winter)",
-        "seasonKharif": "Kharif (Monsoon)",
-        "aiTip": "AI Tip: For best results, ensure soil testing is done before sowing.",
-        "selectSeasonPrompt": "Select a season to view recommendations",
-        "checkAvailability": "Check Availability",
-        "unit": {
-          "km": "km"
-        },
-        "toasts": {
-          "locating": "Locating...",
-          "locatingDesc": "Getting your precise location...",
-          "found": "Location Found",
-          "foundDesc": "Showing shops near {{city}}, {{state}}.",
-          "errorLoc": "Could not fetch city details.",
-          "permDenied": "Permission Denied",
-          "permDeniedDesc": "Please enable location access."
-        },
-        "qtyUnit": "kg"
-      },
       "voiceAssistant": {
         "hero": {
           "title": "ರೈತರಿಗಾಗಿ ಧ್ವನಿ ಸಹಾಯಕ",
@@ -7190,6 +7370,95 @@ const resources = {
           "spatialFeatures": "Spatial Analysis Features",
           "precisionBenefits": "Precision Agriculture Benefits"
         }
+      },
+      "seeds": {
+        "title": "ಸ್ಮಾರ್ಟ್ ಬೀಜ",
+        "titleProcurement": "ಖರೀದಿ",
+        "heroBadge": "ಬ್ಲಾಕ್‌ಚೈನ್ ಸ್ಮಾರ್ಟ್ ಖರೀದಿ ವ್ಯವಸ್ಥೆ (ಬೀಟಾ)",
+        "heroDescription": "ನಾವು ಕೇವಲ ಬೀಜಗಳನ್ನು ಶಿಫಾರಸು ಮಾಡುವುದಿಲ್ಲ—ನಾವು ನಿಮ್ಮನ್ನು ಬೆಲೆ ಬುದ್ಧಿವಂತಿಕೆ ಮತ್ತು ನೈಜ-ಸಮಯದ ಪ್ರವೇಶದೊಂದಿಗೆ ಪರಿಶೀಲಿಸಿದ ಹತ್ತಿರದ ಪೂರೈಕೆದಾರರೊಂದಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+        "verifySeedNet": "SeedNet ನಲ್ಲಿ ಪತ್ತೆಹಚ್ಚಿ",
+        "locateShops": "ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+        "searchPlaceholder": "ಬೀಜಗಳು ಅಥವಾ ಅಂಗಡಿಗಳಿಗಾಗಿ ಹುಡುಕಿ...",
+        "all": "ಎಲ್ಲಾ",
+        "govtSubsidized": "ಸರ್ಕಾರಿ ಸಬ್ಸಿಡಿ",
+        "private": "ಖಾಸಗಿ",
+        "inStock": "ದಾಸ್ತಾನು ಇದೆ",
+        "outOfStock": "ದಾಸ್ತಾನು ಇಲ್ಲ",
+        "subsidyAvailable": "ಸಬ್ಸಿಡಿ ಲಭ್ಯವಿದೆ",
+        "call": "ಕರೆ ಮಾಡಿ",
+        "docsNeeded": "ದಾಖಲೆಗಳ ಅಗತ್ಯವಿದೆ",
+        "requiredDocs": "ಅಗತ್ಯ ದಾಖಲೆಗಳು",
+        "carryDocs": "ಸಬ್ಸಿಡಿ ಪಡೆಯಲು ದಯವಿಟ್ಟು ಈ ದಾಖಲೆಗಳನ್ನು {{shopName}} ಗೆ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ.",
+        "advisorTitle": "AI ಬೀಜ ಸಲಹೆಗಾರ",
+        "advisorDesc": "ನಿಮ್ಮ ಹವಾಮಾನ ಮತ್ತು ಬೆಳೆಯ ಆಧಾರದ ಮೇಲೆ ವೈಯಕ್ತೀಕರಿಸಿದ ಬೀಜ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ.",
+        "selectSeason": "ಹವಾಮಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+        "seasonRabi": "ರಬಿ",
+        "seasonKharif": "ಖಾರಿಫ್",
+        "aiTip": "AI ಈ ಶ್ರೇಯಾಂಕಗಳಿಗಾಗಿ ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಮಣ್ಣಿನ ವಿನ್ಯಾಸ ಮತ್ತು ಕಿರು-ಹವಾಮಾನವನ್ನು ಪರಿಗಣಿಸುತ್ತದೆ.",
+        "selectSeasonPrompt": "AI ಶಿಫಾರಸುಗಳನ್ನು ನೋಡಲು ಹವಾಮಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+        "checkAvailability": "ಲಭ್ಯತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+        "tags": {
+          "lowestPrice": "ಕಡಿಮೆ ಬೆಲೆ",
+          "nearest": "ಹತ್ತಿರದ",
+          "blockchainVerified": "ಬ್ಲಾಕ್‌ಚೈನ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+        },
+        "currentPrice": "ಪ್ರಸ್ತುತ ಬೆಲೆ",
+        "marketRate": "ಮಾರುಕಟ್ಟೆ ದರ",
+        "rating": "ರೇಟಿಂಗ್",
+        "viewRoute": "ದಾರಿ ನೋಡಿ",
+        "checkWithStore": "ಅಂಗಡಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸಿ",
+        "unit": {
+          "km": "ಕಿಮೀ"
+        },
+        "tabs": {
+          "findShops": "ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+          "advisor": "ಬೀಜ ಸಲಹೆಗಾರ"
+        },
+        "toasts": {
+          "locating": "ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ...",
+          "locatingDesc": "ಹತ್ತಿರದ ಅಂಗಡಿಗಳಿಗಾಗಿ ನಿಮ್ಮ ಜಿಪಿಎಸ್ ನಿರ್ದೇಶಾಂಕಗಳನ್ನು ಪಡೆಯಲಾಗುತ್ತಿದೆ.",
+          "found": "ಸ್ಥಳ ಸಿಕ್ಕಿದೆ",
+          "foundDesc": "{{city}}, {{state}} ಹತ್ತಿರ ಪರಿಶೀಲಿಸಿದ ಬೀಜ ಪೂರೈಕೆದಾರರನ್ನು ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
+          "errorLoc": "ಹತ್ತಿರದ ಅಂಗಡಿಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ವಿಫಲವಾಗಿದೆ.",
+          "permDenied": "ಜಿಯೋಲೋಕೇಶನ್ ನಿರಾಕರಿಸಲಾಗಿದೆ",
+          "permDeniedDesc": "ಹತ್ತಿರದ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಲು ದಯವಿಟ್ಟು ಸ್ಥಳವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ."
+        }
+      },
+      "trace": {
+        "title": "Web3 ಟ್ರೇಸೆಬಿಲಿಟಿ",
+        "subtitle": "ಸ್ಮಾರ್ಟ್ ಒಪ್ಪಂದಗಳಿಂದ ನಡೆಸಲ್ಪಡುವ ಎಂಡ್-ಟು-ಎಂಡ್ ಬೆಳೆ ಟ್ರ್ಯಾಕಿಂಗ್.",
+        "connectBtn": "ವಾಲೆಟ್ ಸಂಪರ್ಕಿಸಿ",
+        "connected": "ಸಂಪರ್ಕಿಸಲಾಗಿದೆ: {{account}}",
+        "walletConnected": "ವಾಲೆಟ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ",
+        "simulatedWallet": "ಸಿಮ್ಯುಲೇಟೆಡ್ ವಾಲೆಟ್ ಸಂಪರ್ಕಗೊಂಡಿದೆ",
+        "simulatedWalletDesc": "ಯಾವುದೇ Web3 ಪೂರೈಕೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ. ಡೆಮೊ ಖಕ್ಕಿಯನ್ನು ಬಳಸಲಾಗುತ್ತಿದೆ.",
+        "connectionFailed": "ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ",
+        "trackTab": "ಬೆಳೆಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+        "registerTab": "ಬ್ಯಾಚ್ ನೋಂದಾಯಿಸಿ",
+        "searchHint": "ಬ್ಯಾಚ್ ಐಡಿ ನಮೂದಿಸಿ (ಉದಾ. BATCH-7241) ಅಥವಾ ಕ್ಯೂಆರ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+        "traceBtn": "ಡೇಟಾ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+        "recordFound": "ದಾಖಲೆ ಕಂಡುಬಂದಿದೆ",
+        "recordFoundDesc": "Web3 ದಾಖಲೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪಡೆಯಲಾಗಿದೆ.",
+        "recordNotFound": "ದಾಖಲೆ ಕಂಡುಬಂದಿಲ್ಲ",
+        "recordNotFoundDesc": "ಬ್ಯಾಚ್ ಐಡಿ {{id}} ಲೆಡ್ಜರ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
+        "verifiedBatchTrace": "ಪರಿಶೀಲಿಸಿದ ಬ್ಯಾಚ್ ಟ್ರೇಸ್",
+        "authentic": "ಅಧಿಕೃತ",
+        "signedBy": "ಇವರಿಂದ ಸಹಿ ಮಾಡಲಾಗಿದೆ:",
+        "queryHint": "ಬ್ಲಾಕ್‌ಚೈನ್ ವಿಚಾರಣೆಗಾಗಿ ಬ್ಯಾಚ್ ಐಡಿ ನಮೂದಿಸಿ.",
+        "ledgerInfo": "ಡೇಟಾವನ್ನು Web3 ಬದಲಾಯಿಸಲಾಗದ ಲೆಡ್ಜರ್ ಮೂಲಕ ಪರಿಶೀಲಿಸಲಾಗಿದೆ.",
+        "mintTitle": "ಹೊಸ ಬೆಳೆ ದಾಖಲೆ ರಚಿಸಿ",
+        "mintDesc": "ಬ್ಲಾಕ್‌ಚೈನ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ದಾಖಲಿಸಿ. ಒಮ್ಮೆ ಸಲ್ಲಿಸಿದ ನಂತರ ಇದನ್ನು ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+        "batchIdLabel": "ರಚಿಸಲಾದ ಬ್ಯಾಚ್ ಐಡಿ",
+        "cropLabel": "ಬೆಳೆ / ಉತ್ಪನ್ನದ ಪ್ರಕಾರ",
+        "cropPlaceholder": "ಉದಾ. ಬಾಸ್ಮತಿ ಅಕ್ಕಿ, ಸಾವಯವ ಸೇಬುಗಳು",
+        "originLabel": "ಮೂಲ ಸ್ಥಳ",
+        "originPlaceholder": "ಫಾರ್ಮ್ ವಿಳಾಸ ಅಥವಾ ಜಿಪಿಎಸ್ ನಿರ್ದೇಶಾಂಕಗಳು",
+        "qualityLabel": "ಗುಣಮಟ್ಟ / ಪ್ರಮಾಣೀಕರಣ",
+        "signingNotice": "ಈ ವಹಿವಾಟನ್ನು ಸಲ್ಲಿಸುವ ಮೂಲಕ ನೀವು ಸಹಿ ಮಾಡುತ್ತಿದ್ದೀರಿ. ವಾಲೆಟ್‌ನಲ್ಲಿ ದೃಢೀಕರಿಸಬೇಕಾಗುತ್ತದೆ.",
+        "mintingBtn": "ಬ್ಲಾಕ್‌ಚೈನ್‌ನಲ್ಲಿ ರಚಿಸಲಾಗುತ್ತಿದೆ...",
+        "signRegisterBtn": "ಸಹಿ ಮಾಡಿ ಮತ್ತು ನೋಂದಾಯಿಸಿ",
+        "mintSuccess": "ರಚನೆ ಯಶಸ್ವಿಯಾಗಿದೆ",
+        "mintSuccessDesc": "ಬ್ಯಾಚ್ {{id}} ಶಾಶ್ವತವಾಗಿ ಬ್ಲಾಕ್‌ಚೈನ್‌ನಲ್ಲಿ ನೋಂದಾಯಿಸಲ್ಪಟ್ಟಿದೆ."
       }
     }
   }

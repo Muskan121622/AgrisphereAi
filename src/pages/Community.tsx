@@ -168,6 +168,8 @@ const Community = () => {
             const res = await axios.get(`${API_URL}/community/notifications?username=${username}`);
             const unreadData = res.data.unread_messages;
             const newNotifs: { [key: string]: number } = {};
+            let shouldPlayGlobalSound = false;
+            let totalUnreadOnLoad = 0;
 
             unreadData.forEach((item: any) => {
                 newNotifs[item.sender] = item.count;
@@ -176,7 +178,12 @@ const Community = () => {
                 // Use ref to get latest state inside interval
                 const prevCount = notificationsRef.current[item.sender] || 0;
 
-                // Skip alert on first load to prevent sound explosion
+                if (isFirstLoad.current && item.count > 0 && activePrivateChat !== item.sender) {
+                    shouldPlayGlobalSound = true;
+                    totalUnreadOnLoad += item.count;
+                }
+
+                // Skip alert on first load to prevent sound explosion, or play once
                 if (!isFirstLoad.current && item.count > prevCount && activePrivateChat !== item.sender) {
                     // Play notification sound
                     try {
@@ -202,6 +209,17 @@ const Community = () => {
                     });
                 }
             });
+
+            if (isFirstLoad.current && shouldPlayGlobalSound) {
+                try {
+                    const audio = new Audio("https://cdn.freesound.org/previews/536/536108_2738741-lq.mp3");
+                    audio.play().catch(e => console.log("Audio play failed on load", e));
+                } catch(e) {}
+                toast({
+                    title: "Unread Messages",
+                    description: `You have ${totalUnreadOnLoad} unread messages marked on the user list.`
+                });
+            }
 
             setNotifications(newNotifs);
             isFirstLoad.current = false; // Mark first load as done

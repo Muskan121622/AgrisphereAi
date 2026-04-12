@@ -5,7 +5,8 @@ import { format } from "date-fns";
 import { 
   Calendar as CalendarIcon, TrendingUp, TrendingDown, Minus, IndianRupee, Clock, Sprout, 
   Search, ChevronDown, Volume2, Phone, MapPin, User, AlertTriangle, Pause, Play, 
-  Square, Lightbulb, ArrowUpRight, ArrowDownRight, Info, CheckCircle2, MessageSquare, ArrowRight
+  Square, Lightbulb, ArrowUpRight, ArrowDownRight, Info, CheckCircle2, MessageSquare, ArrowRight,
+  Star, ExternalLink, Loader2
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +51,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/store/authStore";
+import { getProfileLocation } from "@/lib/profile-utils";
 import { useToast } from "@/components/ui/use-toast";
+import { NearbySuppliersMap } from "@/components/NearbySuppliersMap";
 import {
   LineChart,
   Line,
@@ -63,6 +67,7 @@ import {
 } from "recharts";
 import { useNotificationStore } from "@/store/notificationStore";
 import { useTranslation } from "react-i18next";
+import { speakText, stopSpeech } from "@/services/voiceService";
 import { useDialect } from "@/lib/use-dialect";
 
 // Comprehensive District Mapping
@@ -111,14 +116,16 @@ const Marketplace = () => {
   const { addNotification } = useNotificationStore();
   const [date, setDate] = useState<Date>();
   
-  // User Profile Sim (for proximity/verification)
-  const [userProfile] = useState({
-    name: "Muskan",
-    location: "Samastipur, Bihar",
-    district: "Samastipur",
-    state: "Bihar",
+  const { user } = useAuthStore();
+  
+  // Real Profile Data
+  const userProfile = {
+    name: user?.name || "Muskan",
+    location: (localStorage.getItem(`profile_${user?.email}_district`) || "Samastipur") + ", " + (localStorage.getItem(`profile_${user?.email}_state`) || "Bihar"),
+    district: localStorage.getItem(`profile_${user?.email}_district`) || "Samastipur",
+    state: localStorage.getItem(`profile_${user?.email}_state`) || "Bihar",
     isVerified: true
-  });
+  };
 
   const [crop, setCrop] = useState<string>("");
   const [acres, setAcres] = useState<string>("1");
@@ -153,6 +160,9 @@ const Marketplace = () => {
   const [offerPrice, setOfferPrice] = useState("");
   const [offerMsg, setOfferMsg] = useState("");
   const [negSubmitting, setNegSubmitting] = useState(false);
+  const [nearbySuppliers, setNearbySuppliers] = useState<any[]>([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Demands State
   const [demands, setDemands] = useState<any[]>([]);
@@ -305,6 +315,97 @@ const Marketplace = () => {
     }
   };
 
+  const fetchSuppliers = (lat: number, lng: number) => {
+    setLoadingSuppliers(true);
+    setLocationError(null);
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    fetch(`${API_URL}/nearby-suppliers?lat=${lat}&lng=${lng}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          if (data.length === 0) setLocationError("No stores found within 50km.");
+          setNearbySuppliers(data);
+        } else {
+          setLocationError("Failed to fetch shops from server.");
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch suppliers", err);
+        setLocationError("Server connection error.");
+      })
+      .finally(() => setLoadingSuppliers(false));
+  };
+  
+  const handleGetLocation = () => {
+    const profileLoc = getProfileLocation(user?.email);
+    
+    // 1. If profile info exists, fetch by address immediately so the user sees results instantly
+    if (profileLoc?.fullAddress && nearbySuppliers.length === 0) {
+      console.log("Fetching by profile address immediately:", profileLoc.fullAddress);
+      fetchSuppliersByAddress(profileLoc.fullAddress);
+    }
+
+    // 2. Try to get precise GPS coordinates in the background
+    if (!navigator.geolocation) {
+      if (!profileLoc?.fullAddress) {
+        setLocationError("Geolocation is not supported and no profile address found.");
+      }
+      return;
+    }
+    
+    setLoadingSuppliers(true);
+    setLocationError(null);
+    
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        // If GPS succeeds, it will override the profile results with precise local data
+        fetchSuppliers(pos.coords.latitude, pos.coords.longitude);
+      },
+      (err) => {
+        console.error("GPS Error:", err);
+        // Only show error if we haven't already loaded profile results
+        if (!profileLoc?.fullAddress) {
+          setLoadingSuppliers(false);
+          if (err.code === 1) setLocationError("Location permission denied.");
+          else if (err.code === 2) setLocationError("Location unavailable.");
+          else setLocationError("Location request timed out.");
+        } else {
+          // Profile results are already showing, so just stop the loader
+          setLoadingSuppliers(false);
+        }
+      },
+      { timeout: 8000 }
+    );
+  };
+
+  const fetchSuppliersByAddress = (address: string) => {
+    setLoadingSuppliers(true);
+    setLocationError(null);
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    fetch(`${API_URL}/nearby-suppliers?address=${encodeURIComponent(address)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          if (data.length === 0) setLocationError(`No stores found in ${address}. Try expanding search.`);
+          setNearbySuppliers(data);
+        } else {
+          setLocationError("Failed to fetch shops from server.");
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch suppliers", err);
+        setLocationError("Server connection error.");
+      })
+      .finally(() => setLoadingSuppliers(false));
+  };
+
+  // Auto-fetch suppliers on mount
+  useEffect(() => {
+    if (nearbySuppliers.length === 0) {
+      handleGetLocation();
+    }
+  }, []);
+
   const handleAnalyze = async () => {
     if (!crop || !date || !state) {
       toast({
@@ -350,6 +451,10 @@ const Marketplace = () => {
       }
 
       setResult(rawResult);
+      
+      // Auto-fetch suppliers on report generation
+      handleGetLocation();
+
       toast({
         title: t('marketplace.advisory.analysisComplete'),
         description: t('marketplace.advisory.reportGenerated', { state }),
@@ -369,58 +474,35 @@ const Marketplace = () => {
   // Audio State
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
   const handleAudioControl = (id: string, text: string, lang: 'en-US' | 'hi-IN') => {
     if (!text) return;
 
-    // If clicking same ID
+    // If clicking same ID and it's speaking, toggle pause/play if supported, or just stop
     if (playingId === id) {
-      if (isPaused) {
-        window.speechSynthesis.resume();
-        setIsPaused(false);
-      } else {
+      if (!isPaused) {
         window.speechSynthesis.pause();
         setIsPaused(true);
+      } else {
+        window.speechSynthesis.resume();
+        setIsPaused(false);
       }
       return;
     }
 
     // New audio
-    console.log(`Playing audio: ${id} (${lang})`);
-    console.log(`Text: ${text}`);
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-
-    // Attempt to find a matching voice
-    const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => v.lang.includes(lang.split('-')[0])); // loosely match 'hi' or 'en'
-    if (voice) {
-      console.log(`Using voice: ${voice.name}`);
-      utterance.voice = voice;
-    } else {
-      console.warn(`No specific voice found for ${lang}`);
-    }
-
-    utterance.onend = () => {
-      setPlayingId(null);
-      setIsPaused(false);
-      setCurrentUtterance(null);
-    };
-
     setPlayingId(id);
     setIsPaused(false);
-    setCurrentUtterance(utterance);
-    window.speechSynthesis.speak(utterance);
+    speakText(text, lang, () => {
+      setPlayingId(null);
+      setIsPaused(false);
+    });
   };
 
   const stopAudio = () => {
-    window.speechSynthesis.cancel();
+    stopSpeech();
     setPlayingId(null);
     setIsPaused(false);
-    setCurrentUtterance(null);
   };
 
   useEffect(() => {
@@ -880,6 +962,63 @@ const Marketplace = () => {
                             {t('marketplace.advisory.results.sellHere')}
                           </Button>
                         </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Stage 5: Nearby Suppliers - NEW */}
+                    <AccordionItem value="item-5" className="border rounded-lg bg-card px-4 shadow-sm border-l-4 border-l-orange-500 mt-4">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3 text-left w-full">
+                          <span className="text-2xl bg-orange-50 p-2 rounded-full">🏪</span>
+                          <div>
+                            <h3 className="font-semibold text-lg">{t('marketplace.advisory.steps.suppliers.title', 'Nearby Seed & Fertilizer Stores')}</h3>
+                            <p className="text-sm text-muted-foreground font-normal">{t('marketplace.advisory.steps.suppliers.subtitle', 'Verified suppliers near you')}</p>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4 pt-2 border-t mt-2">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                           {loadingSuppliers ? (
+                             Array(2).fill(0).map((_, i) => (
+                               <div key={i} className="animate-pulse bg-slate-100 h-32 rounded-lg" />
+                             ))
+                           ) : nearbySuppliers.length > 0 ? (
+                             nearbySuppliers.slice(0, 4).map((s) => (
+                               <div key={s.id} className="bg-slate-50 border border-slate-200 p-4 rounded-xl hover:border-orange-300 transition-colors relative group">
+                                 <div className="flex justify-between items-start mb-2">
+                                    <Badge variant="outline" className={s.type === 'Government' ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-blue-100 text-blue-700 border-blue-200'}>
+                                      {s.type}
+                                    </Badge>
+                                    <div className="flex items-center gap-1 text-yellow-600 text-sm font-bold">
+                                      <Star className="h-3 w-3 fill-current" /> {s.rating}
+                                    </div>
+                                 </div>
+                                 <h4 className="font-bold text-slate-900 group-hover:text-orange-600 truncate">{s.name}</h4>
+                                 <p className="text-xs text-slate-500 flex items-start gap-1 mt-1 mb-3">
+                                   <MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {s.address}
+                                 </p>
+                                 <div className="flex gap-2">
+                                   <Button variant="outline" size="sm" className="flex-1 h-8 text-[10px]" onClick={() => window.open(`tel:${s.phone}`)}>
+                                     <Phone className="h-3 w-3 mr-1" /> {t('common.call', 'Call')}
+                                   </Button>
+                                   <Button size="sm" className="flex-1 h-8 text-[10px] bg-orange-600 hover:bg-orange-700 text-white" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + ' ' + s.address)}`, '_blank')}>
+                                     <ExternalLink className="h-3 w-3 mr-1" /> {t('common.directions', 'Directions')}
+                                   </Button>
+                                 </div>
+                               </div>
+                             ))
+                           ) : (
+                             <div className="col-span-full py-10 text-center text-slate-500 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                               <MapPin className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                               <p className="text-sm font-medium text-slate-600 mb-1">{locationError || "Location access required"}</p>
+                               <p className="text-xs text-slate-400 mb-4 px-10">We need your location to find verified Krishi Seva Kendras and Seed stores near you.</p>
+                               <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white px-6" onClick={handleGetLocation}>
+                                 {loadingSuppliers ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                 Allow Location & Search
+                               </Button>
+                             </div>
+                           )}
+                         </div>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>

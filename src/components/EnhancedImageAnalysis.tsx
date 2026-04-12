@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { EnhancedDiseaseDetector, MultiClassResult } from '@/lib/enhanced-disease-detection';
 import { weatherIntegration } from '@/lib/advanced-weather-integration';
 import { translateToHindi } from '@/lib/voice-translation';
+import { speakText, stopSpeech as stopServiceSpeech } from '@/services/voiceService';
 import { useDialect } from '@/lib/use-dialect';
 
 interface EnhancedImageAnalysisProps {
@@ -41,24 +42,14 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const stopSpeech = useCallback(() => {
-    window.speechSynthesis.cancel();
+    stopServiceSpeech();
     setSpeechState('idle');
-  }, []);
-
-  const pauseSpeech = useCallback(() => {
-    window.speechSynthesis.pause();
-    setSpeechState('paused');
-  }, []);
-
-  const resumeSpeech = useCallback(() => {
-    window.speechSynthesis.resume();
-    setSpeechState('speaking');
   }, []);
 
   // Cleanup speech on unmount
   useEffect(() => {
     return () => {
-      window.speechSynthesis.cancel();
+      stopServiceSpeech();
     };
   }, []);
 
@@ -330,16 +321,9 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                     className="gap-2 text-primary border-primary/20 hover:bg-primary/5"
                     onClick={async () => {
                       if (speechState === 'speaking') {
-                        pauseSpeech();
+                        stopSpeech();
                         return;
                       }
-                      if (speechState === 'paused') {
-                        resumeSpeech();
-                        return;
-                      }
-
-                      const speech = new SpeechSynthesisUtterance();
-                      speechRef.current = speech;
 
                       const { overallHealth, diseases, pests, nutrientDeficiency, soilAnalysis } = results;
 
@@ -377,6 +361,7 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
 
                       // AI-powered translation for speech if not in English
                       const currentLang = i18n.language;
+                      let speakLangCode = 'en-IN';
                       if (currentLang !== 'en') {
                         const { translateText } = await import('@/lib/ai-translation');
                         text = await translateText(text, currentLang);
@@ -385,21 +370,16 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                         const voiceMap: Record<string, string> = {
                           'hi': 'hi-IN',
                           'bn': 'bn-IN',
-                          'as': 'as-IN', // Assamese might fall back to hi-IN or en-IN depending on OS
+                          'as': 'as-IN',
                           'kn': 'kn-IN'
                         };
-                        speech.lang = voiceMap[currentLang] || 'en-IN';
+                        speakLangCode = voiceMap[currentLang] || 'en-IN';
                       }
 
-                      speech.text = text;
-                      speech.rate = 0.9;
-
-                      speech.onend = () => setSpeechState('idle');
-                      speech.onerror = () => setSpeechState('idle');
-
-                      window.speechSynthesis.cancel();
-                      window.speechSynthesis.speak(speech);
                       setSpeechState('speaking');
+                      speakText(text, speakLangCode, () => {
+                        setSpeechState('idle');
+                      });
                       toast.info("Explaining analysis in your language...");
                     }}
                   >
@@ -408,15 +388,10 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                         <Volume2 className="w-4 h-4" />
                         {voiceLanguage === 'hi' ? 'Parinam Samjhayein' : 'Explain Results'}
                       </>
-                    ) : speechState === 'speaking' ? (
-                      <>
-                        <Pause className="w-4 h-4" />
-                        {voiceLanguage === 'hi' ? 'Rokein' : 'Pause'}
-                      </>
                     ) : (
                       <>
-                        <Play className="w-4 h-4" />
-                        {voiceLanguage === 'hi' ? 'Jaari Rakhein' : 'Resume'}
+                        <Pause className="w-4 h-4" />
+                        {voiceLanguage === 'hi' ? 'Rokein' : 'Stop'}
                       </>
                     )}
                   </Button>

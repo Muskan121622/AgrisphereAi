@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Volume2, StopCircle, Pause, Play, Globe } from "lucide-react";
-import { simplifyTextForFarmer, stopSpeech } from "@/services/voiceService";
+import { simplifyTextForFarmer, stopSpeech, speakText } from "@/services/voiceService";
 import { toast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDialect } from "@/lib/use-dialect";
@@ -72,20 +72,12 @@ export const BuyerVoiceAssistant: React.FC<BuyerVoiceAssistantProps> = ({ insigh
             setIsLoading(false);
             setIsSpeaking(true);
 
-            // Speak
-            stopSpeech(); // Clear any previous
-            const utterance = new SpeechSynthesisUtterance(finalScript);
-            utterance.lang = language === "Hindi" ? "hi-IN" : "en-IN";
-            utterance.rate = 0.9;
-
-            utterance.onend = () => {
+            const speakLang = language === "Hindi" ? "hi-IN" : "en-IN";
+            speakText(finalScript, speakLang, () => {
                 setIsSpeaking(false);
                 setIsPaused(false);
                 setCurrentUtterance(null);
-            };
-
-            setCurrentUtterance(utterance);
-            window.speechSynthesis.speak(utterance);
+            });
 
         } catch (error) {
             console.error("Voice Error", error);

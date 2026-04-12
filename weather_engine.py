@@ -265,3 +265,31 @@ def verify_phone_number(phone_number):
     except Exception as e:
         print(f"Twilio Verification Error: {e}")
         return {"success": False, "error": str(e)}
+
+def get_location_details(lat, lon):
+    """
+    Reverse geocodes lat/lon into State and District using OpenWeatherMap Geo API.
+    """
+    try:
+        url = "http://api.openweathermap.org/geo/1.0/reverse"
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "limit": 1,
+            "appid": WEATHER_API_KEY
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            results = response.json()
+            if results:
+                location_info = results[0]
+                # OpenWeatherMap returns state in 'state' field if available
+                return {
+                    "city": location_info.get("name"),
+                    "state": location_info.get("state"),
+                    "country": location_info.get("country")
+                }
+        return None
+    except Exception as e:
+        print(f"Reverse geocode error: {e}")
+        return None

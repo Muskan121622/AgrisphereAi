@@ -7,6 +7,7 @@ import { chatWithAI, translateToHindi } from '@/lib/openai';
 import { mockChatWithAI } from '@/lib/mockAI';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { speakText, stopSpeech } from '@/services/voiceService';
 import { useDialect } from '@/lib/use-dialect';
 
 const VoiceRecognition = () => {
@@ -180,46 +181,16 @@ const VoiceRecognition = () => {
   };
 
   const speakResponse = (text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-
-      // Smart Fallback for TTS:
-      // Browsers typically only support major languages like English, Hindi, Bengali.
-      // For tribal languages (Mizo, Garo, etc.), we must fallback to a supported voice (e.g., Hindi) 
-      // otherwise the browser might stay silent or throw an error.
-      const broadlySupported = ['hi-IN', 'en-IN', 'bn-IN', 'es-ES', 'fr-FR', 'mr-IN', 'ta-IN', 'te-IN'];
-      // Fallback to Hindi (most likely to have similar phone set) or English
-      utterance.lang = broadlySupported.includes(selectedLanguage) ? selectedLanguage : 'hi-IN';
-
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = (e) => {
-        console.error("TTS Error:", e);
-        setIsSpeaking(false);
-        // Try fallback to English if Hindi fails
-        if (utterance.lang === 'hi-IN') {
-          const fallback = new SpeechSynthesisUtterance(text);
-          fallback.lang = 'en-IN';
-          window.speechSynthesis.speak(fallback);
-        }
-      };
-
-      utteranceRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    }
+    const lang = selectedLanguage || 'hi-IN';
+    speakText(text, lang, () => {
+      setIsSpeaking(false);
+    });
+    setIsSpeaking(true);
   };
 
   const stopSpeaking = () => {
-    if ('speechSynthesis' in window && isSpeaking) {
-      speechSynthesis.cancel();
-      setIsSpeaking(false);
-      utteranceRef.current = null;
-    }
+    stopSpeech();
+    setIsSpeaking(false);
   };
 
   const pauseResumeSpeaking = () => {
