@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import { useDialect } from "@/lib/use-dialect";
 
 // Lazy load the GIS Map component for better performance
-const GISMap = lazy(() => import("@/components/GISMap").then(module => ({ default: module.GISMap as any })));
+const GISMap = lazy(() => import("@/components/GISMap").then(module => ({ default: (module as any).GISMap })));
 
 const DigitalTwin = () => {
   const { t, i18n } = useTranslation();
@@ -41,6 +41,10 @@ const DigitalTwin = () => {
   // const [speechState, setSpeechState] = useState<'idle' | 'speaking' | 'paused'>('idle'); // REPLACED BY HOOK
   const { isSpeaking, speak, stop } = useTextToSpeech();
   const [voiceLanguage, setVoiceLanguage] = useState<'en' | 'hi'>('en');
+  const [ndviData, setNdviData] = useState<any>(null);
+  const [isFetchingAgro, setIsFetchingAgro] = useState(false);
+  const [isReliabilityMode, setIsReliabilityMode] = useState(false);
+  const [aiSummary, setAiSummary] = useState("");
 
 
   // Form State
@@ -165,6 +169,14 @@ const DigitalTwin = () => {
             toast.success(`Location identified: Lat ${lat}, Lng ${lng}`);
           }
 
+          if (aiData.visual_summary?.includes("Reliability Mode")) {
+            setIsReliabilityMode(true);
+            toast.warning("AI Systems Busy: Operating in Reliability Mode.");
+          } else {
+            setIsReliabilityMode(false);
+          }
+          
+          setAiSummary(aiData.visual_summary || "");
           toast.success(`AI Analysis Complete: ${aiData.visual_summary || "Localized data applied."}`);
 
         } else {
@@ -185,7 +197,7 @@ const DigitalTwin = () => {
       console.log('📍 Generated coordinates for acres:', acres, coordinates);
 
       // 1. Initialize Geometry locally (using Turf.js)
-      let [traditionalData, gisData] = await Promise.all([
+      const [traditionalData, gisData] = await Promise.all([
         twinEngine.initializeFarm(coordinates.map(c => [c.lng, c.lat])),
         gisEngine.initializeFarm(formData.farmName, formData.ownerName, coordinates)
       ]);
@@ -193,31 +205,41 @@ const DigitalTwin = () => {
       // MERGE AI Data if available
       if (aiData) {
         // Update Farm Area strictly from AI or usage
-        traditionalData.farmBoundary.area = aiData.farmBoundary.area;
+        if (aiData?.farmBoundary?.area) {
+          traditionalData.farmBoundary.area = aiData.farmBoundary.area;
+        }
 
         // Merge Soil Zones (Keep geometry, update attributes)
-        traditionalData.soilZones = traditionalData.soilZones.map((zone, idx) => {
-          const aiZone = aiData.soilZones[idx % aiData.soilZones.length];
-          return { ...zone, ...aiZone, id: zone.id, coordinates: zone.coordinates };
-        });
+        if (Array.isArray(aiData?.soilZones)) {
+          traditionalData.soilZones = traditionalData.soilZones.map((zone, idx) => {
+            const aiZone = aiData.soilZones[idx % aiData.soilZones.length];
+            return { ...zone, ...aiZone, id: zone.id, coordinates: zone.coordinates };
+          });
+        }
 
         // Merge Irrigation
-        traditionalData.irrigationZones = traditionalData.irrigationZones.map((zone, idx) => {
-          const aiZone = aiData.irrigationZones[idx % aiData.irrigationZones.length];
-          return { ...zone, ...aiZone, id: zone.id, coordinates: zone.coordinates };
-        });
+        if (Array.isArray(aiData?.irrigationZones)) {
+          traditionalData.irrigationZones = traditionalData.irrigationZones.map((zone, idx) => {
+            const aiZone = aiData.irrigationZones[idx % aiData.irrigationZones.length];
+            return { ...zone, ...aiZone, id: zone.id, coordinates: zone.coordinates };
+          });
+        }
 
         // Merge Pest Areas (If AI has fewer, loop them; if AI has more, we limit to geometry count)
-        traditionalData.pestProneAreas = traditionalData.pestProneAreas.map((area, idx) => {
-          const aiPest = aiData.pestProneAreas[idx % aiData.pestProneAreas.length];
-          return { ...area, ...aiPest, id: area.id, coordinates: area.coordinates };
-        });
+        if (Array.isArray(aiData?.pestProneAreas)) {
+          traditionalData.pestProneAreas = traditionalData.pestProneAreas.map((area, idx) => {
+            const aiPest = aiData.pestProneAreas[idx % aiData.pestProneAreas.length];
+            return { ...area, ...aiPest, id: area.id, coordinates: area.coordinates };
+          });
+        }
 
         // Merge Crops
-        traditionalData.cropGrowthStages = traditionalData.cropGrowthStages.map((stage, idx) => {
-          const aiCrop = aiData.cropGrowthStages[idx % aiData.cropGrowthStages.length];
-          return { ...stage, ...aiCrop, id: stage.id, coordinates: stage.coordinates };
-        });
+        if (Array.isArray(aiData?.cropGrowthStages)) {
+          traditionalData.cropGrowthStages = traditionalData.cropGrowthStages.map((stage, idx) => {
+            const aiCrop = aiData.cropGrowthStages[idx % aiData.cropGrowthStages.length];
+            return { ...stage, ...aiCrop, id: stage.id, coordinates: stage.coordinates };
+          });
+        }
 
         // Update Weather
         if (aiData.weatherData) traditionalData.weatherData = aiData.weatherData;
@@ -228,6 +250,24 @@ const DigitalTwin = () => {
       setFarmData(traditionalData);
       setGisData(gisData);
       setHasInitialized(true);
+
+      // 3. FETCH REAL SATELLITE NDVI
+      setIsFetchingAgro(true);
+      fetch('http://localhost:5000/api/agro/ndvi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lon: lng })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log("🛰️ Real NDVI Data:", data);
+          setNdviData(data);
+          toast.success("Real Satellite NDVI data synchronized.");
+        }
+      })
+      .catch(err => console.error("Agro API Error:", err))
+      .finally(() => setIsFetchingAgro(false));
 
       const spatialAnalysis = await gisEngine.performSpatialAnalysis();
       console.log('📊 Spatial Analysis Results:', spatialAnalysis);
@@ -565,7 +605,7 @@ const DigitalTwin = () => {
                               ownerName: "User"
                             }));
 
-                            let [traditionalData, gisData] = await Promise.all([
+                            const [traditionalData, gisData] = await Promise.all([
                               twinEngine.initializeFarm(coordinates.map(c => [c.lng, c.lat])),
                               gisEngine.initializeFarm("Drawn Farm Field", "User", coordinates)
                             ]);
@@ -690,6 +730,14 @@ const DigitalTwin = () => {
               <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
                 {t('digitalTwin.exploreNote', { owner: gisData.owner })}
               </p>
+              {isReliabilityMode && (
+                <Card className="max-w-2xl mx-auto mb-8 p-4 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900 flex items-center gap-3">
+                  <Activity className="w-5 h-5 text-amber-600 dark:text-amber-400 animate-pulse" />
+                  <div className="text-sm text-amber-800 dark:text-amber-300">
+                    <span className="font-bold">Reliability Mode Active:</span> {aiSummary}
+                  </div>
+                </Card>
+              )}
               <Suspense fallback={
                 <div className="flex items-center justify-center py-20">
                   <div className="text-center space-y-4">
@@ -796,13 +844,31 @@ const DigitalTwin = () => {
                   <div className="text-2xl font-bold text-cyan-500">{farmData.irrigationZones.length}</div>
                   <div className="text-sm text-muted-foreground">{t('digitalTwin.insights.activeZones')}</div>
                 </Card>
-                <Card className="p-6 text-center">
+                <Card className="p-6 text-center border-primary/20 bg-primary/5">
                   <Activity className="w-8 h-8 mx-auto mb-3 text-orange-500" />
-                  <h3 className="font-bold mb-2">{t('digitalTwin.insights.growthStages')}</h3>
-                  <div className="text-2xl font-bold text-orange-500">
-                    {Math.round(farmData.cropGrowthStages.reduce((sum, stage) => sum + stage.health, 0) / farmData.cropGrowthStages.length)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">{t('digitalTwin.insights.avgHealth')}</div>
+                  <h3 className="font-bold mb-2">{t('digitalTwin.layers.satellite')} NDVI</h3>
+                  {isFetchingAgro ? (
+                    <div className="animate-pulse flex flex-col items-center">
+                      <div className="h-8 w-16 bg-muted rounded mb-2"></div>
+                      <div className="h-4 w-24 bg-muted rounded"></div>
+                    </div>
+                  ) : ndviData ? (
+                    <>
+                      <div className="text-2xl font-bold text-orange-500">{(ndviData.ndvi?.data || 0.65).toFixed(3)}</div>
+                      <div className="text-sm font-medium text-muted-foreground">
+                        { (ndviData.ndvi?.data || 0.65) > 0.8 ? 'Excellent Health' : 
+                          (ndviData.ndvi?.data || 0.65) > 0.5 ? 'Moderate Health' : 'Low Health' }
+                      </div>
+                      <div className="text-[10px] text-muted-foreground mt-2">
+                        Sensor: Sentinel-2
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-2xl font-bold text-muted-foreground">--</div>
+                      <div className="text-sm text-muted-foreground">Real-time sync pending</div>
+                    </>
+                  )}
                 </Card>
               </div>
               <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">

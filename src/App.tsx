@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { useAuthStore } from "@/store/authStore";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Lazy load pages for faster navigation
 const Index = lazy(() => import("./pages/Index"));
@@ -74,44 +75,46 @@ const App = () => {
   }, [initializeAuth]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Suspense fallback={<LoadingScreen />}>
-            <OfflineIndicator />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              {/* Public routes for demo */}
-              <Route path="/digital-twin" element={<DigitalTwin />} />
-              <Route path="/disease-detection" element={<DiseaseDetection />} />
-              <Route path="/advisory-hub" element={<AdvisoryHub />} />
-              <Route path="/seed-finder" element={<SeedFinder />} />
-              <Route path="/traceability" element={<BlockchainTraceability />} />
-              {/* Protected routes */}
-              <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-              <Route path="/iot-monitoring" element={<ProtectedRoute><IoTMonitoring /></ProtectedRoute>} />
-              <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
-              <Route path="/voice-assistant" element={<ProtectedRoute><VoiceAssistant /></ProtectedRoute>} />
-              <Route path="/weather-alerts" element={<ProtectedRoute><WeatherAlerts /></ProtectedRoute>} />
-              <Route path="/fertilizer-recommendation" element={<ProtectedRoute><FertilizerRecommendation /></ProtectedRoute>} />
-              <Route path="/pest-prediction" element={<ProtectedRoute><PestPrediction /></ProtectedRoute>} />
-              <Route path="/gov/dashboard" element={<ProtectedRoute><GovDashboard /></ProtectedRoute>} />
-              <Route path="/buyer/dashboard" element={<ProtectedRoute><BuyerDashboard /></ProtectedRoute>} />
-              <Route path="/compensation-form" element={<ProtectedRoute><CropLossForm /></ProtectedRoute>} />
-              <Route path="/yield-prediction" element={<ProtectedRoute><YieldPrediction /></ProtectedRoute>} />
-              <Route path="/comprehensive-dashboard" element={<ProtectedRoute><ComprehensiveDashboard /></ProtectedRoute>} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            {/* Global Chatbot */}
-            <AIChat />
-          </Suspense>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Suspense fallback={<LoadingScreen />}>
+              <OfflineIndicator />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                {/* Public routes for demo */}
+                <Route path="/digital-twin" element={<DigitalTwin />} />
+                <Route path="/disease-detection" element={<DiseaseDetection />} />
+                <Route path="/advisory-hub" element={<AdvisoryHub />} />
+                <Route path="/seed-finder" element={<SeedFinder />} />
+                <Route path="/traceability" element={<BlockchainTraceability />} />
+                {/* Protected routes */}
+                <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                <Route path="/iot-monitoring" element={<ProtectedRoute><IoTMonitoring /></ProtectedRoute>} />
+                <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+                <Route path="/voice-assistant" element={<ProtectedRoute><VoiceAssistant /></ProtectedRoute>} />
+                <Route path="/weather-alerts" element={<ProtectedRoute><WeatherAlerts /></ProtectedRoute>} />
+                <Route path="/fertilizer-recommendation" element={<ProtectedRoute><FertilizerRecommendation /></ProtectedRoute>} />
+                <Route path="/pest-prediction" element={<ProtectedRoute><PestPrediction /></ProtectedRoute>} />
+                <Route path="/gov/dashboard" element={<ProtectedRoute><GovDashboard /></ProtectedRoute>} />
+                <Route path="/buyer/dashboard" element={<ProtectedRoute><BuyerDashboard /></ProtectedRoute>} />
+                <Route path="/compensation-form" element={<ProtectedRoute><CropLossForm /></ProtectedRoute>} />
+                <Route path="/yield-prediction" element={<ProtectedRoute><YieldPrediction /></ProtectedRoute>} />
+                <Route path="/comprehensive-dashboard" element={<ProtectedRoute><ComprehensiveDashboard /></ProtectedRoute>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              {/* Global Chatbot */}
+              <AIChat />
+            </Suspense>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

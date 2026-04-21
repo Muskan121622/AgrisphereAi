@@ -20,6 +20,8 @@ const VoiceRecognition = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const recognition = useRef<any>(null);
   const utteranceRef = useRef<any>(null);
 
@@ -80,7 +82,8 @@ const VoiceRecognition = () => {
             body: JSON.stringify({
               text: spokenText,
               language: languageName, // Send full name for AI context
-              dialect: dialect        // Send current dialect
+              dialect: dialect,       // Send current dialect
+              image: selectedImage ? selectedImage.split(',')[1] : null // Send only the base64 part
             })
           });
 
@@ -212,6 +215,23 @@ const VoiceRecognition = () => {
     { hindi: "खाद कितनी डालनी चाहिए?", english: "How much fertilizer to apply?" }
   ];
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImageFile(null);
+  };
+
   return (
     <div className="space-y-6">
       {/* Language Selection */}
@@ -236,11 +256,45 @@ const VoiceRecognition = () => {
         </div>
       </Card>
 
-      {/* Voice Interface */}
-      <Card className="p-6 text-center">
-        <div className="space-y-4">
+      {/* Voice & Vision Interface */}
+      <Card className="p-6 text-center space-y-6">
+        <div className="flex flex-col items-center gap-6">
+          {/* Image Preview / Upload */}
+          <div className="relative group">
+            {selectedImage ? (
+              <div className="relative w-40 h-40 rounded-xl overflow-hidden shadow-xl border-2 border-primary">
+                <img src={selectedImage} alt="Plant to analyze" className="w-full h-full object-cover" />
+                <Button 
+                  size="icon" 
+                  variant="destructive" 
+                  className="absolute top-1 right-1 w-6 h-6 rounded-full"
+                  onClick={removeImage}
+                >
+                  ×
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label 
+                  htmlFor="image-upload"
+                  className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary p-4 rounded-xl border-2 border-dashed border-primary/30 flex flex-col items-center gap-2 transition-all"
+                >
+                  <span className="text-2xl">📸</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Add Photo</span>
+                </label>
+              </div>
+            )}
+          </div>
+
           <motion.div
-            className={`w-32 h-32 mx-auto rounded-full flex items-center justify-center ${isListening ? 'bg-red-500 animate-pulse' : 'bg-primary'
+            className={`w-32 h-32 rounded-full flex items-center justify-center relative ${isListening ? 'bg-red-500 animate-pulse' : 'bg-primary'
               }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -249,7 +303,7 @@ const VoiceRecognition = () => {
               size="lg"
               onClick={isListening ? stopListening : startListening}
               disabled={isProcessing}
-              className={`w-24 h-24 rounded-full transition-all duration-300 ${isListening ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-primary hover:bg-primary/90'
+              className={`w-24 h-24 rounded-full transition-all duration-300 z-10 ${isListening ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-primary hover:bg-primary/90'
                 }`}
             >
               {isListening ? (
@@ -260,12 +314,12 @@ const VoiceRecognition = () => {
             </Button>
           </motion.div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <p className="text-lg font-semibold">
               {isListening ? t('voiceAssistant.demo.listening') : t('voiceAssistant.demo.pressToSpeak')}
             </p>
             {isProcessing && (
-              <p className="text-muted-foreground">{t('voiceAssistant.demo.processing')}</p>
+              <p className="text-muted-foreground animate-pulse font-medium">{t('voiceAssistant.demo.processing')}</p>
             )}
           </div>
         </div>

@@ -23,6 +23,9 @@ import ai_fallbacks
 import base64
 import uuid
 import whatsapp_handler
+from agromonitoring_service import AgroMonitoringService
+
+agro_service = AgroMonitoringService()
 
 def call_groq_with_fallback(prompt, system_message="You are a helpful agricultural AI. Output valid JSON only.", response_format={"type": "json_object"}, temperature=0.2, max_tokens=600):
     """
@@ -59,17 +62,22 @@ def call_groq_with_fallback(prompt, system_message="You are a helpful agricultur
         except Exception as e:
             last_error = str(e)
             print(f"Groq error with {model}: {last_error}")
-            if "rate_limit_exceeded" in last_error.lower():
+            # More inclusive rate limit detection
+            lower_error = last_error.lower()
+            if "rate_limit" in lower_error or "rate limit" in lower_error or "429" in lower_error or "overloaded" in lower_error:
                 continue # Try next model
             break # Other errors might not be recoverable by switching models
             
     return None, last_error
+
+import sqlite3
 
 MARKET_DATA_FILE = "market_data.json"
 LISTINGS_FILE = "listings.json"
 COMMUNITY_DATA_FILE = "community_data.json"
 CROP_LOSS_FILE = "crop_loss_data.json"
 DEMANDS_FILE = "demands.json"
+DB_FILE = "agrisphere.db"
 
 def load_demands():
     if os.path.exists(DEMANDS_FILE):
@@ -97,18 +105,212 @@ def save_crop_loss_data(data):
     with open(CROP_LOSS_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
-def load_community_data():
+def get_db_connection():
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Create tables
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS profiles (
+            username TEXT PRIMARY KEY,
+            name TEXT,
+            email TEXT,
+            photoUrl TEXT,
+            bio TEXT,
+            dob TEXT,
+            country TEXT,
+            state TEXT,
+            district TEXT,
+            village TEXT,
+            farmSize TEXT,
+            experience TEXT,
+            crops TEXT
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS posts (
+            id TEXT PRIMARY KEY,
+            author TEXT,
+            title TEXT,
+            content TEXT,
+            timestamp TEXT,
+            likes INTEGER DEFAULT 0,
+            tags TEXT
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comments (
+            id TEXT PRIMARY KEY,
+            post_id TEXT,
+            author TEXT,
+            text TEXT,
+            timestamp TEXT,
+            FOREIGN KEY(post_id) REFERENCES posts(id)
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS chat (
+            id TEXT PRIMARY KEY,
+            sender TEXT,
+            recipient TEXT,
+            text TEXT,
+            imageUrl TEXT,
+            timestamp TEXT,
+            read INTEGER DEFAULT 0
+        )
+    ''')
+    
+    conn.commit()
+    
+    # Check if we need to migrate from JSON
     if os.path.exists(COMMUNITY_DATA_FILE):
+        print("🔍 Found community_data.json, checking for migration...")
         try:
             with open(COMMUNITY_DATA_FILE, 'r') as f:
-                return json.load(f)
-        except:
-            return {"posts": [], "chat": []}
-    return {"posts": [], "chat": []}
+                data = json.load(f)
+            
+            # Migrate Posts
+            cursor.execute("SELECT count(*) FROM posts")
+            if cursor.fetchone()[0] == 0:
+                print("📦 Migrating posts to SQLite...")
+                for post in data.get('posts', []):
+                    cursor.execute(
+                        "INSERT INTO posts (id, author, title, content, timestamp, likes, tags) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (post.get('id'), post.get('author'), post.get('title'), post.get('content'), post.get('timestamp'), post.get('likes', 0), json.dumps(post.get('tags', [])))
+                    )
+                    for comment in post.get('comments', []):
+                        cursor.execute(
+                            "INSERT INTO comments (id, post_id, author, text, timestamp) VALUES (?, ?, ?, ?, ?)",
+                            (comment.get('id'), post.get('id'), comment.get('author'), comment.get('text'), comment.get('timestamp'))
+                        )
+            
+            # Migrate Chat
+            cursor.execute("SELECT count(*) FROM chat")
+            if cursor.fetchone()[0] == 0:
+                print("💬 Migrating chat messages to SQLite...")
+                for msg in data.get('chat', []):
+                    cursor.execute(
+                        "INSERT INTO chat (id, sender, recipient, text, imageUrl, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (msg.get('id'), msg.get('sender'), msg.get('recipient'), msg.get('text'), msg.get('imageUrl'), msg.get('timestamp'), 1 if msg.get('read') else 0)
+                    )
+            
+            # Migrate Profiles
+            cursor.execute("SELECT count(*) FROM profiles")
+            if cursor.fetchone()[0] == 0:
+                print("👥 Migrating user profiles to SQLite...")
+                for username, p in data.get('profiles', {}).items():
+                    cursor.execute(
+                        "INSERT INTO profiles (username, name, email, photoUrl, bio, dob, country, state, district, village, farmSize, experience, crops) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (username, p.get('name'), p.get('email'), p.get('photoUrl'), p.get('bio'), p.get('dob'), p.get('country'), p.get('state'), p.get('district'), p.get('village'), p.get('farmSize'), p.get('experience'), p.get('crops'))
+                    )
+            
+            conn.commit()
+            print("✅ Migration complete. JSON file preserved as backup.")
+        except Exception as e:
+            print(f"❌ Migration failed: {e}")
+            
+    conn.close()
+
+def load_community_data():
+    """
+    Simulate the old nested JSON structure for compatibility with existing routes
+    while pulling from SQLite for real data.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Load Posts with Comments
+    cursor.execute("SELECT * FROM posts ORDER BY timestamp DESC")
+    posts_rows = cursor.fetchall()
+    posts = []
+    for pr in posts_rows:
+        p = dict(pr)
+        p['tags'] = json.loads(p['tags']) if p['tags'] else []
+        cursor.execute("SELECT * FROM comments WHERE post_id = ? ORDER BY timestamp ASC", (p['id'],))
+        p['comments'] = [dict(cr) for cr in cursor.fetchall()]
+        posts.append(p)
+        
+    # Load Chat
+    cursor.execute("SELECT * FROM chat ORDER BY timestamp ASC")
+    chat = [dict(r) for r in cursor.fetchall()]
+    
+    # Load Profiles
+    cursor.execute("SELECT * FROM profiles")
+    profiles = {r['username']: dict(r) for r in cursor.fetchall()}
+    
+    conn.close()
+    return {"posts": posts, "chat": chat, "profiles": profiles}
 
 def save_community_data(data):
-    with open(COMMUNITY_DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+    """
+    No-op or partial sync for the old monolithic save function.
+    Newer endpoints should call specialized sync functions.
+    """
+    # For now, we'll keep it as a placeholder to avoid breaking monolithic calls
+    # but actual writes should happen at the endpoint level via SQL
+    pass
+
+def save_chat_message(msg):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO chat (id, sender, recipient, text, imageUrl, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (msg.get('id'), msg.get('sender'), msg.get('recipient'), msg.get('text'), msg.get('imageUrl'), msg.get('timestamp'), 0)
+    )
+    conn.commit()
+    conn.close()
+
+def delete_chat_record(msg_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM chat WHERE id = ?", (msg_id,))
+    conn.commit()
+    conn.close()
+
+def update_profile_record(username, p):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "REPLACE INTO profiles (username, name, email, photoUrl, bio, dob, country, state, district, village, farmSize, experience, crops) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (username, p.get('name'), p.get('email'), p.get('photoUrl'), p.get('bio'), p.get('dob'), p.get('country'), p.get('state'), p.get('district'), p.get('village'), p.get('farmSize'), p.get('experience'), p.get('crops'))
+    )
+    conn.commit()
+    conn.close()
+
+def save_post(post):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO posts (id, author, title, content, timestamp, likes, tags) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (post['id'], post['author'], post['title'], post['content'], post['timestamp'], post['likes'], json.dumps(post.get('tags', [])))
+    )
+    conn.commit()
+    conn.close()
+
+def add_post_comment(post_id, comment):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO comments (id, post_id, author, text, timestamp) VALUES (?, ?, ?, ?, ?)",
+        (comment['id'], post_id, comment['author'], comment['text'], comment['timestamp'])
+    )
+    conn.commit()
+    conn.close()
+
+def update_chat_read_status(sender, recipient):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE chat SET read = 1 WHERE sender = ? AND recipient = ?", (sender, recipient))
+    conn.commit()
+    conn.close()
 
 # Online User Tracking (In-Memory)
 active_users = {} # { "User Name": "2024-01-01T12:00:00" }
@@ -1047,18 +1249,19 @@ def handle_voice_query():
     """Handle voice assistant queries"""
     try:
         data = request.json
-        print(f"Voice Query Request Data: {data}") # Debug log
+        print(f"Voice Query Request Data: (contains image: {'image' in data})") # Debug log
         query_text = data.get('text', '')
         language_code = data.get('language', 'en-IN')
         dialect = data.get('dialect', 'Standard')
+        image_base64 = data.get('image') # Support base64 image strings
         
-        print(f"Processing Voice Query: '{query_text}' in Language: '{language_code}', Dialect: '{dialect}'") # Debug log
+        print(f"Processing Voice Query: '{query_text}' in Language: '{language_code}', Dialect: '{dialect}'") 
         
-        if not query_text:
-            return jsonify({'error': 'No query text provided'}), 400
+        if not query_text and not image_base64:
+            return jsonify({'error': 'No query text or image provided'}), 400
         
-        # Process query with voice assistant
-        response = voice_assistant.process_voice_input(query_text, language_code, dialect)
+        # Process query with voice assistant (now supports vision)
+        response = voice_assistant.process_voice_input(query_text, language_code, dialect, image_base64=image_base64)
         
         return jsonify({
             'success': True,
@@ -1515,7 +1718,7 @@ def handle_community_posts():
             data['posts'] = []
             
         data['posts'].insert(0, new_post)
-        save_community_data(data)
+        save_post(new_post)
         return jsonify({'message': 'Post created', 'id': new_post['id']}), 201
 
 # Real-Time User Tracking Endpoints
@@ -1567,7 +1770,7 @@ def handle_community_chat():
                         needs_save = True
                     filtered_chat.append(msg)
             if needs_save:
-                save_community_data(data)
+                update_chat_read_status(user2, user1)
             return jsonify(filtered_chat)
         else:
             # Global Chat: Return messages with NO recipient
@@ -1613,7 +1816,7 @@ def handle_community_chat():
                 # Keep messages with invalid timestamps to be safe
         data['chat'] = cleaned_chat
             
-        save_community_data(data)
+        save_chat_message(msg)
         return jsonify(msg), 201
 
 @app.route('/community/chat/<msg_id>', methods=['DELETE'])
@@ -1632,8 +1835,7 @@ def delete_chat_message(msg_id):
         return jsonify({'error': 'You can only delete your own messages'}), 403
         
     # Delete the message
-    data['chat'] = [msg for msg in data.get('chat', []) if msg.get('id') != msg_id]
-    save_community_data(data)
+    delete_chat_record(msg_id)
     
     return jsonify({'message': 'Message deleted successfully'}), 200
 
@@ -1831,7 +2033,7 @@ def handle_user_profile():
             'crops': profile_data.get('crops', '')
         }
         
-        save_community_data(data)
+        update_profile_record(username, data['profiles'][username])
         return jsonify({'message': 'Profile updated', 'profile': data['profiles'][username]})
 
 @app.route('/community/posts/<post_id>/comments', methods=['POST'])
@@ -1860,10 +2062,7 @@ def handle_post_comment(post_id):
     if 'comments' not in posts[post_index]:
         posts[post_index]['comments'] = []
         
-    posts[post_index]['comments'].append(new_comment)
-    data['posts'] = posts # Update data structure
-    
-    save_community_data(data)
+    add_post_comment(post_id, new_comment)
     return jsonify({'message': 'Comment added', 'comment': new_comment}), 201
 
 @app.route('/generate-digital-twin', methods=['POST'])
@@ -1892,13 +2091,6 @@ def generate_digital_twin_with_groq(farm_data):
     Generate realistic digital twin data using Groq based on location (Lat/Lng OR Text) and size.
     """
     try:
-        from groq import Groq
-        api_key = os.getenv("GROQ_API_KEY") or os.getenv("VITE_GROQ_CHATBOT_API_KEY")
-        if not api_key:
-            return False, "Groq API Key missing"
-
-        client = Groq(api_key=api_key)
-        
         # Calculate hectares from acres (approx)
         acres = float(farm_data.get('size', 10))
         hectares = round(acres * 0.404686, 2)
@@ -1906,72 +2098,54 @@ def generate_digital_twin_with_groq(farm_data):
         # Construct Location Context
         lat = farm_data.get('latitude')
         lng = farm_data.get('longitude')
-        location_text = ""
-        
-        if farm_data.get('town') and farm_data.get('district'):
-            location_text = f"{farm_data.get('town')}, {farm_data.get('district')}, {farm_data.get('state')}"
+        location_text = f"{farm_data.get('town', '')}, {farm_data.get('district', '')}, {farm_data.get('state', '')}"
         
         prompt = f"""
-        Generate a realistic 'Digital Twin' dataset for a farm.
-        
-        INPUTS:
-        - Name: {farm_data.get('farmName')}
-        - Owner: {farm_data.get('ownerName')}
-        - Size: {acres} Acres ({hectares} Hectares)
-        - Location Coordinates: Lat {lat}, Lng {lng}
-        - Location Name: {location_text}
-        
-        Task:
-        1. **Location Resolution**: 
-           - If 'Location Name' is provided but Coordinates are missing/zero, ESTIMATE the Lat/Lng for that town/village.
-           - If Coordinates are provided, use them to identify the micro-region.
-           
-        2. **Agricultural Profiling (DIVERSITY IS CRITICAL)**:
-           - Create a UNIQUE profile specific to this exact location.
-           - **CRITICAL**: Generate AT LEAST 3-4 *DISTINCT* items for Pests and Crops. Do NOT repeat the same pest/crop 4 times.
-           - Example: If Pest 1 is "Stem Borer", Pest 2 MUST be different (e.g., "Leaf Folder").
-           - Example: Include variety in Crop Stages (e.g., one field "vegetative", another "flowering").
-
-        OUTPUT JSON format ONLY. Structure:
-        {{
-            "location": {{ "lat": 22.123, "lng": 88.123 }}, 
-            "farmBoundary": {{ "area": {hectares} }},
-            "visual_summary": "Located in [Town], [District]. The soil is [Type], suitable for [Crops].",
-            "soilZones": [
-                {{ "id": "zone-1", "soilType": "loamy", "ph": 6.5, "nutrients": {{ "nitrogen": 40, "phosphorus": 30, "potassium": 20 }}, "organicMatter": 3.5, "fertility": "high", "recommendations": ["specific advice"] }},
-                {{ "id": "zone-2", "soilType": "sandy loam", "ph": 7.0, "nutrients": {{ "nitrogen": 35, "phosphorus": 25, "potassium": 15 }}, "organicMatter": 3.0, "fertility": "medium", "recommendations": ["different advice"] }}
-            ],
-            "irrigationZones": [
-                {{ "id": "irrig-1", "type": "drip", "efficiency": 92, "status": "active" }}
-            ],
-            "pestProneAreas": [
-                 {{ "id": "pest-1", "pestType": "Specific Pest A", "riskLevel": "high", "preventiveMeasures": ["measure A"] }},
-                 {{ "id": "pest-2", "pestType": "Specific Pest B", "riskLevel": "medium", "preventiveMeasures": ["measure B"] }},
-                 {{ "id": "pest-3", "pestType": "Specific Pest C", "riskLevel": "low", "preventiveMeasures": ["measure C"] }}
-            ],
-            "cropGrowthStages": [
-                 {{ "id": "crop-1", "cropType": "Crop A", "stage": "vegetative", "health": 85, "plantingDate": "2024-11-01" }},
-                 {{ "id": "crop-2", "cropType": "Crop B", "stage": "flowering", "health": 90, "plantingDate": "2024-10-15" }},
-                 {{ "id": "crop-3", "cropType": "Crop C", "stage": "harvesting", "health": 80, "plantingDate": "2024-09-01" }}
-            ],
-            "weatherData": {{ "temperature": 28, "humidity": 60, "rainfall": 12, "windSpeed": 5 }}
-        }}
+        Generate a 'Digital Twin' for a farm: {farm_data.get('farmName')}, {acres} Acres, Lat {lat}, Lng {lng}.
+        Return STRICT JSON with soilZones, pestProneAreas, irrigationZones, and cropGrowthStages.
         """
 
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": "You are an agricultural data scientist. Provide specific, variable, and diverse data. Never repeat the same item in a list."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.8,
-            max_tokens=2500,
-            response_format={"type": "json_object"}
-        )
+        response_content, error = call_groq_with_fallback(prompt, system_message="You are an agricultural data scientist. Output valid JSON only.")
         
-        response_content = completion.choices[0].message.content
-        result = json.loads(response_content)
-        return True, result
+        if error or not response_content:
+            return True, {
+                "location": { "lat": float(lat or 25.86), "lng": float(lng or 85.77) },
+                "farmBoundary": { "area": hectares },
+                "visual_summary": "Digital Twin generated in Reliability Mode due to AI capacity limits.",
+                "soilZones": [{ "id": "z1", "soilType": "Loamy", "ph": 6.8, "nutrients": { "nitrogen": 45, "phosphorus": 35, "potassium": 25 }, "organicMatter": 3.8, "fertility": "high", "recommendations": ["Safe mode data"] }],
+                "irrigationZones": [{ "id": "i1", "type": "Drip", "efficiency": 94, "status": "active" }],
+                "pestProneAreas": [{ "id": "p1", "pestType": "Stem Borer", "riskLevel": "medium", "preventiveMeasures": ["Monitor"] }],
+                "cropGrowthStages": [{ "id": "c1", "cropType": "Wheat", "stage": "Vegetative", "health": 88, "plantingDate": datetime.now().strftime("%Y-%m-%d") }],
+                "weatherData": { "temperature": 27, "humidity": 65, "rainfall": 8, "windSpeed": 4 }
+            }
+
+        raw_result = json.loads(response_content)
+        
+        # Robust Merging/Flattening
+        # Some AI models might nest the result under 'digitalTwin' or similar
+        inner_result = raw_result.get('digitalTwin', raw_result)
+        
+        # Base schema to ensure no fields are completely missing
+        base_schema = {
+            "location": { "lat": float(lat or 25.86), "lng": float(lng or 85.77) },
+            "farmBoundary": { "area": hectares },
+            "visual_summary": "AI generation successful.",
+            "soilZones": [],
+            "irrigationZones": [],
+            "pestProneAreas": [],
+            "cropGrowthStages": [],
+            "weatherData": { "temperature": 27, "humidity": 60, "rainfall": 0, "windSpeed": 5 }
+        }
+        
+        # Merge AI data over base schema
+        for key in base_schema:
+            if key in inner_result:
+                if isinstance(base_schema[key], dict) and isinstance(inner_result[key], dict):
+                    base_schema[key].update(inner_result[key])
+                else:
+                    base_schema[key] = inner_result[key]
+        
+        return True, base_schema
 
     except Exception as e:
         print(f"Groq generation error: {e}")
@@ -2640,7 +2814,60 @@ def get_daily_bulletin():
         print(f"Daily Bulletin Error: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/agro/ndvi', methods=['POST'])
+def get_agro_ndvi():
+    """
+    Fetch real satellite NDVI data for given coordinates.
+    Creates a small 1-hectare polygon around the point if needed.
+    """
+    try:
+        data = request.json
+        lat = float(data.get('lat', 25.8673))
+        lon = float(data.get('lon', 85.7766))
+        
+        # Create a small square polygon (approx 100m x 100m)
+        offset = 0.001
+        coords = [[
+            [lon - offset, lat - offset],
+            [lon + offset, lat - offset],
+            [lon + offset, lat + offset],
+            [lon - offset, lat + offset],
+            [lon - offset, lat - offset]
+        ]]
+        
+        # 1. Create/Get Polygon
+        poly = agro_service.create_polygon(f"Farm_{lat}_{lon}", coords)
+        if not poly:
+            api_key = os.getenv("VITE_AGROMONITIORING_KEY")
+            error_hint = "Check your VITE_AGROMONITIORING_KEY in .env" if not api_key else "Polygon limit reached or invalid coordinates"
+            return jsonify({
+                'error': 'Failed to create monitoring polygon',
+                'hint': error_hint
+            }), 400
+            
+        poly_id = poly['id']
+        
+        # 2. Get NDVI History
+        ndvi_data = agro_service.get_latest_ndvi(poly_id)
+        
+        # 3. Get Imagery Meta
+        imagery = agro_service.get_satellite_imagery(poly_id)
+        
+        return jsonify({
+            'success': True,
+            'poly_id': poly_id,
+            'ndvi': ndvi_data,
+            'imagery': imagery[0] if imagery else None,
+            'timestamp': datetime.now().isoformat(),
+            'location': {'lat': lat, 'lon': lon}
+        })
+        
+    except Exception as e:
+        print(f"Agro API Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
+    init_db()
     print("\n" + "="*50)
     print("AgriSphere AI API Server Starting...")
     print("="*50)
@@ -2654,5 +2881,6 @@ if __name__ == '__main__':
     print("Market Advisory: POST to /market-advisory")
     print("Satellite Analysis: POST to /analyze-satellite") 
     print("Voice examples: GET /voice-examples")
+    print("Agro Satellite NDVI: POST /api/agro/ndvi")
     print("="*50 + "\n")
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

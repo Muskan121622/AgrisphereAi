@@ -17,6 +17,11 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Fix for 'ReferenceError: type is not defined' in react-leaflet-draw's readableArea
+if (typeof window !== 'undefined') {
+  (window as any).type = (window as any).type || '';
+}
+
 interface FarmDrawerProps {
     onSave: (coordinates: Array<{ lat: number; lng: number }>) => void;
     onCancel: () => void;

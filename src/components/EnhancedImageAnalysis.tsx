@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,66 @@ interface EnhancedImageAnalysisProps {
   analysisType?: 'disease' | 'pest' | 'nutrient' | 'soil' | 'comprehensive';
   onResultsChange?: (results: MultiClassResult | null) => void;
 }
+
+const AgriVisionHUD = () => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg z-20"
+  >
+    {/* Scanning Line */}
+    <motion.div 
+      className="absolute left-0 w-full h-[2px] bg-[#00ff99] shadow-[0_0_15px_#00ff99] z-10"
+      initial={{ top: "0%" }}
+      animate={{ top: "100%" }}
+      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+    />
+    
+    {/* Radar Pulse */}
+    <motion.div 
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 border-2 border-[#00ff99] rounded-full"
+      animate={{ scale: [1, 10], opacity: [1, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+    />
+
+    {/* Ghost Bounding Boxes */}
+    {[...Array(3)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute border border-[#00ff99]/40 bg-[#00ff99]/5"
+        initial={{ 
+          top: `${20 + Math.random() * 40}%`, 
+          left: `${20 + Math.random() * 40}%`,
+          width: "30%",
+          height: "20%",
+          opacity: 0
+        }}
+        animate={{ 
+          opacity: [0, 0.4, 0],
+          scale: [0.95, 1.05, 0.95]
+        }}
+        transition={{ 
+          duration: 0.8, 
+          repeat: Infinity, 
+          delay: i * 0.3,
+          ease: "easeInOut"
+        }}
+      >
+        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#00ff99]" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#00ff99]" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#00ff99]" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#00ff99]" />
+      </motion.div>
+    ))}
+
+    {/* HUD markers */}
+    <div className="absolute top-2 left-2 text-[10px] font-mono text-[#00ff99] flex flex-col bg-black/20 p-1 rounded">
+      <span>VISION: ONLINE</span>
+      <span>SCAN: ACTIVE</span>
+    </div>
+  </motion.div>
+);
 
 const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
   onResultsChange,
@@ -53,19 +114,7 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
     };
   }, []);
 
-  // Listen for global language changes
-  useEffect(() => {
-    const handleLangChange = (e: any) => {
-      const newLang = e.detail;
-      if (results && newLang !== 'en') {
-        translateResults(newLang);
-      }
-    };
-    window.addEventListener('languageChanged', handleLangChange);
-    return () => window.removeEventListener('languageChanged', handleLangChange);
-  }, [results]);
-
-  const translateResults = async (lang: string) => {
+  const translateResults = useCallback(async (lang: string) => {
     if (!results) return;
     
     // If standard and english, no need for AI translation usually (unless specifically requested)
@@ -94,14 +143,14 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
 
         // Localize disease treatments
         if (translated.diseases) {
-           for (let d of translated.diseases) {
+           for (const d of translated.diseases) {
               if (d.treatment) d.treatment = await localize(d.treatment);
            }
         }
 
         // Localize pest controls
         if (translated.pests) {
-           for (let p of translated.pests) {
+           for (const p of translated.pests) {
               if (p.damage) p.damage = await localize(p.damage);
               if (p.chemicalControl) p.chemicalControl = await Promise.all(p.chemicalControl.map(c => localize(c)));
               if (p.biologicalControl) p.biologicalControl = await Promise.all(p.biologicalControl.map(c => localize(c)));
@@ -117,7 +166,20 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
       setIsAnalyzing(false);
       setProgress(0);
     }
-  };
+  }, [results, dialect, localize, t]);
+
+  // Listen for global language changes
+  useEffect(() => {
+    const handleLangChange = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const newLang = customEvent.detail;
+      if (results && newLang !== 'en') {
+        translateResults(newLang);
+      }
+    };
+    window.addEventListener('languageChanged', handleLangChange);
+    return () => window.removeEventListener('languageChanged', handleLangChange);
+  }, [results, translateResults]);
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -214,12 +276,15 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
             />
 
             {selectedFile ? (
-              <div className="space-y-4">
+              <div className="space-y-4 relative inline-block mx-auto">
                 <img
                   src={URL.createObjectURL(selectedFile)}
                   alt="Selected"
-                  className="max-w-xs max-h-48 mx-auto rounded-lg shadow-md"
+                  className="max-w-xs max-h-48 rounded-lg shadow-md"
                 />
+                <AnimatePresence>
+                  {isAnalyzing && <AgriVisionHUD />}
+                </AnimatePresence>
                 <div>
                   <p className="font-medium">{selectedFile.name}</p>
                   <p className="text-sm text-muted-foreground">
@@ -332,7 +397,7 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                       // Diseases
                       if (diseases.length > 0) {
                         text += `I have detected ${diseases.length} disease issues. `;
-                        diseases.forEach((d: any) => {
+                        diseases.forEach((d: { disease: string; confidence: number; treatment: string }) => {
                           text += `Found ${d.disease.replace('_', ' ')} with ${(d.confidence * 100).toFixed(0)}% confidence. Treatment: ${d.treatment}. `;
                         });
                       } else {
@@ -342,7 +407,7 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                       // Pests
                       if (pests.length > 0) {
                         text += `I also found ${pests.length} pest issues. `;
-                        pests.forEach((p: any) => {
+                        pests.forEach((p: { pest: string; chemicalControl: string[] }) => {
                           text += `Identified ${p.pest.replace('_', ' ')}. Control it using: ${p.chemicalControl[0] || 'recommended pesticides'}. `;
                         });
                       }
@@ -350,7 +415,7 @@ const EnhancedImageAnalysis: React.FC<EnhancedImageAnalysisProps> = ({
                       // Nutrients
                       if (nutrientDeficiency.length > 0) {
                         text += `There are ${nutrientDeficiency.length} nutrient deficiencies. `;
-                        nutrientDeficiency.forEach((n: any) => {
+                        nutrientDeficiency.forEach((n: { nutrient: string; fertilizer: string }) => {
                           text += `It seems to lack ${n.nutrient.replace('_', ' ')}. Recommended fertilizer is ${n.fertilizer}. `;
                         });
                       }

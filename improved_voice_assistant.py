@@ -125,18 +125,78 @@ class AgriVoiceAssistant:
             }
         }
     
-    def process_voice_input(self, text, language_code="en-IN", dialect="Standard"):
-        """Process voice input and generate appropriate response"""
+    def process_voice_input(self, text, language_code="en-IN", dialect="Standard", image_base64=None):
+        """Process voice input and generate appropriate response (supports multimodal vision)"""
         text = text.lower().strip()
         
         # Clean and normalize text
         text = self.normalize_text(text)
         
+        # If image is provided, use vision processing
+        if image_base64:
+            return self.process_vision_input(image_base64, text, language_code, dialect)
+            
         # Identify query type and generate response
         response = self.generate_response(text, language_code, dialect)
         
         return response
     
+    def process_vision_input(self, image_base64, text, language_code="en-IN", dialect="Standard"):
+        """Process image-based queries using LLama 3.2 Vision model"""
+        if not self.client:
+            return self.handle_general_fallback(text, language_code)
+            
+        try:
+            # Construct the vision prompt
+            system_instruction = f"""You are AgriSphere AI. You are looking at a field photo provided by a farmer.
+            Analyze the image carefully for:
+            1. Plant diseases or pests.
+            2. Nutrient deficiencies (yellowing, spots).
+            3. Soil quality or irrigation state.
+            4. Crop growth stage.
+
+            The user's question is: "{text}"
+
+            Reply strictly in '{language_code}' ({dialect} dialect).
+            PROVIDE TECHNICAL BUT PRACTICAL ADVICE based on the image content.
+            
+            Required JSON Structure (Return ONLY JSON):
+            {{
+                "text": "Detailed analysis and direct answer based on the image (2-4 sentences).",
+                "audio_text": "Conversational summary for TTS.",
+                "solution": "Specific product or action recommended.",
+                "confidence": "High/Medium/Low based on image clarity",
+                "detected_objects": ["list", "of", "detected", "issues"]
+            }}
+            """
+
+            completion = self.client.chat.completions.create(
+                model="llama-3.2-11b-vision-preview",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": system_instruction},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_base64}"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                temperature=0.2,
+                max_tokens=600,
+                response_format={"type": "json_object"}
+            )
+
+            result = json.loads(completion.choices[0].message.content)
+            return result
+        except Exception as e:
+            print(f"Vision Processing Error: {e}")
+            return self.handle_general_fallback(text, language_code)
+
     def normalize_text(self, text):
         """Normalize text for better matching"""
         # Simple cleanup without regex to avoid encoding issues

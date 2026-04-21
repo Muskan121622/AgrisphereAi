@@ -15,92 +15,122 @@ const openai = new OpenAI({
 });
 
 export const analyzeImage = async (imageBase64: string, analysisType: 'disease' | 'soil' | 'pest' = 'disease') => {
-  try {
-    const prompt = getAnalysisPrompt(analysisType);
+  const models = ["llama-3.2-90b-vision-preview", "llama-3.2-11b-vision-preview"];
+  const prompt = getAnalysisPrompt(analysisType);
+  let lastError: unknown = null;
 
-    const response = await openai.chat.completions.create({
-      model: "llama-3.2-90b-vision-preview", // Groq Vision Model
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: prompt },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${imageBase64}`,
+  for (const model of models) {
+    try {
+      console.log(`👁️ Attempting AI Vision with model: ${model}`);
+      const response = await openai.chat.completions.create({
+        model: model,
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${imageBase64}`,
+                },
               },
-            },
-          ],
-        },
-      ],
-      max_tokens: 500,
-      temperature: 0.5,
-    });
+            ],
+          },
+        ],
+        max_tokens: 800,
+        temperature: 0.5,
+      });
 
-    return response.choices[0]?.message?.content || "Analysis failed";
-  } catch (error) {
-    console.error('Groq Vision API Error:', error);
-    return "Error analyzing image. Please check your API key or try again.";
+      return response.choices[0]?.message?.content || "Analysis failed";
+    } catch (error: unknown) {
+      const apiError = error as { status?: number; message?: string };
+      lastError = error;
+      console.error(`⚠️ Groq Vision Error with ${model}:`, error);
+      if (apiError.status === 429 || apiError.message?.includes('429')) {
+        continue;
+      }
+      break;
+    }
   }
+
+  return "⚠️ AgriSphere Vision is currently at capacity (Rate Limited). Please try again in 5-10 minutes. For urgent diagnosis, refer to our offline manuals.";
 };
 
 export const chatWithAI = async (message: string, context: string = 'general', targetLanguage: string = 'en-IN') => {
-  try {
-    const systemPrompt = getSystemPrompt(context, targetLanguage);
+  const systemPrompt = getSystemPrompt(context, targetLanguage);
+  
+  // Prioritized models for fallback resilience
+  const models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"];
+  let lastError: unknown = null;
 
-    const response = await openai.chat.completions.create({
-      model: "llama-3.3-70b-versatile", // Powerful text model
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ],
-      max_tokens: 300,
-      temperature: 0.7,
-    });
+  for (const model of models) {
+    try {
+      console.log(`🤖 Attempting AI chat with model: ${model}`);
+      const response = await openai.chat.completions.create({
+        model: model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        max_tokens: 300,
+        temperature: 0.7,
+      });
 
-    return response.choices[0]?.message?.content || "AgriSphere AI: Sorry, I couldn't process your request.";
-  } catch (error) {
-    console.error('Groq Chat Error:', error);
+      return response.choices[0]?.message?.content || "AgriSphere AI: Sorry, I couldn't process your request.";
+    } catch (error: unknown) {
+      lastError = error;
+      const apiError = error as { status?: number; message?: string };
+      console.error(`⚠️ Groq Error with ${model}:`, error);
 
-    // Fallback responses (kept for offline/error resilience)
-    const fallbackResponses = {
-      'hi': 'Namaste! I am AgriSphere AI (powered by Llama 3). How can I help you with farming today?',
-      'hello': 'Hello! I am your agricultural assistant. Ask me about crops, diseases, or farming techniques.',
-      'disease': 'For disease detection, please upload an image of your crop. I can identify diseases and suggest treatments.',
-      'weather': 'Weather conditions are important for farming. Please check the dashboard for live updates.',
-      'default': 'Server is busy. Please try again in 5 seconds. (Groq API Error)'
-    };
-
-    const lowerMessage = message.toLowerCase();
-    if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('नमस्ते')) {
-      return fallbackResponses.hi;
-    } else {
-      return fallbackResponses.default;
+      // If it's a rate limit error, continue to the next model
+      if (apiError.status === 429 || apiError.message?.includes('429')) {
+        continue;
+      }
+      
+      // For other serious errors, break early
+      break;
     }
   }
+
+  // Final fallback if all models fail
+  console.error('🚫 All AI models failed or rate limited.', lastError);
+  const lowerMessage = message.toLowerCase();
+  if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('नमस्ते')) {
+    return 'Namaste! I am AgriSphere AI. The service is currently experiencing high demand, but I am here for you.';
+  }
+  return 'The AI service is currently busy (Rate Limit reached). Please try again in a few minutes.';
 };
 
 export const translateToHindi = async (text: string) => {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert translator. Translate the given agricultural advice to Hindi. Keep technical terms in brackets. Return ONLY the Hindi translation."
-        },
-        { role: "user", content: `Translate this to Hindi: "${text}"` }
-      ],
-      max_tokens: 200,
-      temperature: 0.3,
-    });
+  const models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"];
+  
+  for (const model of models) {
+    try {
+      const response = await openai.chat.completions.create({
+        model: model,
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert translator. Translate the given agricultural advice to Hindi. Keep technical terms in brackets. Return ONLY the Hindi translation."
+          },
+          { role: "user", content: `Translate this to Hindi: "${text}"` }
+        ],
+        max_tokens: 200,
+        temperature: 0.3,
+      });
 
-    return response.choices[0]?.message?.content || text;
-  } catch (error) {
-    console.error('Translation Error:', error);
-    return text; // Return original text if translation fails
+      return response.choices[0]?.message?.content || text;
+    } catch (error: unknown) {
+      const apiError = error as { status?: number; message?: string };
+      console.error(`Translation Error with ${model}:`, error);
+      if (apiError.status === 429 || apiError.message?.includes('429')) {
+        continue;
+      }
+      break;
+    }
   }
+  return text; // Return original text if all translations fail
 };
 
 const getAnalysisPrompt = (type: string) => {
