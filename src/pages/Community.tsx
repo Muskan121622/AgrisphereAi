@@ -202,7 +202,7 @@ const Community = () => {
       const now = new Date().getTime();
       const fifteenMins = 15 * 60 * 1000;
       const active = allUsers.filter(u => {
-        const lastActive = (u as UserProfile).updatedAt?.toDate?.()?.getTime() || 0;
+        const lastActive = (u as any).updatedAt?.seconds ? (u as any).updatedAt.seconds * 1000 : 0;
         return (now - lastActive) < fifteenMins;
       });
       setActiveUsers(active);

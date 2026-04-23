@@ -94,7 +94,7 @@ export class EnhancedDiseaseDetector {
       console.log('Sending request to API...');
 
       // Make API call to the backend
-      const response = await fetch('${API_BASE_URL}/detect-disease', {
+      const response = await fetch(`${API_BASE_URL}/detect-disease`, {
         method: 'POST',
         body: formData,
       });
@@ -142,7 +142,7 @@ export class EnhancedDiseaseDetector {
       // Optional: We could call the API in background if needed, but for now, instant is better.
       /*
       try {
-        const healthResponse = await fetch('${API_BASE_URL}/analyze-health', {
+        const healthResponse = await fetch(`${API_BASE_URL}/analyze-health`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

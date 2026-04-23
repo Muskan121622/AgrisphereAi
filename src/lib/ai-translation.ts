@@ -24,7 +24,7 @@ export const translateText = async (text: string, targetLanguage: string): Promi
   // 1. Try Gemini first
   if (apiKey) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
       const result = await model.generateContent(prompt);
       const translated = result.response.text().trim();
       if (translated) return translated;
@@ -79,7 +79,7 @@ export const translateAnalysisResults = async (results: Record<string, unknown> 
   // 1. Try Gemini
   if (apiKey && apiKey !== "") {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
       const res = await model.generateContent(prompt);
       const text = await res.response.text();
       const cleanJson = text.replace(/```json|```/g, "").trim();
