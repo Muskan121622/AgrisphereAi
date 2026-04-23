@@ -507,7 +507,7 @@ export class GISDigitalTwin {
           apiCoords.push(apiCoords[0]);
         }
 
-        const response = await fetch('${API_BASE_URL}/analyze-satellite', {
+        const response = await fetch(`${API_BASE_URL}/analyze-satellite`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ coordinates: apiCoords })
