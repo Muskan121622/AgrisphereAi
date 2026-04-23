@@ -1,0 +1,9 @@
+# Ignore Python files on Vercel (already on Render)
+*.py
+requirements.txt
+venv/
+__pycache__/
+models/
+dataset/
+*.joblib
+*.pkl
