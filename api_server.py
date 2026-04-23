@@ -3082,4 +3082,8 @@ if __name__ == '__main__':
     print("Health check: http://localhost:5000/health")
     print("Regional news: GET /api/regional-news?lang=hi")
     print("="*50 + "\n")
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+    # Use dynamic PORT for cloud deployment (Render, Railway, etc.)
+    port = int(os.environ.get("PORT", 5000))
+    is_debug = os.environ.get("FLASK_ENV", "development") != "production"
+    app.run(host='0.0.0.0', port=port, debug=is_debug, threaded=True)
+
