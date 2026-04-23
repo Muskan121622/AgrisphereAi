@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldAlert, CloudRain, Flame, Droplets, Zap, Sprout, MapPin, Phone } from "lucide-react";
-import { indianStates } from "@/data/indian_locations";
+import { indianStates } from "@/data/indian_locations.ts";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import axios from "axios";
+import { API_BASE_URL } from "@/config/api";
 import { useAuthStore } from "@/store/authStore";
 import { useNotificationStore } from "@/store/notificationStore";
 import { useEffect } from "react";
@@ -48,7 +49,7 @@ const WeatherAlerts = () => {
         if (!phone) return;
         setVerifying(true);
         try {
-            const res = await axios.post('http://localhost:5000/verify-phone', { phone });
+            const res = await axios.post(`${API_BASE_URL}/verify-phone`, { phone });
             if (res.data.success) {
                 toast({
                     title: t('weather.toasts.verifyTitle'),
@@ -79,7 +80,7 @@ const WeatherAlerts = () => {
         setLoading(true);
         try {
             // Using the new /weather/alert endpoint
-            const response = await axios.post('http://localhost:5000/weather/alert', {
+            const response = await axios.post(`${API_BASE_URL}/weather/alert`, {
                 city: district, // Using district as city for simplicity
                 state: state,
                 phone: phone

@@ -35,7 +35,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import NotificationCenter from "./NotificationCenter";
-import { indianStates } from "@/data/indian_locations";
+import { indianStates } from "@/data/indian_locations.ts";
 import {
   Select,
   SelectContent,
