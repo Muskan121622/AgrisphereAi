@@ -189,7 +189,7 @@ export class YieldPredictor {
   async predictYield(input: YieldPredictionInput): Promise<YieldPredictionResult> {
     // Try to use the Python API first, fallback to simulation
     try {
-      const response = await fetch('${API_BASE_URL}/predict', {
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
