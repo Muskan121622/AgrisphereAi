@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 /**
  * Advanced AI-Based Yield Prediction System
  * ==========================================
@@ -188,7 +189,7 @@ export class YieldPredictor {
   async predictYield(input: YieldPredictionInput): Promise<YieldPredictionResult> {
     // Try to use the Python API first, fallback to simulation
     try {
-      const response = await fetch('http://localhost:5000/predict', {
+      const response = await fetch('${API_BASE_URL}/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -491,3 +492,4 @@ export class YieldPredictor {
 
 // Export singleton instance
 export const yieldPredictor = new YieldPredictor();
+

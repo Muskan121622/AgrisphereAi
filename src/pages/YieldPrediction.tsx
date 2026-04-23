@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -61,7 +62,7 @@ const YieldPrediction = () => {
     setFormData((prev) => ({ ...prev, crop: value }));
   };
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL || "${API_BASE_URL}";
 
   const handlePredict = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -328,3 +329,4 @@ const YieldPrediction = () => {
 };
 
 export default YieldPrediction;
+

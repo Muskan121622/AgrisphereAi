@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Mic, MicOff, Volume2, Languages } from "lucide-react";
@@ -92,7 +93,7 @@ const VoiceRecognition = () => {
           const languageName = langObj ? langObj.name : selectedLanguage;
 
           // Use improved voice assistant backend
-          const response = await fetch("http://localhost:5000/voice-query", {
+          const response = await fetch("${API_BASE_URL}/voice-query", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -470,7 +471,7 @@ const VoiceRecognition = () => {
                     try {
                       // Use improved voice assistant backend
                       const response = await fetch(
-                        "http://localhost:5000/voice-query",
+                        "${API_BASE_URL}/voice-query",
                         {
                           method: "POST",
                           headers: {
@@ -548,3 +549,4 @@ const VoiceRecognition = () => {
 };
 
 export default VoiceRecognition;
+

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { useTranslation } from 'react-i18next';
@@ -92,7 +93,7 @@ const BuyerDashboard = () => {
     const { t, i18n } = useTranslation();
     const { user } = useAuthStore();
     const { toast } = useToast();
-    const API_URL = 'http://localhost:5000'; // Keep for AI inference
+    const API_URL = '${API_BASE_URL}'; // Keep for AI inference
 
     const [activeTab, setActiveTab] = useState("marketplace");
     const [listings, setListings] = useState<Listing[]>([]);
@@ -938,3 +939,4 @@ const BuyerDashboard = () => {
 };
 
 export default BuyerDashboard;
+

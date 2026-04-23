@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -67,7 +68,7 @@ const FertilizerRecommendation = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:5000/recommend-fertilizer",
+        "${API_BASE_URL}/recommend-fertilizer",
         {
           method: "POST",
           headers: {
@@ -648,3 +649,4 @@ const FertilizerRecommendation = () => {
 };
 
 export default FertilizerRecommendation;
+

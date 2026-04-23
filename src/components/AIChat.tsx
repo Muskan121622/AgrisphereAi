@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import { useState, useRef, useEffect } from "react";
 import { speakText, stopSpeech } from "@/services/voiceService";
 import { motion, AnimatePresence } from "framer-motion";
@@ -226,7 +227,7 @@ const AIChat = () => {
         formData.append("image", selectedImage);
 
         const uploadResponse = await fetch(
-          "http://localhost:5000/community/upload-image",
+          "${API_BASE_URL}/community/upload-image",
           { method: "POST", body: formData }
         );
 
@@ -376,3 +377,4 @@ const AIChat = () => {
 };
 
 export default AIChat;
+

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import axios from "axios";
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_CHATBOT_API_KEY;
@@ -8,7 +9,7 @@ const GROQ_API_KEY = import.meta.env.VITE_GROQ_CHATBOT_API_KEY;
  */
 export const simplifyTextForFarmer = async (text: string, language: string = "Hindi"): Promise<string> => {
     try {
-        const response = await axios.post("http://localhost:5000/simplify-text", {
+        const response = await axios.post("${API_BASE_URL}/simplify-text", {
             text,
             language
         });
@@ -172,3 +173,4 @@ export const speakText = (text: string, lang: string = "hi-IN", onEnd?: () => vo
         setTimeout(checkVoices, 100);
     }
 };
+

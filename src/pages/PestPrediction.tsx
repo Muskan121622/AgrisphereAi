@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -104,7 +105,7 @@ const PestPrediction = () => {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/predict-pest", {
+      const response = await axios.post("${API_BASE_URL}/predict-pest", {
         crop,
         temp,
         humidity,
@@ -433,3 +434,4 @@ const PestPrediction = () => {
 };
 
 export default PestPrediction;
+

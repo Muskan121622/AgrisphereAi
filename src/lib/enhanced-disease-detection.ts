@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 export interface DetectionResult {
   disease: string;
   confidence: number;
@@ -93,7 +94,7 @@ export class EnhancedDiseaseDetector {
       console.log('Sending request to API...');
 
       // Make API call to the backend
-      const response = await fetch('http://localhost:5000/detect-disease', {
+      const response = await fetch('${API_BASE_URL}/detect-disease', {
         method: 'POST',
         body: formData,
       });
@@ -141,7 +142,7 @@ export class EnhancedDiseaseDetector {
       // Optional: We could call the API in background if needed, but for now, instant is better.
       /*
       try {
-        const healthResponse = await fetch('http://localhost:5000/analyze-health', {
+        const healthResponse = await fetch('${API_BASE_URL}/analyze-health', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -549,3 +550,4 @@ export class EnhancedDiseaseDetector {
     return this.labels?.nutrient || ['sufficient', 'nitrogen_deficiency', 'phosphorus_deficiency', 'potassium_deficiency', 'iron_deficiency', 'magnesium_deficiency'];
   }
 }
+

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -118,7 +119,7 @@ const Community = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL || "${API_BASE_URL}";
 
   const handleUserSelect = async (u: UserProfile) => {
     setSelectedRecipient(u);
@@ -723,3 +724,4 @@ const Community = () => {
 };
 
 export default Community;
+

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 /**
  * GIS-Based Smart Farm Digital Twin System
  * Advanced mapping and spatial analysis for precision agriculture
@@ -506,7 +507,7 @@ export class GISDigitalTwin {
           apiCoords.push(apiCoords[0]);
         }
 
-        const response = await fetch('http://localhost:5000/analyze-satellite', {
+        const response = await fetch('${API_BASE_URL}/analyze-satellite', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ coordinates: apiCoords })
@@ -963,3 +964,4 @@ export class GISDigitalTwin {
     }
   }
 }
+

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/config/api';
 import axios from "axios";
 import { NewsArticle } from "../types/advisory";
 
@@ -87,7 +88,7 @@ export const fetchFarmingNews = async (language: SupportedNewsLanguage = "Englis
     if (language !== "English") {
         try {
             const langCode = localLangMap[language] || "hi";
-            const API_SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const API_SERVER_URL = import.meta.env.VITE_API_URL || '${API_BASE_URL}';
             const response = await axios.get(`${API_SERVER_URL}/api/regional-news`, {
                 params: { lang: langCode }
             });
@@ -155,3 +156,4 @@ export const fetchFarmingNews = async (language: SupportedNewsLanguage = "Englis
         return [];
     }
 };
+
