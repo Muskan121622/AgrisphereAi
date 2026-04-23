@@ -36,6 +36,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import NotificationCenter from "./NotificationCenter";
 import { indianStates } from "@/data/indian_locations.ts";
+import { API_BASE_URL } from "@/config/api.ts";
 import {
   Select,
   SelectContent,
@@ -336,7 +337,7 @@ const UserProfileMenu = () => {
     interests: "",
   });
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = API_BASE_URL;
 
   // Sync from Firebase on Open
   useEffect(() => {

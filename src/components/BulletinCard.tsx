@@ -19,6 +19,7 @@ import { speakText, stopSpeech } from "@/services/voiceService";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import axios from "axios";
+import { API_BASE_URL } from "@/config/api.ts";
 
 interface BulletinData {
   greeting: string;
@@ -113,7 +114,7 @@ const BulletinCard = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/daily-bulletin",
+        `${API_BASE_URL}/daily-bulletin`,
         payload,
       );
       setData(response.data);

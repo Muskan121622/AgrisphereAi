@@ -100,6 +100,7 @@ import {
 
 import Navbar from "@/components/Navbar";
 import { speakText, stopSpeech } from "@/services/voiceService";
+import { API_BASE_URL } from "@/config/api.ts";
 
 interface MarketListing {
   id: string;
@@ -1216,10 +1217,8 @@ const Marketplace = () => {
     }
     setPricesLoading(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-      // Use new endpoints that returns both Prices + AI Trends
       const res = await axios.post(
-        `${API_URL}/market-trends`,
+        `${API_BASE_URL}/market-trends`,
         priceFilters,
       );
 
@@ -1249,8 +1248,7 @@ const Marketplace = () => {
   const fetchSuppliers = (lat: number, lng: number) => {
     setLoadingSuppliers(true);
     setLocationError(null);
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-    fetch(`${API_URL}/nearby-suppliers?lat=${lat}&lng=${lng}`)
+    fetch(`${API_BASE_URL}/nearby-suppliers?lat=${lat}&lng=${lng}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -1318,8 +1316,7 @@ const Marketplace = () => {
   const fetchSuppliersByAddress = (address: string) => {
     setLoadingSuppliers(true);
     setLocationError(null);
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-    fetch(`${API_URL}/nearby-suppliers?address=${encodeURIComponent(address)}`)
+    fetch(`${API_BASE_URL}/nearby-suppliers?address=${encodeURIComponent(address)}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -1364,7 +1361,7 @@ const Marketplace = () => {
       const formattedDate = format(date, "yyyy-MM-dd");
 
       const response = await axios.post(
-        "http://localhost:5000/market-advisory",
+        `${API_BASE_URL}/market-advisory`,
         {
           crop,
           sowing_date: formattedDate,
