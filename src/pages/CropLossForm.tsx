@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Loader2, Upload, MapPin, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { submitCropLossCase } from '@/services/firebaseService';
 
 interface CropLossFormValues {
     farmerName: string;
@@ -82,10 +82,11 @@ const CropLossForm = () => {
             const payload = {
                 ...data,
                 location: `${data.village}, ${data.district}, ${data.state}`,
-                timestamp: new Date().toISOString(),
+                uid: user?.id || user?.email,
+                farmerEmail: user?.email,
             };
 
-            await axios.post('http://localhost:5000/gov/crop-loss', payload);
+            await submitCropLossCase(payload);
 
             toast.success(t('cropLoss.success'));
             navigate('/');

@@ -1,7 +1,12 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,902 +14,712 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
-import { MessageSquare, Send, Users, ThumbsUp, MessageCircle, Search, User, Trash2, Image as ImageIcon, X } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import Navbar from '../components/Navbar';
-import axios from 'axios';
-import { useNotificationStore } from "@/store/notificationStore";
+import {
+  MessageSquare,
+  Send,
+  Users,
+  ThumbsUp,
+  MessageCircle,
+  Search,
+  PlusCircle,
+  Trash2,
+  Image as ImageIcon,
+  X,
+  Volume2,
+  MoreVertical,
+  Reply,
+  Loader2,
+  Globe,
+  Mic
+} from "lucide-react";
+import Navbar from "../components/Navbar";
+import VoiceRecorder from "../components/VoiceRecorder";
 import { useAuthStore } from "@/store/authStore";
-import { useVoiceInput } from "@/hooks/useVoiceInput";
-import { useTextToSpeech } from "@/hooks/useTextToSpeech";
-import { Mic, MicOff, Volume2, StopCircle } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { translateText } from "@/lib/ai-translation";
+import { getPosts, createPost, createComment } from "@/services/firebaseService";
+import axios from "axios";
+
+// Types
+interface Comment {
+  id: string;
+  author: string;
+  authorName?: string;
+  text: string;
+  createdAt: Date | { toDate: () => Date } | string;
+}
 
 interface Post {
-    id: string;
-    author: string;
-    avatar?: string;
-    title: string;
-    content: string;
-    tags: string[];
-    likes: number;
-    comments: {
-        id: string;
-        author: string;
-        text: string;
-        timestamp: string;
-    }[];
-    timestamp: string;
+  id: string;
+  author: string;
+  authorName?: string;
+  avatar?: string;
+  title: string;
+  content: string;
+  likes: number;
+  comments: Comment[];
+  createdAt: Date | { toDate: () => Date } | string;
 }
 
 interface ChatMessage {
-    id: string;
-    sender: string;
-    text: string;
-    imageUrl?: string;
-    timestamp: string;
+  id: string;
+  sender: string;
+  text: string;
+  imageUrl?: string;
+  audioUrl?: string;
+  timestamp: string;
+  recipient?: string;
+  read?: boolean;
 }
 
 interface UserProfile {
-    username: string;
-    photoUrl: string;
+  id: string;
+  name?: string;
+  username?: string;
+  photoUrl?: string;
+  city?: string;
+  state?: string;
+  crops?: string;
+  reputation?: number;
+  updatedAt?: { toDate: () => Date };
 }
 
-// Helper for Date Grouping
-const formatDateLabel = (isoDate: string, t: any) => {
-    const date = new Date(isoDate);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-        return t('common.today') || "Today";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-        return t('common.yesterday') || "Yesterday";
-    } else {
-        return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-    }
-};
-
 const Community = () => {
-    const { t, i18n } = useTranslation();
-    const { toast } = useToast();
-    const [activeTab, setActiveTab] = useState("forum");
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const { t, i18n } = useTranslation();
+  const { toast } = useToast();
+  const { user, isAuthenticated } = useAuthStore();
+  
+  const [activeView, setActiveView] = useState<"query" | "chat">("query");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [activeUsers, setActiveUsers] = useState<UserProfile[]>([]);
+  const [trendingFarmers, setTrendingFarmers] = useState<UserProfile[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Private Chat & Notifications
+  const [selectedRecipient, setSelectedRecipient] = useState<UserProfile | null>(null);
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const initialLoadDone = useRef(false);
+  const lastMessageId = useRef<string | null>(null);
+  
+  // Custom notification ping using the user's provided file
+  const notificationSound = useRef(new Audio("/universfield-new-notification-026-380249.mp3"));
+  
+  // Query Hub State
+  const [showAskModal, setShowAskModal] = useState(false);
+  const [queryTitle, setQueryTitle] = useState("");
+  const [queryContent, setQueryContent] = useState("");
+  const [isSubmittingQuery, setIsSubmittingQuery] = useState(false);
+  const [replyText, setReplyText] = useState<{ [postId: string]: string }>({});
 
-    // Forum Inputs
-    const [newPostTitle, setNewPostTitle] = useState("");
-    const [newPostContent, setNewPostContent] = useState("");
-    const [isPosting, setIsPosting] = useState(false);
-    const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
-    const [replyText, setReplyText] = useState("");
+  // Chat State
+  const [chatInput, setChatInput] = useState("");
+  const [isSendingChat, setIsSendingChat] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
 
-    // Chat Inputs
-    const [chatInput, setChatInput] = useState("");
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const { user } = useAuthStore();
-    const [username, setUsername] = useState(() => {
-        const userEmail = user?.email || "default";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const handleUserSelect = async (u: UserProfile) => {
+    setSelectedRecipient(u);
+    const senderName = u.name || u.username || "";
+    try {
+      await axios.post(`${API_URL}/community/read-chat`, {
+        sender: senderName,
+        recipient: user?.name
+      });
+      setUnreadCounts(prev => ({ ...prev, [senderName]: 0 }));
+    } catch(e) {
+      console.error("Failed to mark chat as read");
+    }
+  };
+
+  // Actions wrapped in useCallback for lint-free effects
+  const fetchQueries = React.useCallback(async () => {
+    try {
+      const data = await getPosts();
+      setPosts(data as Post[]);
+    } catch (err) {
+      console.error("Error fetching queries:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchGlobalChat = React.useCallback(async () => {
+    try {
+      let url = `${API_URL}/community/chat`;
+      if (selectedRecipient && user?.name) {
+         url += `?user1=${encodeURIComponent(user.name)}&user2=${encodeURIComponent(selectedRecipient.name || selectedRecipient.username || "")}`;
+      }
+      const res = await axios.get(url);
+      
+      setChatMessages((prev) => {
+        // Play sound if a genuinely new message arrived
+        if (initialLoadDone.current && res.data.length > 0) {
+           const newMsg = res.data[res.data.length - 1];
+           if (newMsg.id !== lastMessageId.current && newMsg.sender !== user?.name) {
+              notificationSound.current.play().catch(e => console.log("Audio play blocked", e));
+           }
+        }
+        if (res.data.length > 0) {
+           lastMessageId.current = res.data[res.data.length - 1].id;
+        } else {
+           lastMessageId.current = null;
+        }
+        return res.data;
+      });
+      initialLoadDone.current = true;
+      
+      // Fetch notifications globally for the current user
+      if (user?.name) {
+         try {
+           const notifRes = await axios.get(`${API_URL}/community/notifications?username=${encodeURIComponent(user.name)}`);
+           const unreadArr = notifRes.data?.unread_messages || [];
+           const counts: Record<string, number> = {};
+           unreadArr.forEach((item: { sender: string; count: number }) => {
+             counts[item.sender] = item.count;
+           });
+           setUnreadCounts(counts);
+         } catch(e) {
+           console.error("Failed to fetch notifs", e);
+         }
+      }
+    } catch (err) {
+      console.error("Chat fetch error:", err);
+    }
+  }, [API_URL, selectedRecipient, user?.name]);
+
+  const fetchUsersData = React.useCallback(async () => {
+    try {
+      const { getFarmersList, getUserProfile, saveUserProfile } = await import("@/services/firebaseService");
+      
+      // Get all farmers for Trending/Active lists
+      const allUsers = await getFarmersList();
+      
+      // Filter for active farmers (active in last 15 mins)
+      const now = new Date().getTime();
+      const fifteenMins = 15 * 60 * 1000;
+      const active = allUsers.filter(u => {
+        const lastActive = (u as UserProfile).updatedAt?.toDate?.()?.getTime() || 0;
+        return (now - lastActive) < fifteenMins;
+      });
+      setActiveUsers(active);
+
+      // Trending: Sort by reputation or activity (mocking score for now based on reputation field)
+      const trending = [...allUsers]
+        .sort((a, b) => (b.reputation || 0) - (a.reputation || 0))
+        .slice(0, 5);
+      setTrendingFarmers(trending);
+
+      // Get current user's full profile for stats
+      if (user?.id) {
+        const profile = await getUserProfile(user.id);
+        setUserProfile({ id: user.id, ...profile } as UserProfile);
         
-        // Try user specific profile name first
-        const specificStored = localStorage.getItem(`profile_${userEmail}_username`);
-        if (specificStored) {
-            localStorage.setItem("agrisphere_username", specificStored);
-            return specificStored;
-        }
+        // Update current user's activity timestamp
+        await saveUserProfile(user.id, { updatedAt: new Date() });
+      }
+    } catch (err) {
+      console.error("Error fetching users data:", err);
+    }
+  }, [user?.id]);
 
-        // Try the auth store name if no profile
-        if (user?.name) {
-            localStorage.setItem("agrisphere_username", user.name);
-            return user.name;
-        }
-
-        const stored = localStorage.getItem("agrisphere_username");
-        if (stored) return stored;
-
-        const newRandom = `Farmer_${Math.floor(Math.random() * 1000)}`;
-        localStorage.setItem("agrisphere_username", newRandom);
-        return newRandom;
-    });
-    // Updated to store objects instead of simple strings
-    const [onlineUsers, setOnlineUsers] = useState<{ username: string, photoUrl?: string }[]>([]);
-    const [activePrivateChat, setActivePrivateChat] = useState<string | null>(null);
-    const [notifications, setNotifications] = useState<{ [key: string]: number }>({}); // sender -> count
-    const notificationsRef = React.useRef<{ [key: string]: number }>({});
-
-    // Keep ref in sync for interval
-    useEffect(() => {
-        notificationsRef.current = notifications;
-    }, [notifications]);
-
-    // Voice Hooks
-    const voiceTitle = useVoiceInput();
-    const voiceContent = useVoiceInput();
-    const voiceChat = useVoiceInput();
-    const tts = useTextToSpeech();
-
-    // Sync Voice Input to State
-    useEffect(() => {
-        if (voiceTitle.transcript) setNewPostTitle(prev => prev + (prev ? " " : "") + voiceTitle.transcript);
-    }, [voiceTitle.transcript]);
-
-    useEffect(() => {
-        if (voiceContent.transcript) setNewPostContent(prev => prev + (prev ? " " : "") + voiceContent.transcript);
-    }, [voiceContent.transcript]);
-
-    useEffect(() => {
-        if (voiceChat.transcript) setChatInput(prev => prev + (prev ? " " : "") + voiceChat.transcript);
-    }, [voiceChat.transcript]);
-
-    const API_URL = 'http://localhost:5000';
-
-    // Effects moved to bottom
-
-
-    const fetchOnlineUsers = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/community/online`);
-            // Backend now returns [{username, photoUrl}]
-            setOnlineUsers(res.data);
-        } catch (e) {
-            console.error("Error fetching online users", e);
-        }
+  // Initial Fetch
+  useEffect(() => {
+    fetchQueries();
+    fetchGlobalChat();
+    fetchUsersData();
+    
+    const chatInterval = setInterval(fetchGlobalChat, 5000); // Poll chat
+    const userInterval = setInterval(fetchUsersData, 60000); // Refresh users every min
+    
+    return () => {
+      clearInterval(chatInterval);
+      clearInterval(userInterval);
     };
+  }, [fetchQueries, fetchGlobalChat, fetchUsersData]);
 
-    // Merged component logic
-    const { addNotification } = useNotificationStore();
-    // ... existing state ...
+  const handleAskQuery = async () => {
+    if (!queryTitle.trim() || !queryContent.trim() || !user) return;
+    setIsSubmittingQuery(true);
+    try {
+      const newPost = {
+        author: user.id,
+        authorName: user.name || "Farmer",
+        title: queryTitle,
+        content: queryContent,
+        createdAt: new Date(),
+        likes: 0,
+        comments: []
+      };
+      await createPost(newPost);
+      setQueryTitle("");
+      setQueryContent("");
+      setShowAskModal(false);
+      fetchQueries();
+      toast({ title: t("community.postTranslated"), description: "Your query is live!" });
+    } catch (err) {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setIsSubmittingQuery(false);
+    }
+  };
 
-    const isFirstLoad = React.useRef(true);
+  const handleReply = async (postId: string) => {
+    const text = replyText[postId];
+    if (!text?.trim() || !user) return;
+    try {
+      await createComment(postId, {
+        author: user.id,
+        authorName: user.name || "Farmer",
+        text,
+        createdAt: new Date()
+      });
+      setReplyText({ ...replyText, [postId]: "" });
+      fetchQueries();
+    } catch (err) {
+      toast({ title: t("common.error"), variant: "destructive" });
+    }
+  };
 
-    // ... existing fetchNotifications ...
-    const fetchNotifications = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/community/notifications?username=${username}`);
-            const unreadData = res.data.unread_messages;
-            const newNotifs: { [key: string]: number } = {};
-            let shouldPlayGlobalSound = false;
-            let totalUnreadOnLoad = 0;
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
-            unreadData.forEach((item: any) => {
-                newNotifs[item.sender] = item.count;
+  const handleSendChat = async (voiceBlob?: Blob) => {
+    if (!user && !voiceBlob) return;
+    if (!chatInput.trim() && !selectedImage && !voiceBlob) return;
 
-                // Show toast if count increased and NOT currently chatting with them
-                // Use ref to get latest state inside interval
-                const prevCount = notificationsRef.current[item.sender] || 0;
+    setIsSendingChat(true);
+    try {
+      let imageUrl = "";
+      let audioUrl = "";
 
-                if (isFirstLoad.current && item.count > 0 && activePrivateChat !== item.sender) {
-                    shouldPlayGlobalSound = true;
-                    totalUnreadOnLoad += item.count;
-                }
+      // Upload Image if any
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+        const res = await axios.post(`${API_URL}/community/upload-image`, formData);
+        imageUrl = res.data.imageUrl;
+      }
 
-                // Skip alert on first load to prevent sound explosion, or play once
-                if (!isFirstLoad.current && item.count > prevCount && activePrivateChat !== item.sender) {
-                    // Play notification sound
-                    try {
-                        const audio = new Audio("https://cdn.freesound.org/previews/536/536108_2738741-lq.mp3"); // Simple ping sound
-                        audio.play().catch(e => console.log("Audio play failed (interaction needed first)", e));
-                    } catch (e) {
-                        console.error("Audio error", e);
-                    }
+      // Upload Voice if any
+      if (voiceBlob) {
+        const formData = new FormData();
+        formData.append("audio", voiceBlob, "voice_msg.webm");
+        const res = await axios.post(`${API_URL}/community/upload-audio`, formData);
+        audioUrl = res.data.audioUrl;
+      }
 
-                    // Global Notification
-                    addNotification({
-                        type: 'community',
-                        title: `Message from ${item.sender}`,
-                        message: `You have ${item.count} unread messages.`,
-                        actionUrl: '/community'
-                    });
+      await axios.post(`${API_URL}/community/chat`, {
+        sender: user?.name || "Farmer",
+        recipient: selectedRecipient ? (selectedRecipient.name || selectedRecipient.username) : null,
+        text: chatInput,
+        imageUrl,
+        audioUrl,
+        timestamp: new Date().toISOString()
+      });
 
-                    toast({
-                        title: "New Message",
-                        description: `Message from ${item.sender}`,
-                        // Action to switch chat
-                        action: <Button variant="outline" size="sm" onClick={() => setActivePrivateChat(item.sender)}>View</Button>
-                    });
-                }
-            });
+      setChatInput("");
+      setSelectedImage(null);
+      setImagePreview(null);
+      fetchGlobalChat();
+    } catch (err) {
+      toast({ title: t("community.errorSend"), variant: "destructive" });
+    } finally {
+      setIsSendingChat(false);
+    }
+  };
 
-            if (isFirstLoad.current && shouldPlayGlobalSound) {
-                try {
-                    const audio = new Audio("https://cdn.freesound.org/previews/536/536108_2738741-lq.mp3");
-                    audio.play().catch(e => console.log("Audio play failed on load", e));
-                } catch(e) {}
-                toast({
-                    title: "Unread Messages",
-                    description: `You have ${totalUnreadOnLoad} unread messages marked on the user list.`
-                });
-            }
+  return (
+    <div className="min-h-screen bg-[#050b15] text-white font-sans">
+      <Navbar />
+      
+      {/* Dynamic Header */}
+      <div className="pt-24 pb-8 px-6 container mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-blue-600/10 to-green-600/10 p-8 rounded-3xl border border-white/5 backdrop-blur-xl">
+          <div className="space-y-2">
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-3 py-1 mb-2">
+              <Globe className="w-3 h-3 mr-2" /> {activeView === "chat" ? "Live Chat" : t("community.globalChat")}
+            </Badge>
+            <h1 className="text-4xl font-extrabold tracking-tight">
+              {activeView === "query" ? t("community.askQuery") : "AgriSphere Live Chat"}
+            </h1>
+            <p className="text-slate-400 max-w-md">
+              {activeView === "query" ? t("community.querySubtitle") : "Real-time discussion with farmers across the globe."}
+            </p>
+          </div>
+          <div className="flex bg-slate-900/50 p-1.5 rounded-2xl border border-white/10 w-full md:w-auto">
+            <Button 
+              variant={activeView === "query" ? "default" : "ghost"} 
+              className={`flex-1 md:w-40 rounded-xl transition-all ${activeView === "query" ? "bg-green-600 hover:bg-green-700 shadow-lg shadow-green-600/20" : "text-slate-400"}`}
+              onClick={() => setActiveView("query")}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" /> {t("community.tabs.feed")}
+            </Button>
+            <Button 
+              variant={activeView === "chat" ? "default" : "ghost"}
+              className={`flex-1 md:w-40 rounded-xl transition-all ${activeView === "chat" ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20" : "text-slate-400"}`}
+              onClick={() => setActiveView("chat")}
+            >
+              <Users className="w-4 h-4 mr-2" /> Live Chat
+            </Button>
+          </div>
+        </div>
+      </div>
 
-            setNotifications(newNotifs);
-            isFirstLoad.current = false; // Mark first load as done
-        } catch (error) {
-            console.error("Error fetching notifications", error);
-        }
-    };
-
-    const fetchPosts = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/community/posts`);
-            setPosts(res.data);
-            setError("");
-        } catch (error) {
-            console.error("Error fetching posts:", error);
-            setError("Failed to load posts. Is the server running?");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchChat = async () => {
-        try {
-            let url = `${API_URL}/community/chat`;
-            const params: any = {};
-            if (activePrivateChat) {
-                params.user1 = username;
-                params.user2 = activePrivateChat;
-            }
-
-            const res = await axios.get(url, { params });
-            const newMessages = res.data;
-
-            // Avoid unnecessary re-renders
-            // Note: In a real app we'd compare IDs or last timestamp
-            setChatMessages(newMessages);
-
-            // Update notifications if logic existed for it (simplified here)
-        } catch (error) {
-            console.error("Error fetching chat:", error);
-        }
-    };
-
-    const handleDeleteMessage = async (msgId: string) => {
-        try {
-            await axios.delete(`${API_URL}/community/chat/${msgId}`, {
-                params: { username }
-            });
-            // Optimistic update
-            setChatMessages(prev => prev.filter(msg => msg.id !== msgId));
-            toast({ title: "Deleted", description: "Message removed." });
-        } catch (error) {
-            console.error("Failed to delete message", error);
-            toast({ title: "Error", description: "Could not delete message.", variant: "destructive" });
-        }
-    };
-
-    const handlePostReply = async (postId: string) => {
-        if (!replyText.trim()) return;
-
-        try {
-            await axios.post(`${API_URL}/community/posts/${postId}/comments`, {
-                author: username,
-                text: replyText
-            });
-            setReplyText("");
-            toast({ title: "Success", description: "Reply added!" });
-            fetchPosts(); // Refresh to show new comment
-        } catch (error) {
-            console.error(error);
-            toast({ title: "Error", description: "Failed to add reply", variant: "destructive" });
-        }
-    };
-
-    const handleCreatePost = async () => {
-        if (!newPostTitle.trim() || !newPostContent.trim()) {
-            toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
-            return;
-        }
-
-        setIsPosting(true);
-        try {
-            const newPost = {
-                author: username, // In a real app, use auth user
-                title: newPostTitle,
-                content: newPostContent,
-                tags: ["General"],
-            };
-
-            await axios.post(`${API_URL}/community/posts`, newPost);
-
-            setNewPostTitle("");
-            setNewPostContent("");
-            toast({ title: "Success", description: "Question posted to the forum!" });
-            fetchPosts();
-        } catch (error) {
-            toast({ title: t('common.error'), description: t('community.errorPost'), variant: "destructive" });
-        } finally {
-            setIsPosting(false);
-        }
-    };
-
-    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setSelectedImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleRemoveImage = () => {
-        setSelectedImage(null);
-        setImagePreview(null);
-    };
-
-    const handleSendMessage = async () => {
-        if (!chatInput.trim() && !selectedImage) return;
-
-        try {
-            let imageUrl = null;
-
-            // Upload image first if selected
-            if (selectedImage) {
-                const formData = new FormData();
-                formData.append('image', selectedImage);
-
-                const uploadResponse = await axios.post(`${API_URL}/community/upload-image`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-
-                imageUrl = uploadResponse.data.imageUrl;
-            }
-
-            const msg: any = {
-                sender: username,
-                text: chatInput || "📷 Image"
-            };
-
-            if (imageUrl) {
-                msg.imageUrl = imageUrl;
-            }
-
-            if (activePrivateChat) {
-                msg.recipient = activePrivateChat;
-            }
-
-            await axios.post(`${API_URL}/community/chat`, msg);
-            setChatInput("");
-            setSelectedImage(null);
-            setImagePreview(null);
-            fetchChat();
-        } catch (error) {
-            console.error("Failed to send message", error);
-            toast({ title: t('common.error'), description: t('community.errorSend'), variant: "destructive" });
-        }
-    };
-
-    const handleTranslate = async (msgId: string, text: string) => {
-        const langMap: Record<string, string> = {
-            'en': 'English', 'hi': 'Hindi', 'bn': 'Bengali', 'as': 'Assamese', 'kn': 'Kannada'
-        };
-        const targetLang = langMap[i18n.language] || 'Hindi'; // fallback to Hindi if they are in English and click translate
-
-        try {
-            const translatedText = await translateText(text, targetLang);
-            
-            setChatMessages(prev => prev.map(msg =>
-                msg.id === msgId
-                    ? { ...msg, text: msg.text.includes(" (TR)") ? msg.text.split(" (TR)")[0] : `${msg.text} (TR): ${translatedText}` }
-                    : msg
-            ));
-            toast({ title: t('common.success'), description: t('community.translatedLocally') });
-        } catch(e) {
-            toast({ title: t('common.error'), description: "Translation failed" });
-        }
-    };
-
-    const handleTranslatePost = async (postId: string, title: string, content: string) => {
-        const langMap: Record<string, string> = {
-            'en': 'English', 'hi': 'Hindi', 'bn': 'Bengali', 'as': 'Assamese', 'kn': 'Kannada'
-        };
-        const targetLang = langMap[i18n.language] || 'Hindi'; 
-
-        try {
-            toast({ title: t('community.translatingToast'), description: t('community.aiTranslating') });
-            const translatedTitle = await translateText(title, targetLang);
-            const translatedContent = await translateText(content, targetLang);
-            
-            setPosts(prev => prev.map(post =>
-                post.id === postId
-                    ? { ...post, title: translatedTitle, content: translatedContent }
-                    : post
-            ));
-            toast({ title: t('common.success'), description: "Post translated successfully" });
-        } catch(e) {
-            toast({ title: t('common.error'), description: "Failed to translate post" });
-        }
-    };
-
-    useEffect(() => {
-        fetchPosts();
-        const interval = setInterval(fetchPosts, 10000); // Polling for updates
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        if (activeTab === 'chat') {
-            fetchChat();
-            fetchOnlineUsers();
-            fetchNotifications();
-
-            const interval = setInterval(() => {
-                fetchChat();
-                fetchOnlineUsers();
-                fetchNotifications();
-            }, 3000); // Faster polling for chat
-
-            // Heartbeat
-            const heartbeat = setInterval(() => {
-                axios.post(`${API_URL}/community/heartbeat`, { username });
-            }, 10000);
-
-            // Initial heartbeat
-            axios.post(`${API_URL}/community/heartbeat`, { username });
-
-            return () => {
-                clearInterval(interval);
-                clearInterval(heartbeat);
-            };
-        }
-    }, [activeTab, username, activePrivateChat]);
-
-    return (
-        <div className="min-h-screen bg-black/95 text-white">
-            <Navbar />
-
-            <main className="container mx-auto px-4 py-8 pt-24">
-                {/* ... existing header ... */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-600">
-                            {t('community.title')}
-                        </h1>
-                        <p className="text-slate-400 mt-2">{t('community.subtitle')}</p>
+      <main className="container mx-auto px-6 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-6">
+            {activeView === "query" ? (
+              <div className="space-y-6">
+                {/* Ask Card */}
+                <Card className="bg-slate-900/40 border-slate-800/50 backdrop-blur-md border-dashed border-2 hover:border-green-500/30 transition-all cursor-pointer group" onClick={() => setShowAskModal(true)}>
+                  <CardContent className="py-10 flex flex-col items-center justify-center text-center">
+                    <div className="bg-green-500/20 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                      <PlusCircle className="w-8 h-8 text-green-500" />
                     </div>
+                    <h3 className="text-xl font-bold text-white mb-2">{t("community.askBtn")}</h3>
+                    <p className="text-slate-500 max-w-sm">{t("community.joinTopics")}</p>
+                  </CardContent>
+                </Card>
+
+                {/* Posts Feed */}
+                {loading ? (
+                  <div className="flex justify-center py-20"><Loader2 className="animate-spin text-green-500 w-10 h-10" /></div>
+                ) : posts.map((post) => (
+                  <Card key={post.id} className="bg-slate-900/80 border-slate-800 overflow-hidden group">
+                    <CardHeader className="flex flex-row items-start gap-4 pb-4">
+                      <Avatar className="w-12 h-12 border-2 border-slate-800">
+                        <AvatarImage src={post.avatar} />
+                        <AvatarFallback className="bg-green-600 text-white font-bold">{post.authorName?.[0] || "?"}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-slate-200">{post.authorName}</h4>
+                          <span className="text-xs text-slate-500">2h ago</span>
+                        </div>
+                        <CardTitle className="text-xl mt-1 text-white group-hover:text-green-400 transition-colors">{post.title}</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-slate-300 leading-relaxed">{post.content}</p>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <div className="flex gap-4">
+                          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-green-500">
+                            <ThumbsUp className="w-4 h-4 mr-2" /> {post.likes || 0}
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-blue-500">
+                            <MessageSquare className="w-4 h-4 mr-2" /> {post.comments?.length || 0}
+                          </Button>
+                        </div>
+                        <Button variant="outline" size="sm" className="border-slate-800 text-slate-400 hover:bg-slate-800">
+                          <Reply className="w-4 h-4 mr-2" /> {t("community.replyBtn")}
+                        </Button>
+                      </div>
+
+                      {/* Replies Area */}
+                      <div className="mt-4 space-y-4 bg-black/20 p-4 rounded-2xl">
+                        {post.comments?.map((comment: Comment) => (
+                          <div key={comment.id} className="flex gap-3">
+                            <Avatar className="w-8 h-8">
+                              <AvatarFallback className="text-[10px] bg-slate-700">{comment.authorName?.[0] || "?"}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 bg-slate-800/50 p-3 rounded-2xl text-sm">
+                              <div className="flex justify-between mb-1">
+                                <span className="font-bold text-slate-300">{comment.authorName}</span>
+                              </div>
+                              <p className="text-slate-400">{comment.text}</p>
+                            </div>
+                          </div>
+                        ))}
+                        
+                        <div className="flex gap-2 pt-2">
+                           <Input 
+                            placeholder={t("community.replyTitle")}
+                            className="bg-slate-900/50 border-slate-700 text-xs" 
+                            value={replyText[post.id] || ""}
+                            onChange={(e) => setReplyText({ ...replyText, [post.id]: e.target.value })}
+                            onKeyDown={(e) => e.key === "Enter" && handleReply(post.id)}
+                           />
+                           <Button size="icon" variant="ghost" onClick={() => handleReply(post.id)} className="text-green-500">
+                             <Send className="w-4 h-4" />
+                           </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              /* Global Chat Room */
+              <Card className="bg-slate-900/90 border-slate-800 h-[700px] flex flex-col shadow-2xl relative">
+                <CardHeader className="border-b border-slate-800 bg-black/20 px-6 py-4">
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-3">
+                       {selectedRecipient ? (
+                          <Button variant="ghost" size="icon" onClick={() => setSelectedRecipient(null)} className="h-8 w-8 text-slate-400 hover:text-white mr-2">
+                            <X className="w-5 h-5" />
+                          </Button>
+                       ) : (
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                       )}
+                       <CardTitle className="text-lg">
+                         {selectedRecipient ? `Chatting with ${selectedRecipient.name || selectedRecipient.username}` : "Live Chat"}
+                       </CardTitle>
+                     </div>
+                     <Badge variant="outline" className="text-slate-500 border-slate-800">
+                       {!selectedRecipient && `${activeUsers.length} ${t("community.onlineFarmers")}`}
+                       {selectedRecipient && "Private Encrypted Chat"}
+                     </Badge>
+                   </div>
+                </CardHeader>
+                
+                <div className="flex flex-1 overflow-hidden">
+                  <ScrollArea className="flex-1 p-6" ref={chatScrollRef}>
+                    <div className="space-y-6">
+                      {chatMessages.map((msg) => (
+                        <div key={msg.id} className={`flex items-start gap-3 ${msg.sender === user?.name ? "flex-row-reverse" : ""}`}>
+                          <Avatar className="w-10 h-10 border border-slate-800 shadow-md">
+                            <AvatarImage src={msg.sender === user?.name ? userProfile?.photoUrl : ""} />
+                            <AvatarFallback className={`${msg.sender === user?.name ? "bg-blue-600" : "bg-slate-700"} text-white`}>
+                              {msg.sender?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className={`space-y-1 max-w-[75%] ${msg.sender === user?.name ? "items-end" : "items-start"}`}>
+                            <div className="flex items-center gap-2 px-1">
+                               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{msg.sender === user?.name ? t("community.you") : msg.sender}</span>
+                               <span className="text-[9px] text-slate-600">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            
+                            <div className={`p-4 rounded-3xl shadow-sm text-sm ${
+                              msg.sender === user?.name 
+                                ? "bg-blue-600 text-white rounded-tr-none" 
+                                : "bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700"
+                            }`}>
+                              {msg.text && <p className="leading-relaxed">{msg.text}</p>}
+                              
+                              {msg.imageUrl && (
+                                <div className="mt-2 group relative">
+                                  <img src={msg.imageUrl} alt="Shared" className="rounded-2xl max-h-60 w-full object-cover shadow-lg border border-white/5" />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl cursor-pointer" onClick={() => window.open(msg.imageUrl)}>
+                                    <ImageIcon className="w-6 h-6 text-white" />
+                                  </div>
+                                </div>
+                              )}
+  
+                              {msg.audioUrl && (
+                                <div className="mt-2 min-w-[240px] bg-black/20 p-2 rounded-2xl">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Volume2 className="w-3 h-3 text-white/50" />
+                                    <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Voice Note</span>
+                                  </div>
+                                  <audio src={msg.audioUrl} controls className="h-8 w-full invert brightness-200" />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+
+                  {/* Active Farmers Sidebar within Chat */}
+                  <div className="hidden md:block w-64 border-l border-slate-800 bg-black/10 overflow-hidden flex flex-col">
+                    <div className="p-4 border-b border-slate-800 bg-slate-900/50">
+                      <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                        <Users className="w-3 h-3" /> Online Farmers
+                      </h4>
+                    </div>
+                    <ScrollArea className="flex-1 p-4">
+                      <div className="space-y-4">
+                        {activeUsers.map((u) => {
+                          const userName = u.name || u.username || "Farmer";
+                          const isCurrentUser = userName === user?.name;
+                          const unreadCount = unreadCounts[userName] || 0;
+                          return (
+                          <div 
+                            key={u.id} 
+                            className={`flex items-center gap-3 p-2 rounded-xl transition-colors ${!isCurrentUser ? "group cursor-pointer hover:bg-slate-800" : ""}`} 
+                            onClick={() => !isCurrentUser && handleUserSelect(u)}
+                          >
+                            <div className="relative">
+                              <Avatar className="w-8 h-8 border border-slate-800">
+                                <AvatarImage src={u.photoUrl} />
+                                <AvatarFallback className={`${isCurrentUser ? "bg-blue-600" : "bg-slate-800"} text-[10px]`}>{userName[0]}</AvatarFallback>
+                              </Avatar>
+                              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-slate-950" />
+                              {unreadCount > 0 && !isCurrentUser && (
+                                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-slate-950 animate-bounce">
+                                  {unreadCount}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-xs font-bold truncate transition-colors ${unreadCount > 0 ? "text-white" : (isCurrentUser ? "text-blue-400" : "text-slate-300 group-hover:text-white")}`}>
+                                {userName} {isCurrentUser && <span className="text-slate-500 font-normal">(You)</span>}
+                              </p>
+                              <p className="text-[9px] text-slate-500 truncate">{u.city || u.state || "Farmer"}</p>
+                            </div>
+                          </div>
+                        )})}
+                      </div>
+                    </ScrollArea>
+                  </div>
                 </div>
 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                    <TabsList className="bg-slate-900 border border-slate-800 p-1">
-                        <TabsTrigger value="forum" className="data-[state=active]:bg-green-600 data-[state=active]:text-white text-slate-400">
-                            <MessageSquare className="w-4 h-4 mr-2" /> {t('community.tabs.feed')}
-                        </TabsTrigger>
-                        <TabsTrigger value="chat" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400">
-                            <MessageCircle className="w-4 h-4 mr-2" /> {t('community.tabs.experts')}
-                        </TabsTrigger>
-                    </TabsList>
+                {/* Input Area */}
+                <div className="p-6 bg-slate-900/50 border-t border-slate-800 backdrop-blur-xl">
+                  {imagePreview && (
+                    <div className="mb-4 relative inline-block animate-in zoom-in-50">
+                      <img src={imagePreview} className="h-24 rounded-2xl border-2 border-blue-500 shadow-xl" />
+                      <button onClick={() => { setSelectedImage(null); setImagePreview(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
 
-                    {/* FORUM TAB CONTENT (unchanged) */}
-                    <TabsContent value="forum" className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* Post List */}
-                            <div className="md:col-span-2 space-y-4">
-                                <div className="flex gap-4 mb-6">
-                                    <div className="relative flex-1">
-                                        <Search className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
-                                        <Input placeholder={t('community.searchPlaceholder')} className="pl-10 bg-slate-900 border-slate-800 text-white" />
-                                    </div>
-                                    <Button variant="outline" className="border-slate-800 text-slate-300 hover:bg-slate-800">{t('advisoryHub.filter')}</Button>
-                                </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1">
+                      <input type="file" accept="image/*" className="hidden" id="chat-img" onChange={handleImageSelect} />
+                      <Button size="icon" variant="outline" className="border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl" asChild>
+                        <label htmlFor="chat-img" className="cursor-pointer">
+                          <ImageIcon className="w-5 h-5" />
+                        </label>
+                      </Button>
+                      <VoiceRecorder onSend={(blob) => handleSendChat(blob)} />
+                    </div>
 
-                                {loading ? (
-                                    <div className="text-center py-12 text-slate-500">{t('community.loadingDiscussions')}</div>
-                                ) : error ? (
-                                    <div className="text-center py-12 text-red-400 border border-red-900/50 rounded-lg bg-red-900/20">
-                                        {error}
-                                        <Button variant="link" className="text-red-300 block mx-auto mt-2" onClick={fetchPosts}>{t('common.tryAgain')}</Button>
-                                    </div>
-                                ) : posts.length === 0 ? (
-                                    <div className="text-center py-12 border border-dashed border-slate-800 rounded-lg">
-                                        <p className="text-slate-500">{t('community.noDiscussions')}</p>
-                                    </div>
-                                ) : (
-                                    posts.map((post) => (
-                                        <Card key={post.id} className="bg-slate-900 border-slate-800 hover:border-slate-700 transition-all cursor-pointer group">
-                                            <CardContent className="p-6">
-                                                <div className="flex items-start gap-4">
-                                                    <Avatar className="h-10 w-10 border border-slate-700">
-                                                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}`} />
-                                                        <AvatarFallback><User /></AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex-1">
-                                                        <div className="flex justify-between items-start" onClick={() => setExpandedPostId(expandedPostId === post.id ? null : post.id)}>
-                                                            <div>
-                                                                <h3 className="font-semibold text-lg text-white group-hover:text-green-400 transition-colors">{post.title}</h3>
-                                                                <p className="text-sm text-slate-400 mt-1 line-clamp-2">{post.content}</p>
-                                                            </div>
-                                                            <Badge variant="outline" className="border-slate-700 text-slate-400">{post.tags[0]}</Badge>
-                                                        </div>
+                    <div className="flex-1 relative">
+                      <Input 
+                        placeholder={t("community.typeMessage")}
+                        className="bg-slate-950/50 border-slate-800 h-12 rounded-2xl pl-4 pr-12 focus:ring-blue-500/50 transition-all border-white/5"
+                        value={chatInput}
+                        onFocus={() => {
+                          if (selectedRecipient) handleUserSelect(selectedRecipient);
+                        }}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
+                      />
+                      <Button 
+                        size="icon" 
+                        disabled={isSendingChat || (!chatInput.trim() && !selectedImage)}
+                        className="absolute right-1.5 top-1.5 h-9 w-9 bg-blue-600 hover:bg-blue-700 rounded-xl shadow-lg transition-transform active:scale-90"
+                        onClick={() => handleSendChat()}
+                      >
+                        {isSendingChat ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
 
-                                                        <div className="flex items-center gap-6 mt-4 text-sm text-slate-500">
-                                                            <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author}</span>
-                                                            <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3" /> {post.likes} Likes</span>
-                                                            <button
-                                                                className="flex items-center gap-1 hover:text-green-400 transition-colors"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setExpandedPostId(expandedPostId === post.id ? null : post.id);
-                                                                }}
-                                                            >
-                                                                <MessageSquare className="w-3 h-3" /> {post.comments?.length || 0} Replies
-                                                            </button>
-                                                            <span>{formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}</span>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="h-6 w-6 p-0 hover:bg-slate-800 rounded-full text-slate-400 hover:text-green-400"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleTranslatePost(post.id, post.title, post.content);
-                                                                }}
-                                                                title={t('community.translatePost')}
-                                                            >
-                                                                <div className="w-4 h-4 flex items-center justify-center text-[10px] font-bold">অ</div>
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="h-6 w-6 p-0 hover:bg-slate-800 rounded-full text-slate-400 hover:text-green-400"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    tts.speak(`${post.title}. ${post.content}`);
-                                                                }}
-                                                            >
-                                                                <Volume2 className="w-4 h-4" />
-                                                            </Button>
-                                                        </div>
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 space-y-6">
+             <Card className="bg-slate-900/50 border-slate-800 border-l-4 border-l-green-500">
+               <CardHeader><CardTitle className="text-lg">{t("community.trendingNow")}</CardTitle></CardHeader>
+               <CardContent className="space-y-4">
+                 {trendingFarmers.length > 0 ? trendingFarmers.map((f, i) => (
+                   <div key={f.id} className="flex items-center gap-3 p-2 hover:bg-slate-800 rounded-2xl transition-colors cursor-pointer">
+                     <Avatar>
+                       <AvatarImage src={f.photoUrl} />
+                       <AvatarFallback className="bg-slate-700">{(f.name || f.username || "?")[0]}</AvatarFallback>
+                     </Avatar>
+                     <div>
+                       <p className="text-sm font-bold">{f.name || f.username}</p>
+                       <p className="text-[10px] text-slate-500">
+                         {f.crops ? `Expert in ${f.crops}` : "Experienced Farmer"} • {f.reputation || 0} Rep
+                       </p>
+                     </div>
+                   </div>
+                 )) : (
+                   <p className="text-xs text-slate-500 py-4 text-center">Loading top farmers...</p>
+                 )}
+               </CardContent>
+             </Card>
 
-                                                        {/* Expanded Comments Section */}
-                                                        {expandedPostId === post.id && (
-                                                            <div className="mt-6 pt-4 border-t border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-                                                                <h4 className="text-sm font-semibold text-slate-300 mb-4">{t('community.replies')}</h4>
-                                                                <div className="space-y-4 mb-4">
-                                                                    {post.comments && post.comments.length > 0 ? (
-                                                                        post.comments.map((comment, idx) => (
-                                                                            <div key={idx} className="bg-slate-800/50 rounded-lg p-3">
-                                                                                <div className="flex justify-between items-center mb-1">
-                                                                                    <span className="text-xs font-semibold text-green-400">{comment.author}</span>
-                                                                                    <span className="text-xs text-slate-500">{formatDistanceToNow(new Date(comment.timestamp), { addSuffix: true })}</span>
-                                                                                </div>
-                                                                                <p className="text-sm text-slate-200">{comment.text}</p>
-                                                                            </div>
-                                                                        ))
-                                                                    ) : (
-                                                                        <p className="text-sm text-slate-500 italic">{t('community.noReplies')}</p>
-                                                                    )}
-                                                                </div>
-                                                                <div className="flex gap-2">
-                                                                    <Input
-                                                                        placeholder={t('community.replyTitle')}
-                                                                        className="bg-slate-800 border-slate-700 h-9 text-sm"
-                                                                        value={replyText}
-                                                                        onChange={(e) => setReplyText(e.target.value)}
-                                                                        onClick={(e) => e.stopPropagation()}
-                                                                        onKeyDown={(e) => {
-                                                                            if (e.key === 'Enter') {
-                                                                                e.stopPropagation();
-                                                                                handlePostReply(post.id);
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                    <Button
-                                                                        size="sm"
-                                                                        className="bg-green-600 hover:bg-green-700 h-9"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handlePostReply(post.id);
-                                                                        }}
-                                                                    >
-                                                                        {t('community.replyBtn')}
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))
-                                )}
-                            </div>
+             <Card className="bg-slate-900/50 border-slate-800">
+               <CardHeader><CardTitle className="text-lg">{t("community.myStats")}</CardTitle></CardHeader>
+               <CardContent className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-950 p-4 rounded-3xl border border-white/5">
+                    <p className="text-[10px] text-slate-500 mb-1">{t("community.reputation")}</p>
+                    <p className="text-xl font-bold text-green-400">{userProfile?.reputation || 0}</p>
+                  </div>
+                  <div className="bg-slate-950 p-4 rounded-3xl border border-white/5">
+                    <p className="text-[10px] text-slate-500 mb-1">Total Posts</p>
+                    <p className="text-xl font-bold text-blue-400">{posts.filter(p => p.author === user?.id).length}</p>
+                  </div>
+               </CardContent>
+             </Card>
 
-                            {/* Ask Question Sidebar */}
-                            <div className="md:col-span-1">
-                                <Card className="bg-slate-900 border-slate-800 sticky top-24">
-                                    <CardHeader>
-                                        <CardTitle className="text-white">{t('community.askBtn')}</CardTitle>
-                                        <CardDescription className="text-slate-400">{t('community.subtitle')}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between">
-                                                <label className="text-sm text-slate-300">{t('marketplace.sell.title')}</label>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className={`h-6 w-6 p-0 ${voiceTitle.isListening ? 'text-red-500 animate-pulse' : 'text-slate-400'}`}
-                                                    onClick={voiceTitle.isListening ? voiceTitle.stopListening : voiceTitle.startListening}
-                                                >
-                                                    {voiceTitle.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                                                </Button>
-                                            </div>
-                                            <Input
-                                                placeholder={t('marketplace.sell.titlePlaceholder')}
-                                                className="bg-black/50 border-slate-700 text-white"
-                                                value={newPostTitle}
-                                                onChange={(e) => setNewPostTitle(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between">
-                                                <label className="text-sm text-slate-300">{t('marketplace.sell.description')}</label>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className={`h-6 w-6 p-0 ${voiceContent.isListening ? 'text-red-500 animate-pulse' : 'text-slate-400'}`}
-                                                    onClick={voiceContent.isListening ? voiceContent.stopListening : voiceContent.startListening}
-                                                >
-                                                    {voiceContent.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                                                </Button>
-                                            </div>
-                                            <Textarea
-                                                placeholder={t('marketplace.sell.descPlaceholder')}
-                                                className="bg-black/50 border-slate-700 text-white min-h-[120px]"
-                                                value={newPostContent}
-                                                onChange={(e) => setNewPostContent(e.target.value)}
-                                            />
-                                        </div>
-                                        <Button
-                                            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-                                            onClick={handleCreatePost}
-                                            disabled={isPosting}
-                                        >
-                                            {isPosting ? t('community.askBtn') : t('community.askBtn')}
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </div>
-                    </TabsContent>
-
-                    {/* LIVE CHAT TAB */}
-                    <TabsContent value="chat" className="h-[600px] flex gap-4">
-                        <Card className="flex-1 bg-slate-900 border-slate-800 flex flex-col">
-                            {/* Chat Header */}
-                            <CardHeader className="border-b border-slate-800 pb-4 bg-slate-900/50">
-                                <div className="flex justify-between items-center">
-                                    <CardTitle className="flex items-center gap-2 text-white">
-                                        <div className={`w-2 h-2 rounded-full ${activePrivateChat ? 'bg-blue-500' : 'bg-green-500'} animate-pulse`}></div>
-                                        {activePrivateChat ? `${t('community.chatWith')} ${activePrivateChat}` : t('community.globalChat')}
-                                    </CardTitle>
-                                    {activePrivateChat && (
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-slate-400 hover:text-white hover:bg-slate-800"
-                                            onClick={() => setActivePrivateChat(null)}
-                                        >
-                                            {t('community.tabs.feed')}
-                                        </Button>
-                                    )}
-                                </div>
-                            </CardHeader>
-                            <ScrollArea className="flex-1 p-4 bg-black/20">
-                                <div className="space-y-4">
-                                    {(activePrivateChat && chatMessages.length === 0) ? (
-                                        <div className="text-center text-slate-500 mt-20">
-                                            {t('common.clickToChat')}
-                                        </div>
-                                    ) : (
-                                        chatMessages.map((msg, i) => {
-                                            const showDate = i === 0 || formatDateLabel(msg.timestamp, t) !== formatDateLabel(chatMessages[i - 1].timestamp, t);
-
-                                            return (
-                                                <div key={msg.id || i}>
-                                                    {showDate && (
-                                                        <div className="flex justify-center my-4">
-                                                            <span className="bg-slate-800 text-slate-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                                                {formatDateLabel(msg.timestamp, t)}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                    <div className={`flex gap-3 mb-4 ${msg.sender === username ? 'flex-row-reverse' : 'flex-row'}`}>
-                                                        <Avatar className="h-8 w-8 border border-white/10">
-                                                            <AvatarFallback className={`text-white ${msg.sender === username ? 'bg-blue-600' : 'bg-slate-700'}`}>
-                                                                {msg.sender[0]}
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div className={`rounded-2xl p-3 max-w-[80%] group relative transition-all ${msg.sender === username
-                                                            ? 'bg-blue-600 text-white rounded-tr-none'
-                                                            : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
-                                                            }`}>
-                                                            <div className="text-xs opacity-70 mb-1 flex justify-between gap-4">
-                                                                <span>{msg.sender === username ? t('community.you') : msg.sender}</span>
-                                                                <div className="flex items-center gap-2">
-                                                                    <span>{new Date(msg.timestamp).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}</span>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        className="h-4 w-4 p-0 opacity-50 hover:opacity-100"
-                                                                        onClick={() => tts.speak(msg.text)}
-                                                                    >
-                                                                        <Volume2 className="w-3 h-3" />
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                            {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.text}</p>}
-                                                            {msg.imageUrl && (
-                                                                <div className="mt-2">
-                                                                    <img
-                                                                        src={msg.imageUrl}
-                                                                        alt="Shared image"
-                                                                        className="rounded-lg max-w-full max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                                                        onClick={() => window.open(msg.imageUrl, '_blank')}
-                                                                    />
-                                                                </div>
-                                                            )}
-
-                                                            {/* Actions Group */}
-                                                            <div className={`absolute top-2 flex gap-1 transition-opacity opacity-0 group-hover:opacity-100 ${msg.sender === username ? '-left-16' : '-right-16'}`}>
-                                                                {/* Translate Button (For others' messages) */}
-                                                                {msg.sender !== username && (
-                                                                    <button
-                                                                        onClick={() => handleTranslate(msg.id, msg.text)}
-                                                                        className="p-1.5 bg-slate-800 border border-slate-700 rounded-full text-slate-400 hover:text-white shadow-lg"
-                                                                        title="Translate to Hindi"
-                                                                    >
-                                                                        <div className="w-4 h-4 flex items-center justify-center text-[10px] font-bold">अ</div>
-                                                                    </button>
-                                                                )}
-
-                                                                {/* Delete Button (For own messages) */}
-                                                                {msg.sender === username && (
-                                                                    <button
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            if (confirm(t('community.deleteMessageConfirm'))) handleDeleteMessage(msg.id);
-                                                                        }}
-                                                                        className="p-1.5 bg-slate-800 border border-red-500/30 rounded-full text-red-400 hover:bg-red-500 hover:text-white shadow-lg transition-colors"
-                                                                        title={t('community.deleteMessage')}
-                                                                    >
-                                                                        <Trash2 className="w-4 h-4" />
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })
-                                    )}
-                                </div>
-                            </ScrollArea>
-                            {/* Chat Input */}
-                            <div className="p-4 border-t border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-                                {/* Image Preview */}
-                                {imagePreview && (
-                                    <div className="mb-3 relative inline-block">
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            className="max-h-32 rounded-lg border-2 border-green-500/50"
-                                        />
-                                        <button
-                                            onClick={handleRemoveImage}
-                                            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                )}
-                                <div className="flex gap-2">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageSelect}
-                                        className="hidden"
-                                        id="chat-image-upload"
-                                    />
-                                    <label htmlFor="chat-image-upload">
-                                        <Button
-                                            type="button"
-                                            size="icon"
-                                            variant="outline"
-                                            className="border-slate-700 hover:bg-slate-800 cursor-pointer"
-                                            asChild
-                                        >
-                                            <div>
-                                                <ImageIcon className="w-4 h-4" />
-                                            </div>
-                                        </Button>
-                                    </label>
-                                    <Input
-                                        placeholder={activePrivateChat ? `${t('community.searchPlaceholder')} ${activePrivateChat}...` : t('community.searchPlaceholder')}
-                                        className="bg-black/50 border-slate-700 text-white focus:ring-blue-500/50"
-                                        value={chatInput}
-                                        onChange={(e) => setChatInput(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                                    />
-                                    <Button
-                                        size="icon"
-                                        variant="outline"
-                                        className={`border-slate-700 hover:bg-slate-800 ${voiceChat.isListening ? 'text-red-500 animate-pulse border-red-500' : ''}`}
-                                        onClick={voiceChat.isListening ? voiceChat.stopListening : voiceChat.startListening}
-                                    >
-                                        {voiceChat.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                                    </Button>
-                                    <Button size="icon" className={`${activePrivateChat ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} transition-colors`} onClick={handleSendMessage}>
-                                        <Send className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                        {/* Sidebar: Online Users */}
-                        <Card className="w-64 bg-slate-900 border-slate-800 hidden md:flex flex-col">
-                            <CardHeader className="border-b border-slate-800/50 pb-3">
-                                <CardTitle className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Users className="w-3 h-3" /> {t('community.onlineFarmers')} ({onlineUsers.length})
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-4 p-2">
-                                <ScrollArea className="h-[480px]">
-                                    <div className="space-y-1">
-                                        {onlineUsers.map((user, i) => (
-                                            <div
-                                                key={i}
-                                                onClick={() => user.username !== username && setActivePrivateChat(user.username)}
-                                                className={`flex items-center gap-3 p-2 rounded-lg transition-all cursor-pointer ${user.username === username ? 'opacity-50 cursor-default' :
-                                                    activePrivateChat === user.username ? 'bg-blue-600/20 border border-blue-600/50' : 'hover:bg-slate-800'
-                                                    }`}
-                                            >
-                                                <div className="relative">
-                                                    <Avatar className="h-8 w-8 border border-white/10">
-                                                        <AvatarImage src={user.photoUrl} />
-                                                        <AvatarFallback className="bg-slate-700 text-slate-300 font-medium">{user.username[0]}</AvatarFallback>
-                                                    </Avatar>
-
-                                                    {/* Notification Badge */}
-                                                    {notifications[user.username] > 0 && user.username !== activePrivateChat && (
-                                                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10 animate-bounce">
-                                                            {notifications[user.username] > 9 ? '9+' : notifications[user.username]}
-                                                        </div>
-                                                    )}
-
-                                                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-slate-900 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className={`text-sm font-medium ${activePrivateChat === user.username ? 'text-blue-400' : 'text-slate-300'}`}>
-                                                        {user.username} {user.username === username && `(${t('community.you')})`}
-                                                    </span>
-                                                    {user.username !== username && (
-                                                        <span className="text-[10px] text-slate-500">
-                                                            {notifications[user.username] > 0 && user.username !== activePrivateChat ?
-                                                                <span className="text-red-400 font-semibold">{notifications[user.username]} {t('common.messages')}</span>
-                                                                : t('common.clickToChat')
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </ScrollArea>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                </Tabs>
-            </main>
+             {/* Community Guidelines or AI Tip */}
+             <div className="bg-gradient-to-br from-green-600/20 to-blue-600/20 p-6 rounded-3xl border border-white/10">
+               <h4 className="font-bold flex items-center gap-2 mb-2 text-green-400">
+                 <Globe className="w-4 h-4" /> AI Farming Tip
+               </h4>
+               <p className="text-xs text-slate-400 leading-relaxed italic">
+                 "Our AI models suggest that global markets for Rice are rising. Check the Marketplace tab to find buyers offering premium rates today!"
+               </p>
+             </div>
+          </div>
         </div>
-    );
+      </main>
+
+      {/* Ask Query Modal */}
+      {showAskModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <Card className="w-full max-w-xl bg-slate-900 border-slate-800 shadow-2xl scale-in-center">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800">
+              <CardTitle>{t("community.askBtn")}</CardTitle>
+              <Button variant="ghost" size="icon" onClick={() => setShowAskModal(false)}><X className="w-4 h-4" /></Button>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-6">
+              <div className="space-y-2">
+                <label className="text-sm text-slate-400">Headline of your problem</label>
+                <Input 
+                  placeholder="e.g. My wheat leaves are turning yellow" 
+                  className="bg-slate-950/50 border-slate-800"
+                  value={queryTitle}
+                  onChange={(e) => setQueryTitle(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-slate-400">Describe it in detail</label>
+                <Textarea 
+                  placeholder="Tell your fellow farmers what's happening..." 
+                  className="bg-slate-950/50 border-slate-800 min-h-[150px]"
+                  value={queryContent}
+                  onChange={(e) => setQueryContent(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-3 justify-end pt-4">
+                <Button variant="outline" className="border-slate-800" onClick={() => setShowAskModal(false)}>Cancel</Button>
+                <Button 
+                  className="bg-green-600 hover:bg-green-700 w-32" 
+                  onClick={handleAskQuery}
+                  disabled={isSubmittingQuery || !queryTitle.trim()}
+                >
+                  {isSubmittingQuery ? <Loader2 className="animate-spin w-4 h-4" /> : t("community.askBtn")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Community;

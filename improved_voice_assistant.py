@@ -10,6 +10,10 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from groq import Groq
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 
 # Load environment variables
 load_dotenv()
@@ -21,13 +25,27 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY") or os.environ.get("VITE_GROQ_CHATB
 
 class AgriVoiceAssistant:
     def __init__(self):
+        # Initialize Groq
         try:
             self.client = Groq(api_key=GROQ_API_KEY)
             self.model = "llama-3.3-70b-versatile" # High quality model
-            print(f"AgriVoiceAssistant initialized with Groq model: {self.model}")
+            print(f"AgriVoiceAssistant: Groq initialized with model: {self.model}")
         except Exception as e:
-            print(f"Failed to initialize Groq client: {e}")
+            print(f"AgriVoiceAssistant: Failed to initialize Groq: {e}")
             self.client = None
+            
+        # Initialize Gemini
+        try:
+            gemini_key = os.environ.get("VITE_GOOGLE_GEMINI_VISION_API_KEY")
+            if genai and gemini_key:
+                genai.configure(api_key=gemini_key)
+                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+                print("AgriVoiceAssistant: Gemini fallback initialized")
+            else:
+                self.gemini_model = None
+        except Exception as e:
+            print(f"AgriVoiceAssistant: Gemini initialization failed: {e}")
+            self.gemini_model = None
             
         self.knowledge_base = self.load_agricultural_knowledge()
         
@@ -126,7 +144,7 @@ class AgriVoiceAssistant:
         }
     
     def process_voice_input(self, text, language_code="en-IN", dialect="Standard", image_base64=None):
-        """Process voice input and generate appropriate response (supports multimodal vision)"""
+        """Process voice input and generate appropriate response"""
         text = text.lower().strip()
         
         # Clean and normalize text
@@ -137,7 +155,7 @@ class AgriVoiceAssistant:
             return self.process_vision_input(image_base64, text, language_code, dialect)
             
         # Identify query type and generate response
-        response = self.generate_response(text, language_code, dialect)
+        response = self.generate_response(text, language_code)
         
         return response
     
@@ -162,9 +180,9 @@ class AgriVoiceAssistant:
             
             Required JSON Structure (Return ONLY JSON):
             {{
-                "text": "Detailed analysis and direct answer based on the image (2-4 sentences).",
-                "audio_text": "Conversational summary for TTS.",
-                "solution": "Specific product or action recommended.",
+                "text": "Comprehensive analysis of the image (4-6 sentences) explaining the detected issues, their causes, and detailed agricultural impact in {language_code}.",
+                "audio_text": "A friendly, detailed spoken summary (2-3 sentences) of what you see in the photo in {language_code}.",
+                "solution": "Specific product, pesticide, or organic remedy recommended in {language_code}.",
                 "confidence": "High/Medium/Low based on image clarity",
                 "detected_objects": ["list", "of", "detected", "issues"]
             }}
@@ -203,75 +221,89 @@ class AgriVoiceAssistant:
         text = text.replace('?', ' ').replace('.', ' ').replace(',', ' ').replace('!', ' ')
         return text.strip()
     
-    def generate_response(self, text, language_code="en-IN", dialect="Standard"):
+    def generate_response(self, text, language_code="en-IN"):
         """Generate appropriate agricultural response"""
         
         # 1. General Fallback to Groq AI
-        return self.call_groq_api(text, language_code, dialect)
+        return self.call_groq_api(text, language_code)
 
-    def call_groq_api(self, text, language_code="en-IN", dialect="Standard"):
-        """Call Groq API for general queries with fallback"""
-        if not self.client:
-            return self.handle_general_fallback(text, language_code)
+    def call_groq_api(self, text, language_code="en-IN"):
+        """Call Groq API for general queries with automatic model and provider fallback"""
+        # 1. Try Groq Models
+        if self.client:
+            models = [self.model, "llama-3.1-8b-instant"]
+            for model_name in models:
+                try:
+                    print(f"AgriVoiceAssistant: Proposing query to Groq ({model_name})")
+                    system_instruction = f"""You are AgriSphere AI. Expert agricultural advisor for Indian farmers.
+                    Language: {language_code}. 
+                    Return ONLY a JSON object reflecting this structure:
+                    {{
+                        "text": "Detailed, thorough answer (4-6 sentences) in {language_code}.",
+                        "audio_text": "Detailed, friendly spoken version (2-3 sentences) in {language_code}.",
+                        "solution": "Action item.",
+                        "timing": "When to apply."
+                    }}
+                    """
+                    
+                    completion = self.client.chat.completions.create(
+                        model=model_name,
+                        messages=[
+                            {"role": "system", "content": system_instruction},
+                            {"role": "user", "content": f"Problem: {text}"}
+                        ],
+                        temperature=0.7,
+                        max_tokens=500
+                    )
 
+                    response_text = completion.choices[0].message.content.strip()
+                    return self.parse_json_robustly(response_text)
+                    
+                except Exception as e:
+                    print(f"AgriVoiceAssistant: Groq {model_name} failed: {e}")
+                    continue
+
+        # 2. Fallback to Gemini
+        if self.gemini_model:
+            try:
+                print("AgriVoiceAssistant: Falling back to Gemini")
+                prompt = f"""You are AgriSphere AI. Expert agricultural advisor for Indian farmers.
+                Language: {language_code}. 
+                Respond to: '{text}'
+                Return ONLY JSON:
+                {{
+                    "text": "Detailed, thorough answer (4-6 sentences) in {language_code}.",
+                    "audio_text": "Detailed, friendly spoken version (2-3 sentences) in {language_code}.",
+                    "solution": "Action item.",
+                    "timing": "When to apply."
+                }}
+                """
+                response = self.gemini_model.generate_content(prompt)
+                return self.parse_json_robustly(response.text)
+            except Exception as e:
+                print(f"AgriVoiceAssistant: Gemini failed: {e}")
+
+        # 3. Final Fallback (Local KB / Rule-based)
+        return self.handle_general_fallback(text, language_code)
+
+    def parse_json_robustly(self, text):
+        """Extract and parse JSON from LLM response text"""
         try:
-             # Construct the prompt
-            system_instruction = f"""You are AgriSphere AI, an expert agricultural assistant for Indian farmers. 
-            You provide accurate, practical farming advice strictly following ICAR (Indian Council of Agricultural Research) and FAO protocols.
-            
-            IMPORTANT: LANGUAGE & DIALECT INSTRUCTION
-            Native Target Language: '{language_code}'
-            Regional Dialect: '{dialect}'
-            
-            1. You MUST reply in the '{language_code}' language, but specifically using the '{dialect}' dialect vocabulary and tone if it is not 'Standard'.
-            2. If dialect is 'Standard', use the standard version of '{language_code}'.
-            3. IGNORE the language of the user's input for your output.
-            4. If the selected language is a tribal language (e.g., Ao Naga, Garo) and you cannot write it perfectly, use the closest regional dialect that the farmer would understand.
-            5. For dialects like Bhojpuri, Maithili, etc., use the Devanagari script but the local dialect's grammar and words.
-            
-            Required JSON Structure:
-            {{
-                "text": "Detailed, helpful answer (2-3 sentences max) in {language_code} ({dialect} dialect).",
-                "audio_text": "A shorter, conversational version for text-to-speech (1 sentence) in {language_code} ({dialect} dialect).",
-                "solution": "Key action item or direct solution (very brief) in {language_code} ({dialect} dialect).",
-                "timing": "Best time to apply/do this (optional, string) in {language_code} ({dialect} dialect)."
-            }}
-            
-            Do NOT use markdown code blocks. Just valid JSON string.
-            """
-            
-            completion = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_instruction},
-                    {"role": "user", "content": f"User question: {text}"}
-                ],
-                temperature=0.7,
-                max_tokens=300,
-                top_p=1,
-                stream=False,
-                stop=None,
-            )
+            # Try direct parse
+            return json.loads(text)
+        except:
+            # Try regex extraction
+            try:
+                json_match = re.search(r'\{.*\}', text, re.DOTALL)
+                if json_match:
+                    return json.loads(json_match.group(0))
+            except:
+                pass
+        raise ValueError("Could not parse JSON from AI response")
 
-            response_text = completion.choices[0].message.content.strip()
-            
-            # Clean up if the model wrapped it in markdown
-            if response_text.startswith("```json"):
-                response_text = response_text[7:]
-            if response_text.startswith("```"):
-                response_text = response_text[3:]
-            if response_text.endswith("```"):
-                response_text = response_text[:-3]
-                
-            response_data = json.loads(response_text)
-            return response_data
-            
-        except Exception as e:
-            print(f"Groq API Error: {e}")
-            return self.handle_general_fallback(text, language_code)
-
-    def handle_disease_query(self, text, is_hindi):
+    def handle_disease_query(self, text, language_code):
         """Handle disease-related queries"""
+        is_hindi = language_code == 'hi-IN'
         # Detect crop type
         crop = self.detect_crop(text)
         
@@ -303,10 +335,11 @@ class AgriVoiceAssistant:
                 }
         
         # If specific disease not found, use Groq
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
-    def handle_fertilizer_query(self, text, is_hindi):
+    def handle_fertilizer_query(self, text, language_code):
         """Handle fertilizer-related queries"""
+        is_hindi = language_code == 'hi-IN'
         if any(word in text for word in ['yellow', 'peela', 'पीला', 'nitrogen']):
             fert_info = self.knowledge_base['fertilizers']['nitrogen_deficiency']
             if is_hindi:
@@ -316,10 +349,11 @@ class AgriVoiceAssistant:
                     'solution': fert_info['treatment'],
                     'timing': fert_info['timing']
                 }
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
-    def handle_irrigation_query(self, text, is_hindi):
+    def handle_irrigation_query(self, text, language_code):
         """Handle irrigation queries"""
+        is_hindi = language_code == 'hi-IN'
         crop = self.detect_crop(text)
         if crop == 'wheat':
             irr_info = self.knowledge_base['irrigation']['wheat']
@@ -330,14 +364,15 @@ class AgriVoiceAssistant:
                     'solution': f"Frequency: {irr_info['frequency']}",
                     'amount': irr_info['water_amount']
                 }
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
-    def handle_pest_query(self, text, is_hindi):
+    def handle_pest_query(self, text, language_code):
         """Handle pest-related queries"""
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
-    def handle_harvest_query(self, text, is_hindi):
+    def handle_harvest_query(self, text, language_code):
         """Handle harvest timing queries"""
+        is_hindi = language_code == 'hi-IN'
         crop = self.detect_crop(text)
         if is_hindi:
             if crop == 'wheat':
@@ -347,30 +382,59 @@ class AgriVoiceAssistant:
                     'solution': "Harvest when grains turn golden",
                     'timing': "March-April"
                 }
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
-    def handle_weather_query(self, text, is_hindi):
+    def handle_weather_query(self, text, language_code):
         """Handle weather-related queries"""
-        return self.call_groq_api(text, is_hindi)
+        return self.call_groq_api(text, language_code)
     
     def handle_general_fallback(self, text, language_code="en-IN"):
-        """Handle general farming queries when AI fails"""
-        # Check specific language code, not just truthiness
-        if language_code == 'hi-IN':
-            return {
-                'text': "मैं AgriSphere AI हूं। तकनीकी समस्या के कारण में संपर्क नहीं कर पा रहा।",
+        """Handle general farming queries when AI fails with localized messages"""
+        fallbacks = {
+            'hi-IN': {
+                'text': "मैं AgriSphere AI हूं। तकनीकी समस्या के कारण मैं अभी संपर्क नहीं कर पा रहा हूं।",
                 'audio_text': "तकनीकी समस्या है। कृपया बाद में प्रयास करें।",
-                'solution': "Server busy, try again later",
+                'solution': "सर्वर व्यस्त है, बाद में प्रयास करें",
                 'examples': ["फसल में रोग", "खाद की मात्रा", "सिंचाई का समय"]
+            },
+            'as-IN': {
+                'text': "মই AgriSphere AI। কাৰিকৰী সমস্যাৰ বাবে মই এতিয়া সংযোগ কৰিব পৰা নাই।",
+                'audio_text': "কাৰিকৰী সমস্যা হৈছে। পিছত চেষ্টা কৰক।",
+                'solution': "চাৰ্ভাৰ ব্যস্ত আছে",
+                'examples': ["শস্যৰ ৰোগ", "সাৰৰ পৰিমাণ", "জলসিঞ্চনৰ সময়"]
+            },
+            'bn-IN': {
+                'text': "আমি AgriSphere AI। প্রযুক্তিগত সমস্যার কারণে আমি এখন যোগাযোগ করতে পারছি না।",
+                'audio_text': "প্রযুক্তিগত সমস্যা হয়েছে। পরে চেষ্টা করুন।",
+                'solution': "সার্ভার ব্যস্ত আছে",
+                'examples': ["ফসলের রোগ", "সারের পরিমাণ", "সেচের সময়"]
+            },
+            'mni-IN': {
+                'text': "ঐহাক AgriSphere AI নি। কারিকরী সমস্যা অমনা মরম ওইরগা ঐহাক হৌজিক কন্টাক্ট তৌবা ঙমদ্রে।",
+                'audio_text': "কারিকরী সমস্যা অমা লৈরে। চাংয়েং তৌবিয়ু।",
+                'solution': "সার্ভার বিজি ওইরে",
+                'examples': ["লাউ মরিক", "সাউ শিজিন্নবা", "লৌউ সিংউ"]
             }
-        else:
-            # Default to English for other languages if fallback is needed
-            return {
-                'text': "I am AgriSphere AI. Due to technical issues, I cannot connect right now. Please try again later.",
-                'audio_text': "Technical issue. Please try again later.",
-                'solution': "Server busy, try again later",
-                'examples': ["Crop diseases", "Fertilizer advice", "Irrigation timing"]
-            }
+        }
+        
+        # Determine fallback based on code or name
+        lang_key = 'en-IN'
+        l_code = str(language_code).lower()
+        if 'hi' in l_code or 'hindi' in l_code: lang_key = 'hi-IN'
+        elif 'as' in l_code or 'assam' in l_code: lang_key = 'as-IN'
+        elif 'bn' in l_code or 'bengali' in l_code: lang_key = 'bn-IN'
+        elif 'mni' in l_code or 'manipuri' in l_code: lang_key = 'mni-IN'
+        
+        if lang_key in fallbacks:
+            return fallbacks[lang_key]
+            
+        # Default English fallback
+        return {
+            'text': "I am AgriSphere AI. Due to technical issues, I cannot connect right now. Please try again later.",
+            'audio_text': "Technical issue. Please try again later.",
+            'solution': "Server busy, try again later",
+            'examples': ["Crop diseases", "Fertilizer advice", "Irrigation timing"]
+        }
     
     def detect_crop(self, text):
         """Detect crop type from text"""

@@ -1,0 +1,92 @@
+﻿=== ENGLISH voiceAssistant keys ===
+  hero.title: Voice Assistant for Farmers
+  hero.desc: Speak naturally in Hindi or your local language. Get instant
+  hero.startBtn: Start Speaking
+  hero.chooseLangBtn: Choose Language
+  features.sectionTitle: Voice Assistant Features
+  features.f1.title: Hindi Voice Recognition
+  features.f1.desc: Speak naturally in Hindi and get instant responses
+  features.f1.example: Gehun mein rog a gaya hai, kya karein?
+  features.f1.response: Wheat disease detected. Apply fungicide spray.
+  features.f2.title: Local Language Support
+  features.f2.desc: Support for regional languages across India
+  features.f3.title: Audio Responses
+  features.f3.desc: Get detailed audio responses in your preferred language
+  features.f3.item1: Clear pronunciation
+  features.f3.item2: Slow/Fast speed
+  features.f3.item3: Repeat option
+  features.f3.item4: Save audio
+  features.f4.title: Offline Voice Commands
+  features.f4.desc: Basic voice commands work even without internet
+  features.f4.item1: Weather check
+  features.f4.item2: Crop calendar
+  features.f4.item3: Basic diagnosis
+  features.f4.item4: Emergency help
+  examples.sectionTitle: Real Conversation Examples
+  examples.solutionPrefix: Solution
+  examples.e1.farmer: Tomato mein patte peelay ho rahe hain
+  examples.e1.farmerTrans: Tomato leaves are turning yellow
+python : Traceback (most 
+recent call last):
+At line:1 char:1
++ python debug_mr.py 2>&1 
+| Out-File -FilePath 
+debug_mr_output.txt -Enc 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (T  
+  raceback (most recent   
+  call last)::String)     
+[], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  File "C:\Users\muska_ak5
+dqij\OneDrive\Desktop\A\Ag
+risphere\debug_mr.py", 
+line 15, in <module>
+    print_keys(va_en)
+    ~~~~~~~~~~^^^^^^^
+  File "C:\Users\muska_ak5
+dqij\OneDrive\Desktop\A\Ag
+risphere\debug_mr.py", 
+line 11, in print_keys
+    print_keys(v, prefix 
++ k + ".")
+    ~~~~~~~~~~^^^^^^^^^^^^
+^^^^^^^^^
+  File "C:\Users\muska_ak5
+dqij\OneDrive\Desktop\A\Ag
+risphere\debug_mr.py", 
+line 11, in print_keys
+    print_keys(v, prefix 
++ k + ".")
+    ~~~~~~~~~~^^^^^^^^^^^^
+^^^^^^^^^
+  File "C:\Users\muska_ak5
+dqij\OneDrive\Desktop\A\Ag
+risphere\debug_mr.py", 
+line 13, in print_keys
+    print(f"  
+{prefix}{k}: 
+{str(v)[:60]}")
+    ~~~~~^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
+  File "C:\Users\muska_ak5
+dqij\AppData\Local\Program
+s\Python\Python314\Lib\enc
+odings\cp1252.py", line 
+19, in encode
+    return codecs.charmap_
+encode(input,self.errors,e
+ncoding_table)[0]
+           ~~~~~~~~~~~~~~~
+~~~~~~^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't 
+encode characters in 
+position 18-19: character 
+maps to <undefined>

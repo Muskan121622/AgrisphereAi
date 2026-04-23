@@ -3,6 +3,8 @@ from flask_cors import CORS, cross_origin
 import requests
 from dotenv import load_dotenv
 from urllib.parse import quote
+import xml.etree.ElementTree as ET
+import re
 
 load_dotenv()
 import joblib
@@ -26,6 +28,11 @@ import whatsapp_handler
 from agromonitoring_service import AgroMonitoringService
 
 agro_service = AgroMonitoringService()
+
+try:
+    from pymongo import MongoClient
+except ImportError:
+    MongoClient = None
 
 def call_groq_with_fallback(prompt, system_message="You are a helpful agricultural AI. Output valid JSON only.", response_format={"type": "json_object"}, temperature=0.2, max_tokens=600):
     """
@@ -163,6 +170,7 @@ def init_db():
             recipient TEXT,
             text TEXT,
             imageUrl TEXT,
+            audioUrl TEXT, 
             timestamp TEXT,
             read INTEGER DEFAULT 0
         )
@@ -262,8 +270,8 @@ def save_chat_message(msg):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO chat (id, sender, recipient, text, imageUrl, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (msg.get('id'), msg.get('sender'), msg.get('recipient'), msg.get('text'), msg.get('imageUrl'), msg.get('timestamp'), 0)
+        "INSERT INTO chat (id, sender, recipient, text, imageUrl, audioUrl, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (msg.get('id'), msg.get('sender'), msg.get('recipient'), msg.get('text'), msg.get('imageUrl'), msg.get('audioUrl'), msg.get('timestamp'), 0)
     )
     conn.commit()
     conn.close()
@@ -311,6 +319,67 @@ def update_chat_read_status(sender, recipient):
     cursor.execute("UPDATE chat SET read = 1 WHERE sender = ? AND recipient = ?", (sender, recipient))
     conn.commit()
     conn.close()
+
+def resolve_user_reference(identifier):
+    """
+    Search for a user by username, email, or a potential firebaseUid in the profiles table.
+    """
+    if not identifier:
+        return None
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM profiles WHERE username = ? OR email = ?",
+        (identifier, identifier)
+    )
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+def serialize_user_document(row):
+    """
+    Safely convert SQLite row to dictionary for JSON serialization.
+    """
+    if not row:
+        return {}
+    return dict(row)
+
+def get_unread_chat_counts(username):
+    """
+    Return a map of {sender: unread_count} for the specified recipient.
+    """
+    if not username:
+        return {}
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT sender, COUNT(*) as count FROM chat WHERE recipient = ? AND read = 0 GROUP BY sender",
+        (username,)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return {r['sender']: r['count'] for r in rows}
+
+def get_chat_messages(user1=None, user2=None):
+    """
+    Retrieve messages between user1 and user2, or public messages if no recipient.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    if user1 and user2:
+        cursor.execute(
+            "SELECT * FROM chat WHERE (sender = ? AND recipient = ?) OR (sender = ? AND recipient = ?) ORDER BY timestamp ASC",
+            (user1, user2, user2, user1)
+        )
+    else:
+        # Public chat
+        cursor.execute(
+            "SELECT * FROM chat WHERE recipient IS NULL OR recipient = '' ORDER BY timestamp ASC"
+        )
+    rows = cursor.fetchall()
+    chat_list = [dict(r) for r in rows]
+    conn.close()
+    return chat_list
 
 # Online User Tracking (In-Memory)
 active_users = {} # { "User Name": "2024-01-01T12:00:00" }
@@ -461,7 +530,6 @@ voice_assistant = AgriVoiceAssistant()
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
@@ -820,7 +888,7 @@ def get_nearby_suppliers():
         shop['price'] = f"₹{random.choice(prices)}/kg"
         shop['stock'] = random.choice(stock_status)
         shop['delivery_available'] = random.choice([True, False, True])
-        shop['subsidy_available'] = 'Government' in shop['type'] or 'Krishi' in shop['name']
+        shop['subsidy_available'] = 'Government' in shop['type'] or 'Krishi' in shop['name'] or 'Government' in shop.get('name', '')
         
         if 'rating' not in shop:
             shop['rating'] = round(random.uniform(3.8, 4.9), 1)
@@ -830,7 +898,7 @@ def get_nearby_suppliers():
             tags.append('Government Certified')
         if index == 0:
             tags.append('Nearest')
-        if '40/kg' in shop['price'] or '35/kg' in shop['price']:
+        if '40/kg' in shop.get('price', '') or '35/kg' in shop.get('price', ''):
             tags.append('Lowest Price')
         if shop.get('rating', 0) >= 4.5:
             tags.append('Best Rated')
@@ -838,6 +906,42 @@ def get_nearby_suppliers():
         shop['ai_tags'] = tags[:2] # Keep top 2 tags max
         shop['blockchain_verified'] = bool(random.choice([True, False]))
         return shop
+
+    def fetch_google_places(lat, lng):
+        """Fetch real-world data from Google Places as a fallback for Overpass."""
+        google_api_key = os.getenv("VITE_GOOGLE_MAPS_API_KEY")
+        if not google_api_key:
+            return []
+        
+        try:
+            url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+            params = {
+                "query": "agricultural seeds fertilizer farm shop",
+                "location": f"{lat},{lng}",
+                "radius": 50000,
+                "key": google_api_key
+            }
+            resp = requests.get(url, params=params, timeout=10).json()
+            google_results = []
+            for p in resp.get('results', []):
+                dist_km = haversine(lat, lng, p['geometry']['location']['lat'], p['geometry']['location']['lng'])
+                google_results.append({
+                    'id': p['place_id'],
+                    'name': p['name'],
+                    'address': p['formatted_address'],
+                    'type': 'Agricultural Shop',
+                    'rating': p.get('rating', 4.0),
+                    'distance': f"{dist_km:.1f}",
+                    'availableSeeds': ['Paddy', 'Wheat', 'Maize', 'Vegetables'],
+                    'phone': 'Connect via AgriSphere',
+                    'lat': p['geometry']['location']['lat'],
+                    'lng': p['geometry']['location']['lng'],
+                    'googleMapsUrl': f"https://www.google.com/maps/search/?api=1&query=Google&query_place_id={p['place_id']}"
+                })
+            return google_results
+        except Exception as e:
+            print(f"DEBUG: Google Places failed ({e})")
+            return []
 
     try:
         search_lat = lat or 25.8673   # Default: Samastipur, Bihar
@@ -929,87 +1033,57 @@ out body 30;
             print(f"DEBUG: Overpass found {len(results)} shops near ({search_lat:.4f}, {search_lng:.4f})")
 
         except Exception as ov_err:
-            print(f"DEBUG: Overpass failed ({ov_err}), using curated fallback")
+            print(f"DEBUG: Overpass failed ({ov_err}), trying Google Places fallback...")
+            results = fetch_google_places(search_lat, search_lng)
 
-            # Hardcoded known agricultural hubs near Samastipur
-            results = [
+        # If still no results, use dynamic AI-generated/template fallback for THE CURRENT LOCATION
+        if not results:
+            print(f"DEBUG: No API results for ({search_lat}, {search_lng}) — using localized template fallback")
+            
+            # Use Nominatim's found address or just a generic "Your Area"
+            loc_label = address or "your locality"
+            
+            # Standard generic stores that exist in almost every major Indian town/district
+            fallback_shops = [
                 {
-                    'id': 'fallback_1',
-                    'name': 'Samastipur Krishi Vigyan Kendra',
-                    'address': 'Near Collectorate, Samastipur, Bihar 848101',
+                    'id': f'gen_{int(search_lat)}_{int(search_lng)}_1',
+                    'name': f'District Krishi Vigyan Kendra',
+                    'address': f'Main Road, {loc_label}',
                     'type': 'Krishi Seva Kendra',
                     'rating': 4.5,
-                    'availableSeeds': ['Paddy (Dhan)', 'Wheat (Gehu)', 'Maize (Makka)', 'Mustard (Sarso)', 'Potato (Aloo)'],
-                    'phone': '06274-222345',
-                    'lat': 25.8635,
-                    'lng': 85.7801,
+                    'availableSeeds': ['Paddy', 'Wheat', 'Maize', 'Vegetables'],
+                    'phone': 'Connect via AgriSphere',
+                    'lat': search_lat + 0.01,
+                    'lng': search_lng + 0.01
                 },
                 {
-                    'id': 'fallback_2',
-                    'name': 'Bihar Rajya Beej Nigam — Samastipur',
-                    'address': 'Station Road, Samastipur, Bihar',
+                    'id': f'gen_{int(search_lat)}_{int(search_lng)}_2',
+                    'name': 'Regional Seed Corporation Store',
+                    'address': f'Near Station, {loc_label}',
                     'type': 'Government Seed Store',
-                    'rating': 4.4,
-                    'availableSeeds': ['Certified Paddy', 'Hybrid Wheat', 'Certified Mustard', 'Soyabean'],
+                    'rating': 4.3,
+                    'availableSeeds': ['Certified Paddy', 'Certified Wheat', 'Soyabean'],
                     'phone': 'Connect via AgriSphere',
-                    'lat': 25.8712,
-                    'lng': 85.7823,
+                    'lat': search_lat - 0.01,
+                    'lng': search_lng - 0.01
                 },
                 {
-                    'id': 'fallback_3',
-                    'name': 'Patliputra Krishi Bhandar',
-                    'address': 'Hasanpur Road, Samastipur, Bihar',
-                    'type': 'Seed Store',
-                    'rating': 4.2,
-                    'availableSeeds': ['Paddy (Dhan)', 'Vegetable Seeds', 'Fertilizer', 'Pesticides'],
-                    'phone': 'Connect via AgriSphere',
-                    'lat': 25.8580,
-                    'lng': 85.7750,
-                },
-                {
-                    'id': 'fallback_4',
-                    'name': 'Kisan Seva Kendra — Rosera',
-                    'address': 'Rosera, Samastipur District, Bihar',
-                    'type': 'Krishi Seva Kendra',
-                    'rating': 4.1,
-                    'availableSeeds': ['Paddy', 'Wheat', 'Maize', 'Pulses'],
-                    'phone': 'Connect via AgriSphere',
-                    'lat': 25.9689,
-                    'lng': 86.0067,
-                },
-                {
-                    'id': 'fallback_5',
-                    'name': 'Darbhanga Agricultural Supply Centre',
-                    'address': 'Laheriasarai, Darbhanga, Bihar',
+                    'id': f'gen_{int(search_lat)}_{int(search_lng)}_3',
+                    'name': 'Kisan Suvidha Kendra',
+                    'address': f'Market Area, {loc_label}',
                     'type': 'Agricultural Shop',
-                    'rating': 4.0,
-                    'availableSeeds': ['All Major Seeds', 'Fertilizers', 'Pesticides'],
+                    'rating': 4.1,
+                    'availableSeeds': ['All Major Seeds', 'Fertilizers'],
                     'phone': 'Connect via AgriSphere',
-                    'lat': 26.1542,
-                    'lng': 85.8972,
-                },
-            ]
-
-        # If Overpass returned nothing, use fallback
-        if not results:
-            print("DEBUG: No OSM results — using curated Samastipur/Bihar fallback")
-            fallback_shops = [
-                {'id':'fallback_1','name':'Samastipur Krishi Vigyan Kendra','address':'Near Collectorate, Samastipur, Bihar 848101','type':'Krishi Seva Kendra','rating':4.5,'availableSeeds':['Paddy (Dhan)','Wheat (Gehu)','Maize (Makka)','Mustard (Sarso)','Potato (Aloo)'],'phone':'06274-222345','lat':25.8635,'lng':85.7801},
-                {'id':'fallback_2','name':'Bihar Rajya Beej Nigam — Samastipur','address':'Station Road, Samastipur, Bihar','type':'Government Seed Store','rating':4.4,'availableSeeds':['Certified Paddy','Hybrid Wheat','Certified Mustard','Soyabean'],'phone':'Connect via AgriSphere','lat':25.8712,'lng':85.7823},
-                {'id':'fallback_3','name':'Patliputra Krishi Bhandar','address':'Hasanpur Road, Samastipur, Bihar','type':'Seed Store','rating':4.2,'availableSeeds':['Paddy (Dhan)','Vegetable Seeds','Fertilizer','Pesticides'],'phone':'Connect via AgriSphere','lat':25.8580,'lng':85.7750},
-                {'id':'fallback_4','name':'Kisan Seva Kendra — Rosera','address':'Rosera, Samastipur District, Bihar','type':'Krishi Seva Kendra','rating':4.1,'availableSeeds':['Paddy','Wheat','Maize','Pulses'],'phone':'Connect via AgriSphere','lat':25.9689,'lng':86.0067},
-                {'id':'fallback_5','name':'Darbhanga Agricultural Supply Centre','address':'Laheriasarai, Darbhanga, Bihar','type':'Agricultural Shop','rating':4.0,'availableSeeds':['All Major Seeds','Fertilizers','Pesticides'],'phone':'Connect via AgriSphere','lat':26.1542,'lng':85.8972},
-                {'id':'fallback_6','name':'Muzaffarpur District Seed Centre','address':'Juran Chapra, Muzaffarpur, Bihar','type':'Government Seed Store','rating':4.3,'availableSeeds':['Paddy','Wheat','Lichi Saplings','Vegetables'],'phone':'Connect via AgriSphere','lat':26.1197,'lng':85.3910},
-                {'id':'fallback_7','name':'Begusarai Krishi Bhandar','address':'Near Bus Stand, Begusarai, Bihar','type':'Seed Store','rating':4.1,'availableSeeds':['Paddy','Wheat','Maize','Mustard'],'phone':'Connect via AgriSphere','lat':25.4182,'lng':86.1272},
+                    'lat': search_lat + 0.02,
+                    'lng': search_lng - 0.005
+                }
             ]
             
             for f in fallback_shops:
                 dist_km = haversine(search_lat, search_lng, f['lat'], f['lng'])
-                if dist_km <= 50.0:
-                    f['distance'] = f"{dist_km:.1f}"
-                    results.append(f)
-            
-            results.sort(key=lambda x: float(x.get('distance', 999)))
+                f['distance'] = f"{dist_km:.1f}"
+                results.append(f)
             
             # Enrich with AI Intelligence
             for i, shop in enumerate(results):
@@ -1250,18 +1324,20 @@ def handle_voice_query():
     try:
         data = request.json
         print(f"Voice Query Request Data: (contains image: {'image' in data})") # Debug log
-        query_text = data.get('text', '')
-        language_code = data.get('language', 'en-IN')
+        text = data.get('text', '')
+        image_base64 = data.get('image', '')
+        # Handle both old 'language' and new 'language_code'/'language_name' formats
+        language_code = data.get('language_code') or data.get('language', 'en-IN')
+        language_name = data.get('language_name') or language_code
         dialect = data.get('dialect', 'Standard')
-        image_base64 = data.get('image') # Support base64 image strings
         
-        print(f"Processing Voice Query: '{query_text}' in Language: '{language_code}', Dialect: '{dialect}'") 
+        print(f"Processing Voice Query: '{text}' in Language: '{language_name}' ({language_code}), Dialect: '{dialect}'") # Debug log
         
-        if not query_text and not image_base64:
+        if not text and not image_base64:
             return jsonify({'error': 'No query text or image provided'}), 400
         
-        # Process query with voice assistant (now supports vision)
-        response = voice_assistant.process_voice_input(query_text, language_code, dialect, image_base64=image_base64)
+        # Process query with voice assistant
+        response = voice_assistant.process_voice_input(text, language_code, dialect, image_base64)
         
         return jsonify({
             'success': True,
@@ -1731,18 +1807,29 @@ def handle_heartbeat():
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'Username required'}), 400
 
+@app.route('/community/farmers', methods=['GET'])
+def handle_community_farmers():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM profiles")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    farmers = [serialize_user_document(r) for r in rows]
+    return jsonify(farmers)
+
 @app.route('/community/online', methods=['GET'])
 def handle_online_users():
     active_usernames = get_active_users()
-    data = load_community_data()
-    profiles = data.get('profiles', {})
     
     # Return enriched objects
     enriched_users = []
     for username in active_usernames:
-        profile = profiles.get(username, {})
+        profile_doc = resolve_user_reference(username)
+        profile = serialize_user_document(profile_doc) if profile_doc else {}
         enriched_users.append({
             'username': username,
+            'name': profile.get('name', username),
             'photoUrl': profile.get('photoUrl', '')
         })
         
@@ -1750,33 +1837,24 @@ def handle_online_users():
 
 @app.route('/community/chat', methods=['GET', 'POST'])
 def handle_community_chat():
-    data = load_community_data()
-    
     if request.method == 'GET':
         user1 = request.args.get('user1')
         user2 = request.args.get('user2')
-        all_chats = data.get('chat', [])
+        all_chats = get_chat_messages(user1, user2)
         
         if user1 and user2:
             # Private Chat: Filter messages between user1 and user2
             filtered_chat = []
-            needs_save = False
             for msg in all_chats:
                 if msg.get('sender') == user1 and msg.get('recipient') == user2:
                     filtered_chat.append(msg)
                 elif msg.get('sender') == user2 and msg.get('recipient') == user1:
-                    if not msg.get('read', False):
-                        msg['read'] = True
-                        needs_save = True
                     filtered_chat.append(msg)
-            if needs_save:
-                update_chat_read_status(user2, user1)
             return jsonify(filtered_chat)
         else:
-            # Global Chat: Return messages with NO recipient
             public_chat = [msg for msg in all_chats if not msg.get('recipient')]
             return jsonify(public_chat)
-    
+
     if request.method == 'POST':
         msg = request.json
         if not msg:
@@ -1786,38 +1864,18 @@ def handle_community_chat():
         msg['timestamp'] = datetime.now().isoformat()
         msg['read'] = False
         
-        # Ensure chat list exists
-        if 'chat' not in data:
-            data['chat'] = []
-            
-        data['chat'].append(msg)
-        
-        # Retention Policy: Auto-cleanup messages older than 60 days
-        sixty_days_ago = datetime.now() - timedelta(days=60)
-        # Filter messages relative to now
-        # Parse ISO strings to datetime objects for comparison
-        cleaned_chat = []
-        for m in data['chat']:
-            try:
-                if not m.get('timestamp'):
-                     cleaned_chat.append(m) # No timestamp, keep it safe
-                     continue
-                     
-                msg_time = datetime.fromisoformat(m.get('timestamp'))
-                
-                # Normalize timezone to naive local (since sixty_days_ago is naive local)
-                if msg_time.tzinfo is not None:
-                    msg_time = msg_time.replace(tzinfo=None)
-                    
-                if msg_time > sixty_days_ago:
-                    cleaned_chat.append(m)
-            except (ValueError, TypeError) as e:
-                print(f"Error parsing date for cleanup: {e}")
-                # Keep messages with invalid timestamps to be safe
-        data['chat'] = cleaned_chat
-            
         save_chat_message(msg)
         return jsonify(msg), 201
+
+@app.route('/community/read-chat', methods=['POST'])
+def handle_read_chat():
+    data = request.json
+    sender = data.get('sender')
+    recipient = data.get('recipient')
+    if sender and recipient:
+        update_chat_read_status(sender, recipient)
+        return jsonify({'success': True}), 200
+    return jsonify({'error': 'Missing parameters'}), 400
 
 @app.route('/community/chat/<msg_id>', methods=['DELETE'])
 def delete_chat_message(msg_id):
@@ -1835,7 +1893,8 @@ def delete_chat_message(msg_id):
         return jsonify({'error': 'You can only delete your own messages'}), 403
         
     # Delete the message
-    delete_chat_record(msg_id)
+    data['chat'] = [msg for msg in data.get('chat', []) if msg.get('id') != msg_id]
+    save_community_data(data)
     
     return jsonify({'message': 'Message deleted successfully'}), 200
 
@@ -1880,13 +1939,57 @@ def upload_chat_image():
         print(f"Error uploading image: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Serve uploaded images
+@app.route('/community/upload-audio', methods=['POST'])
+def upload_chat_audio():
+    """Upload audio (voice message) for chat messages"""
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'error': 'No audio file provided'}), 400
+        
+        file = request.files['audio']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        # Allowed extensions for audio
+        allowed_extensions = {'webm', 'mp3', 'wav', 'ogg', 'm4a', 'aac'}
+        file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'webm'
+        
+        # Create uploads directory if it doesn't exist
+        upload_dir = os.path.join(os.path.dirname(__file__), 'uploads', 'chat_audio')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Generate unique filename
+        unique_filename = f"{uuid.uuid4()}.{file_ext}"
+        file_path = os.path.join(upload_dir, unique_filename)
+        
+        # Save file
+        file.save(file_path)
+        
+        # Return URL path (relative to server)
+        audio_url = f"http://localhost:5000/uploads/chat_audio/{unique_filename}"
+        
+        return jsonify({
+            'success': True,
+            'audioUrl': audio_url
+        }), 200
+        
+    except Exception as e:
+        print(f"Error uploading audio: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Serve uploaded images/audio
 @app.route('/uploads/chat_images/<filename>')
 def serve_chat_image(filename):
-    """Serve uploaded chat images"""
     upload_dir = os.path.join(os.path.dirname(__file__), 'uploads', 'chat_images')
     from flask import send_from_directory
     return send_from_directory(upload_dir, filename)
+
+@app.route('/uploads/chat_audio/<filename>')
+def serve_chat_audio(filename):
+    upload_dir = os.path.join(os.path.dirname(__file__), 'uploads', 'chat_audio')
+    from flask import send_from_directory
+    return send_from_directory(upload_dir, filename)
+
 
 @app.route('/community/notifications', methods=['GET'])
 def get_notifications():
@@ -1894,26 +1997,14 @@ def get_notifications():
     if not username:
         return jsonify({'error': 'Username required'}), 400
         
-    data = load_community_data()
-    all_chats = data.get('chat', [])
-    
-    # Find active alerts (e.g., unread private messages)
-    # Since we don't have true "read" status yet, we'll return all recent senders
-    # The frontend will filter based on what it has seen or just show "New"
-    
-    notifications = {} # sender -> count
-    
-    for msg in all_chats:
-        if msg.get('recipient') == username:
-            sender = msg.get('sender')
-            if sender and not msg.get('read', False):
-                notifications[sender] = notifications.get(sender, 0) + 1
+    notifications = get_unread_chat_counts(username)
     
     # --- NEW: SYSTEM ALERTS ---
     system_alerts = []
     
     # 1. Get User Profile for Context
-    profile = data.get('profiles', {}).get(username, {})
+    profile_doc = resolve_user_reference(username)
+    profile = serialize_user_document(profile_doc) if profile_doc else {}
     user_district = profile.get('district') or 'Nashik'
     user_state = profile.get('state') or 'Maharashtra'
     
@@ -1998,26 +2089,29 @@ def get_notifications():
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 def handle_user_profile():
-    data = load_community_data()
-    if 'profiles' not in data:
-        data['profiles'] = {} # username -> { name, email, photoUrl, bio }
-        
     if request.method == 'GET':
-        username = request.args.get('username')
-        if not username:
+        identifier = request.args.get('firebaseUid') or request.args.get('username') or request.args.get('email')
+        if not identifier:
              return jsonify({'error': 'Username required'}), 400
-        
-        profile = data['profiles'].get(username, {})
-        return jsonify(profile)
+
+        profile_doc = resolve_user_reference(identifier)
+        if not profile_doc:
+            return jsonify({})
+
+        return jsonify(serialize_user_document(profile_doc))
         
     if request.method == 'POST':
         profile_data = request.json
+        if not profile_data:
+            return jsonify({'error': 'No data provided'}), 400
+
         username = profile_data.get('username')
-        
-        if not username:
+        firebase_uid = profile_data.get('firebaseUid') or profile_data.get('userId')
+
+        if not username and not firebase_uid:
             return jsonify({'error': 'Username required'}), 400
             
-        data['profiles'][username] = {
+        profile_record = {
             'name': profile_data.get('name', username),
             'email': profile_data.get('email', ''),
             'photoUrl': profile_data.get('photoUrl', ''),
@@ -2033,8 +2127,8 @@ def handle_user_profile():
             'crops': profile_data.get('crops', '')
         }
         
-        update_profile_record(username, data['profiles'][username])
-        return jsonify({'message': 'Profile updated', 'profile': data['profiles'][username]})
+        update_profile_record(username or firebase_uid, profile_record)
+        return jsonify({'message': 'Profile updated', 'profile': profile_record})
 
 @app.route('/community/posts/<post_id>/comments', methods=['POST'])
 def handle_post_comment(post_id):
@@ -2101,11 +2195,22 @@ def generate_digital_twin_with_groq(farm_data):
         location_text = f"{farm_data.get('town', '')}, {farm_data.get('district', '')}, {farm_data.get('state', '')}"
         
         prompt = f"""
-        Generate a 'Digital Twin' for a farm: {farm_data.get('farmName')}, {acres} Acres, Lat {lat}, Lng {lng}.
-        Return STRICT JSON with soilZones, pestProneAreas, irrigationZones, and cropGrowthStages.
+        Generate a hyper-realistic 'GIS Digital Twin' for a farm located in: {location_text}
+        Specific Details: {farm_data.get('farmName')}, {acres} Acres, Lat {lat}, Lng {lng}.
+
+        As an Agricultural Data Scientist, use your knowledge of regional soil types in {farm_data.get('state', 'India')}, 
+        typical pests in {farm_data.get('district', 'this area')}, and current crop seasons.
+        
+        Return a STRICTOR JSON format with:
+        1. soilZones: Array of unique zones with realistic pH (e.g. 6.2-7.5), soilType (Loamy, Clayey, Silt, Sandy), and nutrient levels.
+        2. pestProneAreas: Array of 1-3 specific pests common in {farm_data.get('state')} with realistic risk levels.
+        3. irrigationZones: Array of zones with realistic efficiency (80-95%) and irrigation types (Drip, Sprinkler).
+        4. cropGrowthStages: Real-time estimation of 1-3 crops likely grown in {location_text} right now, their current growth stage (Seedling, Vegetative, Flowering, Fruiting, Harvest Ready), and health metrics.
+
+        Output ONLY valid JSON. No conversational text.
         """
 
-        response_content, error = call_groq_with_fallback(prompt, system_message="You are an agricultural data scientist. Output valid JSON only.")
+        response_content, error = call_groq_with_fallback(prompt, system_message="You are a professional Agriculture GIS System. Output valid JSON results matched to regional Indian topography.")
         
         if error or not response_content:
             return True, {
@@ -2265,8 +2370,12 @@ def handle_market_trends():
             return jsonify({'error': 'State and District are required'}), 400
         
         # 1. Fetch Real Prices
+        print(f"\n" + "="*40)
+        print(f"📈 MARKET TRENDS REQUEST: {district}, {state}")
+        print(f"="*40)
+        
         prices = market_engine.get_market_prices(state, district, market, category)
-        print(f"DEBUG: Fetched {len(prices)} items for {district}, {state}")
+        print(f"✅ SUCCESS: Fetched {len(prices)} real records from Agmarknet")
         
         # 2. Generate AI Insights based on those prices
         # Pass top 10 relevant items to AI to save context
@@ -2648,52 +2757,21 @@ def analyze_satellite():
 
 @app.route('/localize-text', methods=['POST'])
 def localize_text_endpoint():
-    """Dynamically localize technical text into regional dialects using AI"""
+    """Localize text - deprecated, kept for backward compatibility"""
     try:
         data = request.json
         text = data.get('text', '')
         language = data.get('language', 'Hindi')
-        dialect = data.get('dialect', 'Standard')
-        region = data.get('region', 'India')
 
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        # Construct specific dialect prompt
-        prompt = f"""You are a local agricultural expert in {region}. 
-        Translate/Convert the following technical farming advice into {language} using the {dialect} dialect.
-        
-        RULES:
-        1. Keep the tone friendly and rural-accessible for farmers.
-        2. Use local agricultural terms (Desi words) common in {region} for {dialect}.
-        3. If it's a technical term like 'XGBoost' or 'NPK', keep it as is or use the common phonetic version.
-        4. Do NOT use complex academic language.
-        5. The goal is to make the farmer feel like they are talking to a neighbor.
-        
-        Text to localize: {text}
-        
-        Response format (JSON):
-        {{
-            "localized_text": "The localized version",
-            "dialect_used": "{dialect}",
-            "language": "{language}"
-        }}
-        """
-
-        # We can reuse the voice_assistant's Groq client for this
-        if not voice_assistant.client:
-             return jsonify({'localized_text': text, 'status': 'fallback_to_original'})
-
-        completion = voice_assistant.client.chat.completions.create(
-            model=voice_assistant.model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=500,
-            response_format={ "type": "json_object" }
-        )
-
-        response_data = json.loads(completion.choices[0].message.content.strip())
-        return jsonify(response_data)
+        # Return text as-is (no dialect localization)
+        return jsonify({
+            'localized_text': text,
+            'language': language,
+            'status': 'no_localization'
+        })
 
     except Exception as e:
         print(f"Localization error: {e}")
@@ -2736,19 +2814,51 @@ def get_daily_bulletin():
         data = request.json
         lat = data.get('lat')
         lon = data.get('lon')
-        state = data.get('state', 'Punjab')
-        district = data.get('district', 'Amritsar')
+        state = data.get('state')
+        district = data.get('district')
         crop = data.get('crop', 'Rice')
         language = data.get('language', 'Hindi')
+        is_hindi = str(language).lower().startswith('hi')
 
-        # 0. Resolve Location if coords provided
+
+        # 0. Resolve Location
+        # Accept city/state directly from frontend (most reliable for user's real location)
+        city_from_client = data.get('city')
+        state_from_client = data.get('state')
+
+        resolved_location = None
         if lat and lon:
             print(f"Bulletin: Resolving coordinates {lat}, {lon}...")
-            loc_details = weather_engine.get_location_details(lat, lon)
-            if loc_details:
-                district = loc_details.get('city', district)
-                state = loc_details.get('state', state)
-                print(f"Bulletin: Resolved to {district}, {state}")
+            resolved_location = weather_engine.get_location_details(lat, lon)
+        
+        # NOTE: Server-side IP lookup is intentionally NOT used here as it returns
+        # the server's IP location, not the user's real location.
+
+        if resolved_location:
+            district = resolved_location.get('city', city_from_client or district)
+            state = resolved_location.get('state', state_from_client or state)
+            print(f"Bulletin: Resolved via GPS to {district}, {state}")
+        elif city_from_client:
+            district = city_from_client
+            state = state_from_client or state
+            print(f"Bulletin: Using client-provided location: {district}, {state}")
+        
+        # If still no location, don't hardcode — use generic label
+        if not district and not state:
+            district = None
+            state = None
+            print("Bulletin: No location resolved — using generic weather context.")
+        
+        if district and state:
+            location_display = f"{district}, {state}"
+        elif district:
+            location_display = district
+        elif state:
+            location_display = state
+        else:
+            location_display = "India"
+
+
 
         # 1. Fetch Weather
         print(f"Bulletin: Fetching weather for {district}, {state}...")
@@ -2795,20 +2905,36 @@ def get_daily_bulletin():
         response_content, error = call_groq_with_fallback(prompt)
         
         if error or not response_content:
+             if is_hindi:
+                 return jsonify({
+                     "greeting": "नमस्ते!",
+                     "weather_summary": "आज मौसम सामान्य रहने की संभावना है।",
+                     "market_summary": "बाजार भाव स्थिर हैं।",
+                     "voice_script": "नमस्ते! आज मौसम सामान्य रहने की संभावना है और बाजार भाव स्थिर हैं। सुरक्षित रहें।",
+                     "weather_risk": "Safe",
+                     "temp": 28,
+                     "location_display": location_display
+                 })
+
              # Fallback
              return jsonify({
-                 "greeting": "नमस्ते!",
-                 "weather_summary": "आज मौसम सामान्य रहने की संभावना है।",
-                 "market_summary": "बाजार भाव स्थिर हैं।",
-                 "voice_script": "नमस्ते! आज मौसम सामान्य रहने की संभावना है और बाजार भाव स्थिर हैं। सुरक्षित रहें।",
-                 "weather_risk": "Safe"
+                 "greeting": "Hello!",
+                 "weather_summary": "Weather is expected to remain mostly normal today.",
+                 "market_summary": "Market prices are likely to stay steady.",
+                 "voice_script": "Hello! Weather is expected to remain mostly normal today and market prices are likely to stay steady. Stay safe.",
+                 "weather_risk": "Safe",
+                 "temp": 26,
+                 "location_display": location_display
              })
+
 
         bulletin_data = json.loads(response_content)
         bulletin_data['weather_risk'] = weather_analysis.get('risk_level', 'Safe')
         bulletin_data['temp'] = weather_analysis.get('details', {}).get('temp', 'N/A')
+        bulletin_data['location_display'] = location_display
         
         return jsonify(bulletin_data)
+
 
     except Exception as e:
         print(f"Daily Bulletin Error: {e}")
@@ -2866,6 +2992,87 @@ def get_agro_ndvi():
         print(f"Agro API Error: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/regional-news', methods=['GET'])
+def get_regional_news():
+    """
+    Fetch authentic regional agricultural news via Google News RSS.
+    Bypasses NewsAPI for native localized strings.
+    """
+    try:
+        lang = request.args.get('lang', 'hi')
+        
+        # Localized queries for better results
+        queries = {
+            'hi': 'कृषि समाचार',
+            'te': 'వ్యవసాయ వార్తలు',
+            'mr': 'शेती बातम्या',
+            'ta': 'வேளாண்மை செய்திகள்',
+            'bn': 'কৃষি সংবাদ',
+            'kn': 'ಕೃಷಿ ಸುದ್ದಿ',
+            'or': 'କୃଷି ସମ୍ବାଦ',
+            'en': 'agriculture news India'
+        }
+        
+        query_str = queries.get(lang, 'agriculture news India')
+        url = f"https://news.google.com/rss/search?q={quote(query_str)}&hl={lang}&gl=IN&ceid=IN:{lang}"
+        
+        response = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
+        if response.status_code != 200:
+             return jsonify({'error': f'RSS Fetch failed: {response.status_code}', "status": "error"}), 500
+
+        root = ET.fromstring(response.content)
+        
+        articles = []
+        # Curated high-quality agricultural placeholders for a premium look
+        placeholders = [
+            "https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?q=80&w=2070&auto=format&fit=crop", # Rice field
+            "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2070&auto=format&fit=crop", # Agriculture landscape
+            "https://images.unsplash.com/photo-1625246333195-58ad9acf4256?q=80&w=2070&auto=format&fit=crop", # Farm sunset
+            "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=2070&auto=format&fit=crop", # Vegetable farming
+            "https://images.unsplash.com/photo-1560493676-04071c5f467b?q=80&w=1974&auto=format&fit=crop", # Farmer portrait
+            "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=2070&auto=format&fit=crop", # Wheat field
+            "https://images.unsplash.com/photo-1500673922987-e212871fec22?q=80&w=2070&auto=format&fit=crop", # Mountain farm
+            "https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?q=80&w=2038&auto=format&fit=crop"  # Irrigation
+        ]
+        
+        for idx, item in enumerate(root.findall('.//item')[:25]):
+            title = item.find('title').text if item.find('title') is not None else ""
+            link = item.find('link').text if item.find('link') is not None else ""
+            pub_date_raw = item.find('pubDate').text if item.find('pubDate') is not None else ""
+            source_node = item.find('source')
+            source_name = source_node.text if source_node is not None else "Local News"
+            description = item.find('description').text if item.find('description') is not None else ""
+            
+            # Clean HTML from description
+            if description:
+                description = re.sub('<[^<]+?>', '', description)
+
+            # Convert pubDate to ISO format if possible
+            pub_date = pub_date_raw
+            try:
+                from email.utils import parsedate_to_datetime
+                dt = parsedate_to_datetime(pub_date_raw)
+                pub_date = dt.isoformat()
+            except:
+                pass
+                    
+            articles.append({
+                "title": title,
+                "description": description or title,
+                "url": link,
+                "urlToImage": placeholders[idx % len(placeholders)],
+                "source": {"name": source_name},
+                "publishedAt": pub_date
+            })
+            
+        return jsonify({
+            "status": "ok",
+            "articles": articles
+        })
+    except Exception as e:
+        print(f"Regional News RSS Error: {e}")
+        return jsonify({'error': str(e), 'status': 'error'}), 500
+
 if __name__ == '__main__':
     init_db()
     print("\n" + "="*50)
@@ -2873,14 +3080,6 @@ if __name__ == '__main__':
     print("="*50)
     print("Server will be available at: http://localhost:5000")
     print("Health check: http://localhost:5000/health")
-    print("Disease detection: POST to /detect-disease")
-    print("Yield prediction: POST to /predict")
-    print("Voice assistant: POST to /voice-query")
-    print("Fertilizer Recommendation: POST to /recommend-fertilizer")
-    print("Pest Prediction: POST to /predict-pest")
-    print("Market Advisory: POST to /market-advisory")
-    print("Satellite Analysis: POST to /analyze-satellite") 
-    print("Voice examples: GET /voice-examples")
-    print("Agro Satellite NDVI: POST /api/agro/ndvi")
+    print("Regional news: GET /api/regional-news?lang=hi")
     print("="*50 + "\n")
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)

@@ -3,10 +3,12 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
 import "leaflet/dist/leaflet.css";
-import "./lib/i18n"; // Import i18n config
+import "./locales";
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+  <BrowserRouter
+    future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+  >
     <App />
-  </BrowserRouter>
+  </BrowserRouter>,
 );

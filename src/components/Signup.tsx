@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/store/authStore';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Mail, Lock, User, ArrowRight, Sparkles, Phone, MapPin, ArrowLeft } from 'lucide-react';
+import { Loader2, Mail, Lock, User, ArrowRight, Sparkles, Phone, MapPin, ArrowLeft, Landmark } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -125,6 +125,21 @@ const Signup = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-white">I am a Buyer</h3>
                         <p className="text-sm text-slate-400">I want to purchase crops from farmers.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => { setRole('government'); setStep(2); }}
+                    className="p-6 border-2 border-slate-700 bg-slate-900/50 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-900/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-900/30 rounded-full text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                        <Landmark className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Government Official</h3>
+                        <p className="text-sm text-slate-400">I manage policies and regional data.</p>
                       </div>
                     </div>
                   </div>

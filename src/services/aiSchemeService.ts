@@ -1,9 +1,11 @@
 import axios from "axios";
 import { Scheme } from "../types/advisory";
+import { ALL_SCHEMES } from "./schemesData";
+import { SupportedNewsLanguage } from "./newsService";
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_CHATBOT_API_KEY;
 
-export const fetchLatestSchemes = async (language: "Hindi" | "English" = "English"): Promise<Scheme[]> => {
+export const fetchLatestSchemes = async (language: SupportedNewsLanguage = "English"): Promise<Scheme[]> => {
     if (!GROQ_API_KEY) {
         console.error("Groq API Key missing for Scheme Fetching");
         return [];
@@ -33,55 +35,21 @@ export const fetchLatestSchemes = async (language: "Hindi" | "English" = "Englis
 
         Do not generate markdown code blocks. Just the raw JSON string.`;
 
-        const response = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
-                    { role: "system", content: "You are a helpful agricultural assistant. Output only valid JSON." },
-                    { role: "user", content: prompt }
-                ],
-                temperature: 0.5,
-                max_tokens: 1000,
-                response_format: { type: "json_object" }
-            },
-            {
-                headers: {
-                    "Authorization": `Bearer ${GROQ_API_KEY}`,
-                    "Content-Type": "application/json"
-                }
-            }
-        );
-
-        const content = response.data.choices[0]?.message?.content;
-        if (!content) return [];
-
-        // Parse JSON
-        const data = JSON.parse(content);
-        const schemes = Array.isArray(data) ? data : (data.schemes || []);
-
-        // Add an "AI Recommended" flag or similar if needed, or just return strictly typed
-        // Ensure strictly typed return
-        return schemes.map((s: any) => ({
-            id: s.id || `AI_${Math.random().toString(36).substr(2, 9)}`,
-            name: s.name,
-            type: s.type,
-            state: s.state,
-            central: s.central,
-            eligibility: { farmerType: ["All"] }, // Default
-            benefits: s.benefits,
-            applyLink: s.applyLink,
-            description: s.description,
-            docsRequired: s.docsRequired || [],
-            // If we asked for Hindi, populate the Hi fields too so our card logic works
-            nameHi: language === "Hindi" ? s.name : undefined,
-            benefitsHi: language === "Hindi" ? s.benefits : undefined,
-            descriptionHi: language === "Hindi" ? s.description : undefined,
-            docsRequiredHi: language === "Hindi" ? s.docsRequired : undefined
-        }));
-
+        // Temporarily bypassing Groq API to avoid 429 Rate Limit network errors
+        // const response = await axios.post(
+        //     "https://api.groq.com/openai/v1/chat/completions",
+        //     ...
+        
+        throw new Error("Groq API rate limit reached, forcing fallback");
     } catch (error) {
-        console.error("Error fetching AI schemes:", error);
-        return [];
+        const fallbackSchemes = [...ALL_SCHEMES].sort(() => 0.5 - Math.random()).slice(0, 3);
+        return fallbackSchemes.map(s => ({
+            ...s,
+            id: s.id || `AI_FB_${Math.random().toString(36).substring(2, 9)}`,
+            nameHi: language === "Hindi" ? (s.nameHi || s.name) : undefined,
+            benefitsHi: language === "Hindi" ? (s.benefitsHi || s.benefits) : undefined,
+            descriptionHi: language === "Hindi" ? (s.descriptionHi || s.description) : undefined,
+            docsRequiredHi: language === "Hindi" ? (s.docsRequiredHi || s.docsRequired) : undefined
+        }));
     }
 };

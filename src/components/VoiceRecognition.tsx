@@ -1,61 +1,79 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Mic, MicOff, Volume2, Languages } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { chatWithAI, translateToHindi } from '@/lib/openai';
-import { mockChatWithAI } from '@/lib/mockAI';
-import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
-import { speakText, stopSpeech } from '@/services/voiceService';
-import { useDialect } from '@/lib/use-dialect';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
+import { Mic, MicOff, Volume2, Languages } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { chatWithAI, translateToHindi } from "@/lib/openai";
+import { mockChatWithAI } from "@/lib/mockAI";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { speakText, stopSpeech } from "@/services/voiceService";
+
+const languages = [
+  { code: "hi-IN", name: "Hindi (हिंदी)", flag: "🇮🇳" },
+  { code: "en-IN", name: "English (India)", flag: "🇮🇳" },
+
+  // Northeast Official Languages
+  { code: "as-IN", name: "Assamese (অসমীয়া)", flag: "AS" },
+  { code: "bn-IN", name: "Bengali (Bangla)", flag: "TR" },
+  { code: "brx-IN", name: "Bodo", flag: "AS" },
+  { code: "mni-IN", name: "Meitei (Manipuri)", flag: "MN" },
+  { code: "kok-IN", name: "Kokborok (Tripuri)", flag: "TR" },
+  { code: "lus-IN", name: "Mizo", flag: "MZ" },
+  { code: "ne-IN", name: "Nepali", flag: "SK" },
+
+  // Tribal & Regional Languages
+  { code: "kh-IN", name: "Khasi", flag: "ML" },
+  { code: "grt-IN", name: "Garo", flag: "ML" },
+  { code: "nj-IN", name: "Nagamese", flag: "NL" },
+  { code: "ao-IN", name: "Ao Naga", flag: "NL" },
+  { code: "ang-IN", name: "Angami Naga", flag: "NL" },
+];
 
 const VoiceRecognition = () => {
   const { t, i18n } = useTranslation();
-  const { dialect } = useDialect();
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [response, setResponse] = useState('');
-  const [hindiResponse, setHindiResponse] = useState('');
+  const [transcript, setTranscript] = useState("");
+  const [response, setResponse] = useState("");
+  const [hindiResponse, setHindiResponse] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
+  const [selectedLanguage, setSelectedLanguage] = useState("hi-IN");
+  const [dialect, setDialect] = useState("Standard");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const recognition = useRef<any>(null);
   const utteranceRef = useRef<any>(null);
+  const isActuallyListening = useRef(false);
 
-  const languages = [
-    { code: 'hi-IN', name: 'Hindi (हिंदी)', flag: '🇮🇳' },
-    { code: 'en-IN', name: 'English (India)', flag: '🇮🇳' },
-
-    // Northeast Official Languages
-    { code: 'as-IN', name: 'Assamese (অसमীয়া)', flag: 'AS' },
-    { code: 'bn-IN', name: 'Bengali (Bangla)', flag: 'TR' },
-    { code: 'brx-IN', name: 'Bodo', flag: 'AS' },
-    { code: 'mni-IN', name: 'Meitei (Manipuri)', flag: 'MN' },
-    { code: 'kok-IN', name: 'Kokborok (Tripuri)', flag: 'TR' },
-    { code: 'lus-IN', name: 'Mizo', flag: 'MZ' },
-    { code: 'ne-IN', name: 'Nepali', flag: 'SK' },
-
-    // Tribal & Regional Languages
-    { code: 'kh-IN', name: 'Khasi', flag: 'ML' },
-    { code: 'grt-IN', name: 'Garo', flag: 'ML' },
-    { code: 'nj-IN', name: 'Nagamese', flag: 'NL' },
-    { code: 'ao-IN', name: 'Ao Naga', flag: 'NL' },
-    { code: 'ang-IN', name: 'Angami Naga', flag: 'NL' },
-  ];
 
   const [isSupported, setIsSupported] = useState(true);
 
+  const speakResponse = useCallback(
+    (text: string) => {
+      const lang = selectedLanguage || "hi-IN";
+      speakText(text, lang, () => {
+        setIsSpeaking(false);
+      });
+      setIsSpeaking(true);
+    },
+    [selectedLanguage],
+  );
+
   useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).webkitSpeechRecognition ||
+        (window as any).SpeechRecognition;
       recognition.current = new SpeechRecognition();
       recognition.current.continuous = false;
       recognition.current.interimResults = false;
       // Use Hindi or English as fallback acoustic model for tribal languages
-      recognition.current.lang = ['hi-IN', 'en-IN', 'bn-IN'].includes(selectedLanguage) ? selectedLanguage : 'en-IN';
+      recognition.current.lang = ["hi-IN", "en-IN", "bn-IN"].includes(
+        selectedLanguage,
+      )
+        ? selectedLanguage
+        : "en-IN";
 
       recognition.current.onresult = async (event: any) => {
         const spokenText = event.results[0][0].transcript;
@@ -70,25 +88,26 @@ const VoiceRecognition = () => {
 
         try {
           // Find full language name for better AI context
-          const langObj = languages.find(l => l.code === selectedLanguage);
+          const langObj = languages.find((l) => l.code === selectedLanguage);
           const languageName = langObj ? langObj.name : selectedLanguage;
 
           // Use improved voice assistant backend
-          const response = await fetch('http://localhost:5000/voice-query', {
-            method: 'POST',
+          const response = await fetch("http://localhost:5000/voice-query", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               text: spokenText,
-              language: languageName, // Send full name for AI context
-              dialect: dialect,       // Send current dialect
-              image: selectedImage ? selectedImage.split(',')[1] : null // Send only the base64 part
-            })
+              language_code: selectedLanguage, // Send ISO code for logic
+              language_name: languageName,     // Send full name for AI context
+              dialect: dialect, // Send current dialect
+              image: selectedImage ? selectedImage.split(",")[1] : null, // Send only the base64 part
+            }),
           });
 
-          let aiResponse = '';
-          let hindiTranslation = '';
+          let aiResponse = "";
+          let hindiTranslation = "";
 
           if (response.ok) {
             const data = await response.json();
@@ -106,90 +125,107 @@ const VoiceRecognition = () => {
           // Speak the response
           speakResponse(hindiTranslation); // Speak the audio_text version
         } catch (error) {
-          console.error('Voice processing error:', error);
+          console.error("Voice processing error:", error);
           /* Added toast for user feedback */
-          toast.error("Failed to process voice command. Please try again.");
-          setResponse('Sorry, I encountered an error processing your request.');
-          setHindiResponse('क्षमा करें, मुझे आपके अनुरोध को प्रोसेस करने में त्रुटि हुई।');
+          toast.error(t("voiceAssistant.demo.processError"));
+          setResponse(t("voiceAssistant.demo.processErrorResponse"));
+          setHindiResponse(t("voiceAssistant.demo.processErrorHindi"));
         } finally {
           setIsProcessing(false);
         }
       };
 
       recognition.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+        console.error("Speech recognition error:", event.error);
         setIsListening(false);
         setIsProcessing(false);
-        if (event.error === 'not-allowed') {
-          toast.error("Microphone access denied. Please allow microphone permissions.");
-        } else if (event.error === 'no-speech') {
-          toast.info("No speech detected. Please try again.");
+        if (event.error === "not-allowed") {
+          toast.error(t("voiceAssistant.demo.micDenied"));
+        } else if (event.error === "no-speech") {
+          toast.info(t("voiceAssistant.demo.noSpeech"));
         } else {
-          toast.error(`Voice error: ${event.error}`);
+          toast.error(
+            t("voiceAssistant.demo.voiceError", { error: event.error }),
+          );
         }
       };
 
       recognition.current.onend = () => {
         setIsListening(false);
+        isActuallyListening.current = false;
       };
 
       recognition.current.onstart = () => {
-        console.log('Speech recognition started');
-        toast.success("Listening... Speak now!");
+        console.log("Speech recognition started");
+        setIsListening(true);
+        isActuallyListening.current = true;
+        toast.success(t("voiceAssistant.demo.listeningNow"));
       };
     } else {
       setIsSupported(false);
-      toast.error("Voice recognition not supported in this browser.");
+      toast.error(t("voiceAssistant.demo.notSupported"));
     }
 
     // Cleanup
     return () => {
       if (recognition.current) {
-        recognition.current.stop();
+        try {
+          recognition.current.stop();
+          isActuallyListening.current = false;
+        } catch (e) {
+          // Ignore
+        }
       }
     };
-  }, [selectedLanguage]);
+  }, [selectedLanguage, dialect, selectedImage, t, speakResponse]);
 
   const startListening = () => {
     if (!isSupported) {
-      toast.error("Voice recognition is not supported in this browser. Try Chrome.");
+      toast.error(t("voiceAssistant.demo.notSupportedChrome"));
       return;
     }
-    if (recognition.current && !isListening) {
-      setTranscript('');
-      setResponse('');
-      setHindiResponse('');
+    if (recognition.current && !isListening && !isActuallyListening.current) {
+      setTranscript("");
+      setResponse("");
+      setHindiResponse("");
       setIsListening(true);
+      isActuallyListening.current = true;
       // Fallback logic repeated here
-      recognition.current.lang = ['hi-IN', 'en-IN', 'bn-IN'].includes(selectedLanguage) ? selectedLanguage : 'en-IN';
+      recognition.current.lang = ["hi-IN", "en-IN", "bn-IN"].includes(
+        selectedLanguage,
+      )
+        ? selectedLanguage
+        : "en-IN";
       try {
         recognition.current.start();
       } catch (error) {
-        console.error('Speech recognition start error:', error);
-        toast.error("Could not start microphone.");
-        setIsListening(false);
+        console.error("Speech recognition start error:", error);
+        if (error instanceof Error && error.name === 'InvalidStateError') {
+          // Already started, just sync
+          setIsListening(true);
+          isActuallyListening.current = true;
+        } else {
+          toast.error(t("voiceAssistant.demo.couldNotStartMic"));
+          setIsListening(false);
+          isActuallyListening.current = false;
+        }
       }
     }
   };
 
   const stopListening = () => {
-    if (recognition.current && isListening) {
+    if (recognition.current && (isListening || isActuallyListening.current)) {
       try {
         recognition.current.stop();
       } catch (error) {
-        console.error('Speech recognition stop error:', error);
+        console.error("Speech recognition stop error:", error);
       }
       setIsListening(false);
+      isActuallyListening.current = false;
     }
   };
 
-  const speakResponse = (text: string) => {
-    const lang = selectedLanguage || 'hi-IN';
-    speakText(text, lang, () => {
-      setIsSpeaking(false);
-    });
-    setIsSpeaking(true);
-  };
+
 
   const stopSpeaking = () => {
     stopSpeech();
@@ -197,7 +233,7 @@ const VoiceRecognition = () => {
   };
 
   const pauseResumeSpeaking = () => {
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
       if (isSpeaking) {
         if (speechSynthesis.speaking && !speechSynthesis.paused) {
           speechSynthesis.pause();
@@ -209,10 +245,16 @@ const VoiceRecognition = () => {
   };
 
   const exampleQuestions = [
-    { hindi: "गेहूं में रोग आ गया है, क्या करें?", english: "Wheat has disease, what to do?" },
+    {
+      hindi: "गेहूं में रोग आ गया है, क्या करें?",
+      english: "Wheat has disease, what to do?",
+    },
     { hindi: "आज पानी देना चाहिए?", english: "Should I water today?" },
     { hindi: "फसल कब काटनी चाहिए?", english: "When should I harvest?" },
-    { hindi: "खाद कितनी डालनी चाहिए?", english: "How much fertilizer to apply?" }
+    {
+      hindi: "खाद कितनी डालनी चाहिए?",
+      english: "How much fertilizer to apply?",
+    },
   ];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,7 +280,7 @@ const VoiceRecognition = () => {
       <Card className="p-4">
         <h3 className="font-bold mb-3 flex items-center gap-2">
           <Languages className="w-5 h-5" />
-          {t('voiceAssistant.demo.selectLang')}
+          {t("voiceAssistant.demo.selectLang")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {languages.map((lang) => (
@@ -247,12 +289,32 @@ const VoiceRecognition = () => {
               variant={selectedLanguage === lang.code ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedLanguage(lang.code)}
-              className="justify-start"
+              className="justify-start transition-all duration-300 hover:scale-[1.02]"
             >
-              <span className="mr-2">{lang.flag}</span>
+              <span className="mr-2 text-base">{lang.flag}</span>
               {lang.name}
             </Button>
           ))}
+        </div>
+
+        {/* Dialect Selection */}
+        <div className="mt-6 pt-4 border-t border-primary/10">
+          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-3 px-1">
+            {t("voiceAssistant.demo.regionalDialect", "Regional Dialect")}
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {[ "Standard", "Awadhi", "Braj", "Malwai", "Deswali", "Haryanvi" ].map((d) => (
+              <Button
+                key={d}
+                variant={dialect === d ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setDialect(d)}
+                className={`h-8 text-xs ${dialect === d ? "bg-primary/20 text-primary hover:bg-primary/30" : "text-muted-foreground"}`}
+              >
+                {d}
+              </Button>
+            ))}
+          </div>
         </div>
       </Card>
 
@@ -294,7 +356,7 @@ const VoiceRecognition = () => {
           </div>
 
           <motion.div
-            className={`w-32 h-32 rounded-full flex items-center justify-center relative ${isListening ? 'bg-red-500 animate-pulse' : 'bg-primary'
+            className={`w-32 h-32 mx-auto rounded-full flex items-center justify-center ${isListening ? 'bg-red-500 animate-pulse' : 'bg-primary'
               }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -303,7 +365,7 @@ const VoiceRecognition = () => {
               size="lg"
               onClick={isListening ? stopListening : startListening}
               disabled={isProcessing}
-              className={`w-24 h-24 rounded-full transition-all duration-300 z-10 ${isListening ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-primary hover:bg-primary/90'
+              className={`w-24 h-24 rounded-full transition-all duration-300 ${isListening ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-primary hover:bg-primary/90'
                 }`}
             >
               {isListening ? (
@@ -316,10 +378,14 @@ const VoiceRecognition = () => {
 
           <div className="space-y-1">
             <p className="text-lg font-semibold">
-              {isListening ? t('voiceAssistant.demo.listening') : t('voiceAssistant.demo.pressToSpeak')}
+              {isListening
+                ? t("voiceAssistant.demo.listening")
+                : t("voiceAssistant.demo.pressToSpeak")}
             </p>
             {isProcessing && (
-              <p className="text-muted-foreground animate-pulse font-medium">{t('voiceAssistant.demo.processing')}</p>
+              <p className="text-muted-foreground animate-pulse font-medium">
+                {t("voiceAssistant.demo.processing")}
+              </p>
             )}
           </div>
         </div>
@@ -335,7 +401,7 @@ const VoiceRecognition = () => {
           <Card className="p-4">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
               <Mic className="w-4 h-4" />
-              {t('voiceAssistant.demo.youSaid')}
+              {t("voiceAssistant.demo.youSaid")}
             </h4>
             <p className="text-muted-foreground">{transcript}</p>
           </Card>
@@ -344,7 +410,7 @@ const VoiceRecognition = () => {
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-semibold flex items-center gap-2">
-                  {t('voiceAssistant.demo.aiResponse')}
+                  {t("voiceAssistant.demo.aiResponse")}
                 </h4>
                 <div className="flex gap-2">
                   {isSpeaking ? (
@@ -354,7 +420,7 @@ const VoiceRecognition = () => {
                         variant="outline"
                         onClick={pauseResumeSpeaking}
                       >
-                        {speechSynthesis.paused ? '▶️' : '⏸️'}
+                        {speechSynthesis.paused ? "▶️" : "⏸️"}
                       </Button>
                       <Button
                         size="sm"
@@ -376,16 +442,20 @@ const VoiceRecognition = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <p className="text-primary font-medium text-lg leading-relaxed">{response}</p>
+                <p className="text-primary font-medium text-lg leading-relaxed">
+                  {response}
+                </p>
               </div>
             </Card>
           )}
-        </motion.div >
+        </motion.div>
       )}
 
       {/* Example Questions */}
       <Card className="p-4">
-        <h4 className="font-semibold mb-3">{t('voiceAssistant.demo.exampleQuestionsTitle')}</h4>
+        <h4 className="font-semibold mb-3">
+          {t("voiceAssistant.demo.exampleQuestionsTitle")}
+        </h4>
         <div className="grid gap-2">
           {exampleQuestions.map((q, i) => (
             <div key={i} className="space-y-2">
@@ -399,20 +469,23 @@ const VoiceRecognition = () => {
                   setTimeout(async () => {
                     try {
                       // Use improved voice assistant backend
-                      const response = await fetch('http://localhost:5000/voice-query', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
+                      const response = await fetch(
+                        "http://localhost:5000/voice-query",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            text: q.hindi,
+                            language_code: "hi-IN", // Examples are in Hindi
+                            language_name: "Hindi (हिंदी)",
+                          }),
                         },
-                        body: JSON.stringify({
-                          text: q.hindi,
-                          language: 'hi-IN', // Examples are in Hindi
-                          dialect: dialect
-                        })
-                      });
+                      );
 
-                      let aiResponse = '';
-                      let hindiTranslation = '';
+                      let aiResponse = "";
+                      let hindiTranslation = "";
 
                       if (response.ok) {
                         const data = await response.json();
@@ -428,9 +501,9 @@ const VoiceRecognition = () => {
                       setHindiResponse(hindiTranslation);
                       speakResponse(aiResponse);
                     } catch (error) {
-                      console.error('Voice query error:', error);
-                      setResponse('Sorry, I encountered an error.');
-                      setHindiResponse('क्षमा करें, मुझे त्रुटि हुई।');
+                      console.error("Voice query error:", error);
+                      setResponse("Sorry, I encountered an error.");
+                      setHindiResponse("क्षमा करें, मुझे त्रुटि हुई।");
                     } finally {
                       setIsProcessing(false);
                     }
@@ -450,13 +523,9 @@ const VoiceRecognition = () => {
                     variant="outline"
                     onClick={pauseResumeSpeaking}
                   >
-                    {speechSynthesis.paused ? '▶️' : '⏸️'}
+                    {speechSynthesis.paused ? "▶️" : "⏸️"}
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={stopSpeaking}
-                  >
+                  <Button size="sm" variant="outline" onClick={stopSpeaking}>
                     ⏹️
                   </Button>
                 </div>
@@ -468,10 +537,13 @@ const VoiceRecognition = () => {
 
       {/* Browser Support Note */}
       <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-        <p><strong>{t('voiceAssistant.demo.noteTitle')}:</strong> {t('voiceAssistant.demo.noteDesc')}</p>
-        <p>{t('voiceAssistant.demo.noteHindiDesc')}</p>
+        <p>
+          <strong>{t("voiceAssistant.demo.noteTitle")}:</strong>{" "}
+          {t("voiceAssistant.demo.noteDesc")}
+        </p>
+        <p>{t("voiceAssistant.demo.noteHindiDesc")}</p>
       </div>
-    </div >
+    </div>
   );
 };
 

@@ -1,5 +1,4 @@
 {
-  "translation": {
     "nav": {
       "home": "Home",
       "marketplace": "Marketplace",
@@ -18,7 +17,8 @@
       "getStarted": "Get Started",
       "logout": "Logout",
       "saveProfile": "Save Profile",
-      "aiTools": "Smart Farming Tools"
+      "aiTools": "Smart Farming Tools",
+      "dashboard": "Dashboard"
     },
     "home": {
       "heroTitle1": "India's First",
@@ -213,6 +213,15 @@
         "t11": "Data security"
       },
       "learnMore": "Learn more",
+      "bulletin": {
+        "todayUpdate": "Today's Update",
+        "highAlert": "High Alert",
+        "weather": "Weather",
+        "marketplace": "Marketplace",
+        "generating": "Generating your daily bulletin...",
+        "playBulletin": "Play Bulletin",
+        "stopAudio": "Stop Audio"
+      },
       "footer": {
         "tagline": "Empowering farmers with AI and GIS technology for sustainable, profitable agriculture.",
         "col1": "Features",
@@ -327,7 +336,14 @@
       "issues": "Issues",
       "diseasesCount": "Monitored Diseases",
       "pestsCount": "Active Pest Threats",
-      "viewSummary": "View Quick Summary"
+      "viewSummary": "View Quick Summary",
+      "status": {
+        "excellent": "Excellent",
+        "good": "Good",
+        "fair": "Fair",
+        "poor": "Poor",
+        "critical": "Critical"
+      }
     },
     "marketplace": {
       "title": "Smart Marketplace & Advisory",
@@ -394,10 +410,12 @@
           "bestValue": "Best value for your region in",
           "sellHere": "Sell My Produce Here"
         },
-        "selectDistrict": "Select District"
+        "selectDistrict": "Select District",
+        "district": "District"
       },
       "trends": {
         "title": "AI Market Insights",
+        "subtitle": "Real-time trends and mandi pricing analysis for your location.",
         "livePrices": "Live Mandi Prices",
         "forecast": "Price Forecast",
         "updated": "Market Data Updated",
@@ -649,11 +667,53 @@
       "title": "Kisan Sarathi Community",
       "subtitle": "Connect with fellow farmers, share knowledge, and grow together.",
       "searchPlaceholder": "Search discussions, questions, or experts...",
+      "searchFarmers": "Search farmers or villages...",
       "askBtn": "Ask a Question",
+      "askQuery": "Query Hub",
+      "querySubtitle": "Ask questions and get answers from the global farming community.",
+      "startConversation": "Knowledge Sharing",
+      "joinTopics": "Join active discussions or start a new query to get expert help.",
+      "findPeers": "Find Expert Farmers",
+      "trendingNow": "Trending Farmers",
+      "myStats": "My Contributions",
+      "reputation": "Community Standing",
+      "helpfulTags": "Helpful Solutions",
+      "voiceMessage": "Voice Message",
+      "recording": "Recording...",
+      "stopRecording": "Stop",
+      "sendVoice": "Send Voice",
+      "typeMessage": "Type your doubt here...",
+      "globalChatTitle": "Global Farmer Chat",
+      "globalChatSubtitle": "Live discussion room for all registered members.",
+      "feedTitle": "Community Farmers",
+      "feedSubtitle": "Registered farmers from the database are listed here.",
+      "farmersCount_one": "{{count}} farmer",
+      "farmersCount_other": "{{count}} farmers",
+      "loadingFarmers": "Loading registered farmers...",
+      "noFarmers": "No farmers are registered yet.",
+      "demoRating": "demo rating",
+      "messageButton": "Message",
+      "whatsappTab": "WhatsApp",
+      "chatTitle": "WhatsApp Chat",
+      "chatSubtitle": "Select a farmer from the right column to start chatting.",
+      "activeChatBadge": "Active chat",
+      "selectFarmerChat": "Select a farmer to chat",
+      "chatHint": "Your conversation will appear here and messages will be saved automatically.",
+      "loadingChatHistory": "Loading chat history...",
+      "noMessagesYet": "No messages yet. Start the conversation.",
+      "farmersPanelTitle": "Farmers",
+      "farmersPanelSubtitle": "Select a farmer to open the individual conversation.",
+      "messagePlaceholder": "Message {{name}}",
+      "retry": "Retry",
+      "messageToastTitle": "Message",
+      "messageToastDesc": "Opening chat with {{name}}.",
+      "sendError": "Error occurred while sending message. Retry.",
       "tabs": {
-        "feed": "Community Feed",
+        "feed": "Query Hub",
         "experts": "Expert Advice",
-        "myPosts": "My Activity"
+        "myPosts": "My Activity",
+        "directory": "Farmer Directory",
+        "messages": "Global Chat"
       },
       "stats": {
         "members": "Members",
@@ -670,12 +730,213 @@
       "noReplies": "No replies yet. Be the first!",
       "translatingToast": "AI is translating this post...",
       "aiTranslating": "AI is translating this post.",
+      "translatedLocally": "Message translated successfully.",
+      "postTranslated": "Post translated successfully.",
+      "translationFailed": "Translation failed.",
+      "postTranslateFailed": "Failed to translate post.",
       "translatePost": "Translate Post",
       "deleteMessage": "Delete Message",
       "errorPost": "Failed to post question",
       "errorSend": "Failed to send message"
     },
+    "imageAnalysis": {
+      "title": "Image Analysis",
+      "diseaseDetection": "Disease Detection",
+      "soilAnalysis": "Soil Analysis",
+      "pestIdentification": "Pest Identification",
+      "uploadImage": "Upload Image",
+      "uploadPlantImage": "Upload Plant Image",
+      "supportImages": "Support for leaf, stem, fruit, and soil images",
+      "chooseImage": "Choose Image",
+      "analyze": "Analyze",
+      "analyzeWithAI": "Analyze with AI",
+      "analyzing": "Analyzing...",
+      "translating": "Translating...",
+      "analysisProgress": "AI Analysis Progress",
+      "translationProgress": "AI Translation Progress",
+      "localizingResults": "Localizing results for your region...",
+      "processingModels": "Processing with multiple AI models...",
+      "analysisComplete": "Analysis Complete",
+      "identifiedIssue": "Identified Issue",
+      "severity": "Severity",
+      "confidence": "Confidence",
+      "treatment": "Treatment",
+      "prevention": "Prevention",
+      "note": "Note",
+      "demoNote": "This is a demo using OpenAI's vision model. For production, you would use specialized agricultural AI models trained on crop disease datasets.",
+      "analysisFailed": "Failed to analyze image. Using demo analysis.",
+      "overallPlantHealth": "Overall Plant Health",
+      "resultSaved": "Result saved for offline access!",
+      "explainingAnalysis": "Explaining analysis in your language...",
+      "explainHindi": "Parinam Samjhayein",
+      "explainResults": "Explain Results",
+      "stopHindi": "Rokein",
+      "healthStatus": "Health Status",
+      "imageAnalysis": "Image Analysis",
+      "plantPart": "Plant Part",
+      "quality": "Quality",
+      "processingTime": "Processing Time",
+      "priorityRecommendations": "Priority Recommendations",
+      "diseasesTab": "Diseases",
+      "pestsTab": "Pests",
+      "nutrientsTab": "Nutrients",
+      "soilTab": "Soil Analysis",
+      "noDiseasesDetected": "No diseases detected. Plant appears healthy!",
+      "noPestsDetected": "No pests detected. Plant is pest-free!",
+      "noNutrientsDetected": "No nutrient deficiencies detected. Nutrition levels are adequate!",
+      "soilAnalysisResults": "Soil Analysis Results",
+      "soilTexture": "Soil Texture",
+      "phLevel": "pH Level",
+      "fertility": "Fertility",
+      "symptoms": "Symptoms",
+      "preventiveMeasures": "Preventive Measures",
+      "economicImpact": "Economic Impact"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "new": "New",
+      "markAll": "Mark all read",
+      "clearAll": "Clear all",
+      "empty": "No new notifications.",
+      "test": "Test Notification"
+    },
+    "voiceAssistant": {
+      "hero": {
+        "title": "Voice Assistant for Farmers",
+        "desc": "Speak naturally in Hindi or your local language. Get instant AI-powered agricultural advice with voice responses designed for rural farmers.",
+        "startBtn": "Start Speaking",
+        "chooseLangBtn": "Choose Language"
+      },
+      "features": {
+        "sectionTitle": "Voice Assistant Features",
+        "f1": {
+          "title": "Hindi Voice Recognition",
+          "desc": "Speak naturally in Hindi and get instant responses",
+          "example": "Gehun mein rog a gaya hai, kya karein?",
+          "response": "Wheat disease detected. Apply fungicide spray."
+        },
+        "f2": {
+          "title": "Local Language Support",
+          "desc": "Support for regional languages across India"
+        },
+        "f3": {
+          "title": "Audio Responses",
+          "desc": "Get detailed audio responses in your preferred language",
+          "item1": "Clear pronunciation",
+          "item2": "Slow/Fast speed",
+          "item3": "Repeat option",
+          "item4": "Save audio"
+        },
+        "f4": {
+          "title": "Offline Voice Commands",
+          "desc": "Basic voice commands work even without internet",
+          "item1": "Weather check",
+          "item2": "Crop calendar",
+          "item3": "Basic diagnosis",
+          "item4": "Emergency help"
+        }
+      },
+      "examples": {
+        "sectionTitle": "Real Conversation Examples",
+        "solutionPrefix": "Solution",
+        "e1": {
+          "farmer": "Tomato mein patte peelay ho rahe hain",
+          "farmerTrans": "Tomato leaves are turning yellow",
+          "ai": "यह नाइट्रोजन की कमी हो सकती है। यूरिया का छिड़काव करें।",
+          "aiTrans": "This could be nitrogen deficiency. Apply urea spray.",
+          "solution": "Apply 2kg urea per acre with water spray"
+        },
+        "e2": {
+          "farmer": "Kya aaj pani dena chahiye?",
+          "farmerTrans": "Should I water today?",
+          "ai": "मिट्टी में नमी 40% है। 2 दिन बाद पानी दें।",
+          "aiTrans": "Soil moisture is 40%. Water after 2 days.",
+          "solution": "Wait 2 days, then apply 25mm irrigation"
+        },
+        "e3": {
+          "farmer": "Fasal kab kaatni chahiye?",
+          "farmerTrans": "When should I harvest the crop?",
+          "ai": "आपकी गेहूं 15 दिन में तैयार होगी। दाने सुनहरे होने का इंतज़ार करें।",
+          "aiTrans": "Your wheat will be ready in 15 days. Wait for golden grains.",
+          "solution": "Harvest when moisture content is 12-14%"
+        }
+      },
+      "demo": {
+        "sectionTitle": "Try Voice Assistant Live",
+        "selectLang": "Choose Language",
+        "processError": "Voice processing error",
+        "processErrorResponse": "Sorry, failed to process.",
+        "processErrorHindi": "क्षमा करें, विफल रहा।",
+        "micDenied": "Microphone access denied.",
+        "noSpeech": "No speech detected.",
+        "voiceError": "Voice error: {{error}}",
+        "listeningNow": "Listening...",
+        "notSupported": "Voice recognition not supported.",
+        "notSupportedChrome": "Use Chrome for voice recognition.",
+        "couldNotStartMic": "Could not start microphone.",
+        "regionalDialect": "Regional Dialect",
+        "listening": "Listening...",
+        "pressToSpeak": "Press microphone to speak",
+        "processing": "Processing with AI...",
+        "youSaid": "You Said",
+        "aiResponse": "AI Response",
+        "exampleQuestionsTitle": "Example Questions",
+        "noteTitle": "Note",
+        "noteDesc": "Commands are processed naturally.",
+        "noteHindiDesc": "Hindi processing takes seconds."
+      },
+      "langs": {
+        "sectionTitle": "Supported Languages",
+        "hindi": "Hindi (हिंदी)",
+        "english": "English (India)",
+        "fullSupport": "Full Support"
+      },
+      "howItWorks": {
+        "sectionTitle": "How Voice Assistant Works",
+        "s1": {
+          "title": "Speak Question",
+          "desc": "Ask in Hindi or local language"
+        },
+        "s2": {
+          "title": "AI Processing",
+          "desc": "Voice recognition & understanding"
+        },
+        "s3": {
+          "title": "Generate Response",
+          "desc": "AI creates personalized answer"
+        },
+        "s4": {
+          "title": "Audio Reply",
+          "desc": "Hear response in your language"
+        }
+      },
+      "benefits": {
+        "sectionTitle": "Voice Assistant Benefits",
+        "b1": {
+          "title": "Easy to Use",
+          "desc": "No typing required, just speak"
+        },
+        "b2": {
+          "title": "Rural Friendly",
+          "desc": "Works for illiterate farmers"
+        },
+        "b3": {
+          "title": "Instant Help",
+          "desc": "Get answers in seconds"
+        },
+        "b4": {
+          "title": "Local Language",
+          "desc": "Understand & respond in Hindi"
+        }
+      }
+    },
     "common": {
+      "risk": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      },
       "today": "Today",
       "yesterday": "Yesterday",
       "messages": "New Messages",
@@ -683,8 +944,6 @@
       "active": "active",
       "loading": "Loading...",
       "localizing": "Localizing...",
-      "localized": "Analysis localized to {{lang}} in {{dialect}} dialect.",
-      "dialectTransform": "Transforming advice into {{dialect}} dialect...",
       "listening": "Listening...",
       "voiceError": "Voice input failed. Please try again.",
       "error": "Error",
@@ -710,6 +969,10 @@
         "landless": "Landless Laborer"
       },
       "voiceUnsupported": "Voice search not supported in this browser.",
+      "languages": {
+        "hindi": "Hindi",
+        "english": "English"
+      },
       "offline": "Offline",
       "tryAgain": "Try Again",
       "ready": "Ready",
@@ -739,16 +1002,24 @@
       "longitude": "Longitude",
       "useCurrent": "Use Current Location",
       "size": "Farm Size (Acres)",
-      "generateBtn": "Generate Digital Twin",
-      "generating": "Generating Digital Twin...",
-      "quickDemo": "Quick Demo",
-      "drawMap": "Draw on Map",
+      "generateBtn": "Initialize Digital Twin",
+      "generateBtn_initializing": "Synthesizing AI Twin...",
+      "updateBtn": "Update Digital Twin",
+      "generating": "Synthesizing AI Digital Twin...",
+      "quickDemo": "Quick Demo (Assam)",
+      "quickDemoFarmName": "Lush Green Acres",
+      "quickDemoOwnerName": "Farmer Rajesh",
+      "drawnFarmName": "Drawn Farm Polygon",
+      "drawnOwnerName": "Manual Entry",
+      "drawMap": "Draw Farm Boundary",
       "capabilities": "Digital Twin Capabilities",
       "visualization": "Multi-Layer GIS Visualization",
       "interactiveMap": "Interactive GIS Map: {{name}}",
       "liveData": "Live Farm Intelligence",
       "explainBtn": "Explain Farm Status",
-      "stopBtn": "Stop",
+      "stopBtn": "Stop Briefing",
+      "dataSourceAI": "Data Source: AI-Estimated Localized Twin",
+      "dataSourceSat": "Data Source: Real-time Sentinel-2 Satellite",
       "accuracy": "Accuracy",
       "update": "Update Digital Twin",
       "hectares": "Hectares",
@@ -822,17 +1093,35 @@
         "pests": "Calculating historical pest risk zones..."
       },
       "insights": {
+        "avgHealth": "Avg. Vegetation Health Score",
+        "pestRisk": "Active Pest Risk Zones",
+        "growthStages": "Crop Lifecycle Analysis",
+        "health": "Health Score",
+        "risk": "Risk",
         "mappedZones": "Mapped Soil Zones",
-        "activeZones": "Active Irrigation Zones",
-        "growthStages": "Avg Growth Stage",
-        "health": "Health Score"
+        "activeZones": "Active Irrigation Zones"
       },
       "summary": {
-        "prefix": "Farm Status Report for {{area}} hectares.",
-        "zones": "We have identified {{soil}} distinct soil zones and {{irrigation}} irrigation zones.",
-        "health": "Overall crop health is {{health}}%.",
-        "pestWarning": "Warning: High pest risk detected. Immediate action recommended.",
-        "pestLow": "Pest risk is currently low."
+        "prefix": "Your farm spans {{area}} hectares.",
+        "zones": "The AI has identified {{soil}} soil zones and {{irrigation}} active irrigation zones.",
+        "health": "The overall vegetation health score, based on satellite NDVI data, is {{health}} percent.",
+        "pestWarning": "Warning: High pest risks detected in some areas. Please check the red zones on your map.",
+        "pestLow": "Good news: Pest risk levels are currently low across your entire farm.",
+        "irrigationEfficiency": "Irrigation efficiency is estimated at eighty-five percent. Consider optimizing Zone 2."
+      },
+      "toast": {
+        "gettingGps": "Getting GPS coordinates...",
+        "locationFound": "Location updated from GPS.",
+        "locationManual": "GPS failed. Please enter coordinates manually.",
+        "geolocationUnsupported": "Geolocation is not supported by this browser.",
+        "locating": "Locating {{town}}, {{district}} via AI Search...",
+        "generating": "Synthesizing AI Digital Twin...",
+        "locationIdentified": "Location identified: {{lat}}, {{lng}}",
+        "aiAnalysisFailed": "AI Spatial Analysis failed. Using localized defaults.",
+        "networkError": "Network error while connecting to GIS engine.",
+        "couldNotDetermine": "Could not determine farm location.",
+        "farmBoundarySaved": "Farm boundary saved successfully.",
+        "drawFailed": "Failed to save drawn boundary."
       }
     },
     "iot": {
@@ -989,452 +1278,582 @@
       },
       "qtyUnit": "kg"
     },
-    "voiceAssistant": {
-      "hero": {
-        "title": "Voice Assistant for Farmers",
-        "desc": "Speak naturally in Hindi or your local language. Get instant AI-powered agricultural advice with voice responses designed for rural farmers.",
-        "startBtn": "Start Speaking",
-        "chooseLangBtn": "Choose Language"
+    "seedFinder": {
+      "title": "Seed Finder",
+      "subtitle": "Shop Locator",
+      "nearbyShops": "Nearby shops",
+      "notSearched": "You have not searched yet.",
+      "searchHint": "Use one of the map buttons to load farm shops near your current location or saved address.",
+      "noShopsFound": "No shops found.",
+      "tryAnotherLocation": "Try the other location option or search from a different area.",
+      "farmingShop": "Farming shop",
+      "viewOnMaps": "View on Google Maps",
+      "phoneNumber": "Phone number",
+      "notAvailable": "Not available",
+      "callToShop": "Call to shop",
+      "showingResults": "Showing {{count}} nearby farming shops.",
+      "noNearbyShops": "No nearby farming shops found.",
+      "searchError": "Unable to search Google Places for nearby farming shops."
+    },
+    "profile": {
+      "locationHelp": "Fill the fields below so the map can search shops near your address.",
+      "state": "State",
+      "district": "District",
+      "village": "Village",
+      "city": "City",
+      "country": "Country",
+      "useGps": "Use GPS to fill location",
+      "buyerDetails": "Buyer Details",
+      "buyerSubtitle": "Update your company details and buying preferences.",
+      "company": "Company",
+      "companyPlaceholder": "e.g. Fresh Foods Pvt Ltd",
+      "license": "License Number",
+      "licensePlaceholder": "License Number",
+      "interests": "Interests",
+      "interestsPlaceholder": "e.g. Wheat, Rice, Organic Vegetables",
+      "farmDetails": "Farm Details",
+      "farmSize": "Farm Size (Acres)",
+      "experience": "Experience (Years)",
+      "primaryCrops": "Primary Crops",
+      "save": "Save Profile",
+      "logout": "Logout"
+    },
+    "aiChat": {
+      "welcomeMessage": "Hello! I am AgriSphere AI. Select your language to start chatting.\nनमस्ते! मैं AgriSphere AI हूं। बात करने के लिए अपनी भाषा चुनें।",
+      "title": "AgriSphere AI",
+      "subtitle": "Agricultural Assistant",
+      "pause": "Pause",
+      "listenHindi": "Listen in Hindi",
+      "stopSpeaking": "Stop Speaking"
+    },
+    "offlineFertilizerCalculator": {
+      "title": "Offline Fertilizer Calculator",
+      "selectCrop": "Select Crop",
+      "cropPlaceholder": "Choose crop...",
+      "crops": {
+        "wheat": "Wheat (Gehu)",
+        "rice": "Rice (Dhaan)",
+        "corn": "Corn (Makka)",
+        "sugarcane": "Sugarcane (Ganna)"
       },
+      "farmSize": "Farm Size (Acres)",
+      "farmSizePlaceholder": "e.g. 2.5",
+      "calculate": "Calculate Dosage",
+      "resultTitle": "Recommended Dosage",
+      "urea": "Bags Urea",
+      "dap": "Bags DAP",
+      "mop": "Bags MOP",
+      "note": "*Calculated using standard NPK values. No internet needed."
+    },
+    "farmDrawer": {
+      "loadingMaps": "Loading Maps...",
+      "title": "Draw Your Farm Boundary",
+      "subtitle": "Use the polygon tool to trace your field's exact edges.",
+      "cancel": "Cancel",
+      "saveBoundary": "Save Boundary",
+      "tipTitle": "Tip",
+      "tipLine1": "Click points to draw.",
+      "tipLine2": "Click the first point again to close the shape.",
+      "gpsError": "Could not access GPS. Defaulting to India center.",
+      "drawBoundaryFirst": "Please draw a farm boundary first.",
+      "drawPolygonOrRectangle": "Please draw a Polygon or Rectangle."
+    },
+    "hero": {
+      "title": "Voice Assistant for Farmers",
+      "desc": "Speak naturally in Hindi or your local language. Get instant AI-powered agricultural advice with voice responses designed for rural farmers.",
+      "startBtn": "Start Speaking",
+      "chooseLangBtn": "Choose Language"
+    },
+    "features": {
+      "sectionTitle": "Voice Assistant Features",
+      "f1": {
+        "title": "Hindi Voice Recognition",
+        "desc": "Speak naturally in Hindi and get instant responses",
+        "example": "Gehun mein rog a gaya hai, kya karein?",
+        "response": "Wheat disease detected. Apply fungicide spray."
+      },
+      "f2": {
+        "title": "Local Language Support",
+        "desc": "Support for regional languages across India"
+      },
+      "f3": {
+        "title": "Audio Responses",
+        "desc": "Get detailed audio responses in your preferred language",
+        "item1": "Clear pronunciation",
+        "item2": "Slow/Fast speed",
+        "item3": "Repeat option",
+        "item4": "Save audio"
+      },
+      "f4": {
+        "title": "Offline Voice Commands",
+        "desc": "Basic voice commands work even without internet",
+        "item1": "Weather check",
+        "item2": "Crop calendar",
+        "item3": "Basic diagnosis",
+        "item4": "Emergency help"
+      }
+    },
+    "examples": {
+      "sectionTitle": "Real Conversation Examples",
+      "solutionPrefix": "Solution",
+      "e1": {
+        "farmer": "Tomato mein patte peelay ho rahe hain",
+        "farmerTrans": "Tomato leaves are turning yellow",
+        "ai": "यह नाइट्रोजन की कमी हो सकती है। यूरिया का छिड़काव करें।",
+        "aiTrans": "This could be nitrogen deficiency. Apply urea spray.",
+        "solution": "Apply 2kg urea per acre with water spray"
+      },
+      "e2": {
+        "farmer": "Kya aaj pani dena chahiye?",
+        "farmerTrans": "Should I water today?",
+        "ai": "मिट्टी में नमी 40% है। 2 दिन बाद पानी दें।",
+        "aiTrans": "Soil moisture is 40%. Water after 2 days.",
+        "solution": "Wait 2 days, then apply 25mm irrigation"
+      },
+      "e3": {
+        "farmer": "Fasal kab kaatni chahiye?",
+        "farmerTrans": "When should I harvest the crop?",
+        "ai": "आपकी गेहूं 15 दिन में तैयार होगी। दाने सुनहरे होने का इंतज़ार करें।",
+        "aiTrans": "Your wheat will be ready in 15 days. Wait for golden grains.",
+        "solution": "Harvest when moisture content is 12-14%"
+      }
+    },
+    "demo": {
+      "sectionTitle": "Try Voice Assistant Live",
+      "selectLang": "Select Language / भाषा चुनें",
+      "listening": "सुन रहा हूं... / Listening...",
+      "pressToSpeak": "बोलने के लिए दबाएं / Press to Speak",
+      "processing": "प्रोसेसिंग... / Processing...",
+      "youSaid": "आपने कहा / You said:",
+      "aiResponse": "🤖 AgriSphere AI का जवाब / Response:",
+      "exampleQuestionsTitle": "उदाहरण प्रश्न / Example Questions:",
+      "noteTitle": "Note",
+      "noteDesc": "Voice recognition requires a modern browser with microphone permissions. Works best in Chrome/Edge.",
+      "noteHindiDesc": "नोट: आवाज़ पहचान के लिए आधुनिक ब्राउज़र और माइक्रोफ़ोन की अनुमति चाहिए।"
+    },
+    "langs": {
+      "sectionTitle": "Supported Languages",
+      "hindi": "Hindi",
+      "english": "English (India)",
+      "fullSupport": "Full Support"
+    },
+    "howItWorks": {
+      "sectionTitle": "How Voice Assistant Works",
+      "s1": {
+        "title": "Speak Question",
+        "desc": "Ask in Hindi or local language"
+      },
+      "s2": {
+        "title": "AI Processing",
+        "desc": "Voice recognition & understanding"
+      },
+      "s3": {
+        "title": "Generate Response",
+        "desc": "AI creates personalized answer"
+      },
+      "s4": {
+        "title": "Audio Reply",
+        "desc": "Hear response in your language"
+      }
+    },
+    "benefits": {
+      "sectionTitle": "Voice Assistant Benefits",
+      "b1": {
+        "title": "Easy to Use",
+        "desc": "No typing required, just speak"
+      },
+      "b2": {
+        "title": "Rural Friendly",
+        "desc": "Works for illiterate farmers"
+      },
+      "b3": {
+        "title": "Instant Help",
+        "desc": "Get answers in seconds"
+      },
+      "b4": {
+        "title": "Local Language",
+        "desc": "Understand & respond in Hindi"
+      }
+    },
+    "digitalTwinLegacy": {
+      "title": "Farm Digital Twin",
+      "subtitle": "Visualize your farm with GIS, IoT, and AI-driven spatial analysis.",
+      "initializing": {
+        "status": "Creating your digital farm twin...",
+        "mapping": "Mapping field boundaries for",
+        "soil": "Analyzing soil zones based on location",
+        "irrigation": "Planning irrigation systems for",
+        "pests": "Detecting pest-prone areas"
+      },
+      "capabilities": "Digital Twin Capabilities",
       "features": {
-        "sectionTitle": "Voice Assistant Features",
-        "f1": {
-          "title": "Hindi Voice Recognition",
-          "desc": "Speak naturally in Hindi and get instant responses",
-          "example": "Gehun mein rog a gaya hai, kya karein?",
-          "response": "Wheat disease detected. Apply fungicide spray."
+        "gis": {
+          "title": "GIS Plot Mapping",
+          "desc": "Satellite-based boundary mapping with sub-meter accuracy",
+          "f1": "Boundary Detection",
+          "f2": "Area Calculation",
+          "f3": "Elevation Mapping",
+          "f4": "Geo-fencing"
         },
-        "f2": {
-          "title": "Local Language Support",
-          "desc": "Support for regional languages across India"
+        "soil": {
+          "title": "Soil Health Mapping",
+          "desc": "Spatial distribution of nutrients and soil types",
+          "f1": "NPK Gradients",
+          "f2": "pH Variation",
+          "f3": "Texture Analysis",
+          "f4": "Carbon Seq."
         },
-        "f3": {
-          "title": "Audio Responses",
-          "desc": "Get detailed audio responses in your preferred language",
-          "item1": "Clear pronunciation",
-          "item2": "Slow/Fast speed",
-          "item3": "Repeat option",
-          "item4": "Save audio"
-        },
-        "f4": {
-          "title": "Offline Voice Commands",
-          "desc": "Basic voice commands work even without internet",
-          "item1": "Weather check",
-          "item2": "Crop calendar",
-          "item3": "Basic diagnosis",
-          "item4": "Emergency help"
+        "irrigation": {
+          "title": "Smart Irrigation",
+          "desc": "VRT-based irrigation planning and moisture tracking",
+          "f1": "Hydraulic Zones",
+          "f2": "Moisture Flux",
+          "f3": "Drip Planning",
+          "f4": "Runoff Predict."
         }
       },
-      "examples": {
-        "sectionTitle": "Real Conversation Examples",
-        "solutionPrefix": "Solution",
-        "e1": {
-          "farmer": "Tomato mein patte peelay ho rahe hain",
-          "farmerTrans": "Tomato leaves are turning yellow",
-          "ai": "यह नाइट्रोजन की कमी हो सकती है। यूरिया का छिड़काव करें।",
-          "aiTrans": "This could be nitrogen deficiency. Apply urea spray.",
-          "solution": "Apply 2kg urea per acre with water spray"
-        },
-        "e2": {
-          "farmer": "Kya aaj pani dena chahiye?",
-          "farmerTrans": "Should I water today?",
-          "ai": "मिट्टी में नमी 40% है। 2 दिन बाद पानी दें।",
-          "aiTrans": "Soil moisture is 40%. Water after 2 days.",
-          "solution": "Wait 2 days, then apply 25mm irrigation"
-        },
-        "e3": {
-          "farmer": "Fasal kab kaatni chahiye?",
-          "farmerTrans": "When should I harvest the crop?",
-          "ai": "आपकी गेहूं 15 दिन में तैयार होगी। दाने सुनहरे होने का इंतज़ार करें।",
-          "aiTrans": "Your wheat will be ready in 15 days. Wait for golden grains.",
-          "solution": "Harvest when moisture content is 12-14%"
-        }
+      "insights": {
+        "pestRisk": "Pest Risk Areas",
+        "growthStages": "Crop Growth Stages",
+        "health": "Health",
+        "risk": "risk",
+        "mappedZones": "Mapped zones",
+        "activeZones": "Active zones",
+        "avgHealth": "Average %"
       },
-      "demo": {
-        "sectionTitle": "Try Voice Assistant Live",
-        "selectLang": "Select Language / भाषा चुनें",
-        "listening": "सुन रहा हूं... / Listening...",
-        "pressToSpeak": "बोलने के लिए दबाएं / Press to Speak",
-        "processing": "प्रोसेसिंग... / Processing...",
-        "youSaid": "आपने कहा / You said:",
-        "aiResponse": "🤖 AgriSphere AI का जवाब / Response:",
-        "exampleQuestionsTitle": "उदाहरण प्रश्न / Example Questions:",
-        "noteTitle": "Note",
-        "noteDesc": "Voice recognition requires a modern browser with microphone permissions. Works best in Chrome/Edge.",
-        "noteHindiDesc": "नोट: आवाज़ पहचान के लिए आधुनिक ब्राउज़र और माइक्रोफ़ोन की अनुमति चाहिए।"
+      "areaNote": "acres"
+    },
+    "farmerDashboard": {
+      "title": "Smart Farmer Dashboard",
+      "subtitle": "Your centralized hub for AI operations and farm management.",
+      "metrics": {
+        "models": "AI Models",
+        "activeModels": "active models",
+        "area": "Mapped Area",
+        "hectares": "hectares",
+        "detections": "Detections",
+        "types": "distinct types",
+        "accuracy": "Avg. Accuracy"
       },
-      "langs": {
-        "sectionTitle": "Supported Languages",
-        "hindi": "Hindi",
-        "english": "English (India)",
-        "fullSupport": "Full Support"
+      "tabs": {
+        "overview": "Overview",
+        "disease": "Disease AI",
+        "twin": "Digital Twin",
+        "yield": "Yield Predict",
+        "pest": "Pest Forecast",
+        "marketplace": "Marketplace"
+      }
+    },
+    "trace": {
+      "title": "Blockchain Traceability",
+      "subtitle": "Immutable ledgers ensuring genuine end-to-end supply chain transparency.",
+      "walletConnected": "Wallet Connected",
+      "simulatedWallet": "Simulated Web3 Mode",
+      "simulatedWalletDesc": "Connected to a simulated Web3 provider for local testing.",
+      "connectionFailed": "Wallet Connection Failed",
+      "recordFound": "Record Prepared for Verification",
+      "recordFoundDesc": "Please sign the transaction using Wallet.",
+      "mintSuccess": "Record Minted Successfully",
+      "mintSuccessDesc": "Batch {{id}} permanently recorded on the AgriSphere Web3 Ledger.",
+      "recordNotFound": "Record Not Found",
+      "recordNotFoundDesc": "No blockchain record exists for Batch ID {{id}}",
+      "connected": "Connected ({{account}})",
+      "connectBtn": "Connect Wallet",
+      "trackTab": "Track Batch",
+      "registerTab": "Register Harvest",
+      "searchHint": "Enter Unique Batch ID (e.g. BATCH-8314)",
+      "traceBtn": "Trace on Blockchain",
+      "authentic": "AUTHENTIC RECORD",
+      "verifiedBatchTrace": "Verified Batch Trace",
+      "actions": {
+        "harvested": "Harvested",
+        "in-transit": "In-Transit",
+        "packaged": "Packaged",
+        "delivered": "Delivered"
       },
-      "howItWorks": {
-        "sectionTitle": "How Voice Assistant Works",
-        "s1": {
-          "title": "Speak Question",
-          "desc": "Ask in Hindi or local language"
-        },
-        "s2": {
-          "title": "AI Processing",
-          "desc": "Voice recognition & understanding"
-        },
-        "s3": {
-          "title": "Generate Response",
-          "desc": "AI creates personalized answer"
-        },
-        "s4": {
-          "title": "Audio Reply",
-          "desc": "Hear response in your language"
-        }
-      },
-      "benefits": {
-        "sectionTitle": "Voice Assistant Benefits",
-        "b1": {
-          "title": "Easy to Use",
-          "desc": "No typing required, just speak"
-        },
-        "b2": {
-          "title": "Rural Friendly",
-          "desc": "Works for illiterate farmers"
-        },
-        "b3": {
-          "title": "Instant Help",
-          "desc": "Get answers in seconds"
-        },
-        "b4": {
-          "title": "Local Language",
-          "desc": "Understand & respond in Hindi"
-        }
-      },
-      "digitalTwin": {
-        "title": "Farm Digital Twin",
-        "subtitle": "Visualize your farm with GIS, IoT, and AI-driven spatial analysis.",
-        "initializing": {
-          "status": "Creating your digital farm twin...",
-          "mapping": "Mapping field boundaries for",
-          "soil": "Analyzing soil zones based on location",
-          "irrigation": "Planning irrigation systems for",
-          "pests": "Detecting pest-prone areas"
-        },
-        "capabilities": "Digital Twin Capabilities",
-        "features": {
-          "gis": {
-            "title": "GIS Plot Mapping",
-            "desc": "Satellite-based boundary mapping with sub-meter accuracy",
-            "f1": "Boundary Detection",
-            "f2": "Area Calculation",
-            "f3": "Elevation Mapping",
-            "f4": "Geo-fencing"
-          },
-          "soil": {
-            "title": "Soil Health Mapping",
-            "desc": "Spatial distribution of nutrients and soil types",
-            "f1": "NPK Gradients",
-            "f2": "pH Variation",
-            "f3": "Texture Analysis",
-            "f4": "Carbon Seq."
-          },
-          "irrigation": {
-            "title": "Smart Irrigation",
-            "desc": "VRT-based irrigation planning and moisture tracking",
-            "f1": "Hydraulic Zones",
-            "f2": "Moisture Flux",
-            "f3": "Drip Planning",
-            "f4": "Runoff Predict."
-          }
-        },
-        "insights": {
-          "pestRisk": "Pest Risk Areas",
-          "growthStages": "Crop Growth Stages",
-          "health": "Health",
-          "risk": "risk",
-          "mappedZones": "Mapped zones",
-          "activeZones": "Active zones",
-          "avgHealth": "Average %"
-        },
-        "areaNote": "acres"
-      },
-      "farmerDashboard": {
-        "title": "Smart Farmer Dashboard",
-        "subtitle": "Your centralized hub for AI operations and farm management.",
-        "metrics": {
-          "models": "AI Models",
-          "activeModels": "active models",
-          "area": "Mapped Area",
-          "hectares": "hectares",
-          "detections": "Detections",
-          "types": "distinct types",
-          "accuracy": "Avg. Accuracy"
-        },
-        "tabs": {
-          "overview": "Overview",
-          "disease": "Disease AI",
-          "twin": "Digital Twin",
-          "yield": "Yield Predict",
-          "pest": "Pest Forecast",
-          "marketplace": "Marketplace"
-        }
+      "signedBy": "Signed by:",
+      "batchIdLabel": "Blockchain Tracking ID (Auto-Generated)",
+      "cropLabel": "Crop Details",
+      "cropPlaceholder": "e.g. Basmati Rice (A-Grade)",
+      "originLabel": "Origin Location",
+      "originPlaceholder": "e.g. Ludhiana, Punjab Farm",
+      "qualityLabel": "Quality Certification Standard",
+      "signingNotice": "Minting this record burns gas and requires a cryptographic signature. Data is strictly immutable once verified by the network validators.",
+      "mintingBtn": "Validating over Network...",
+      "signRegisterBtn": "Cryptographically Sign & Mint Record",
+      "enterBatchId": "Enter a Batch ID to query the blockchain.",
+      "web3Verification": "Data is strictly verified via Web3 Immutable Ledger.",
+      "mintRecordTitle": "Mint New Crop Record",
+      "mintRecordDesc": "Record your harvest on the blockchain. This data cannot be altered once submitted.",
+      "retrievedTitle": "Record Found",
+      "retrievedDesc": "Immutable Web3 records retrieved.",
+      "farmOrigin": "Farm Origin",
+      "certs": {
+        "organic": "100% Organic",
+        "standard": "Standard Farming",
+        "transitional": "Transitional",
+        "pesticideFree": "Pesticide-Free"
       }
     },
     "gov": {
-      "title": "Ministry of Agriculture Dashboard",
-      "subtitle": "National Command & Control Centre",
-      "operational": "System Operational",
-      "genReport": "Generate Report",
-      "stats": {
-        "regFarmers": "Registered Farmers",
-        "activeAlerts": "Active Alerts",
-        "cropLossCases": "Crop Loss Cases",
-        "estDisbursement": "Est. Disbursement"
-      },
-      "tabs": {
-        "overview": "Overview & Analytics",
-        "cropLoss": "Crop Loss Compensation",
-        "market": "Market Intelligence"
-      },
-      "charts": {
-        "diseaseTrend": "Disease Detection Trend",
-        "communityIssues": "Community Issues",
-        "prices": "State-wise Avg Prices",
-        "listings": "Live Listings Overview"
-      },
-      "cases": {
-        "title": "Compensation Case Management",
-        "search": "Search case ID...",
-        "noCases": "No active cases found.",
-        "eligible": "Eligible",
-        "reviewRequired": "Review Required",
-        "verify": "Verify",
-        "reject": "Reject",
-        "approve": "Approve",
-        "status": {
-          "approved": "Approved",
-          "rejected": "Rejected",
-          "underVerification": "Under Verification",
-          "pending": "Approval Pending"
-        }
-      },
-      "report": {
-        "generated": "Report Generated",
-        "downloaded": "The report has been downloaded to your device.",
-        "totalVolume": "Total Volume Traded"
-      },
-      "caseActions": {
-        "approved": "Case Approved",
-        "rejected": "Case Rejected",
-        "verified": "Verification Requested",
-        "updated": "Case {{id}} has been updated.",
-        "errorUpdate": "Failed to update case status",
-        "errorFetch": "Failed to fetch government dashboard data"
-      },
-      "labels": {
-        "replies": "Replies",
-        "loss": "Loss",
-        "cause": "Cause",
-        "damage": "Damage",
-        "estLoss": "Est. Loss",
-        "scheme": "Scheme"
-      }
+    "title": "Ministry of Agriculture Dashboard",
+    "subtitle": "National Command & Control Centre",
+    "operational": "System Operational",
+    "genReport": "Generate Report",
+    "stats": {
+      "regFarmers": "Registered Farmers",
+      "activeAlerts": "Active Alerts",
+      "cropLossCases": "Crop Loss Cases",
+      "estDisbursement": "Est. Disbursement"
     },
-    "buyer": {
-      "title": "Verified Buyer Dashboard",
-      "welcome": "Welcome, {{name}}",
-      "subtitle": "Sourcing fresh produce directly from farmers.",
-      "panIndia": "Pan India",
-      "postDemand": "Post Demand",
-      "tabs": {
-        "listings": "Listing Feed",
-        "intelligence": "Market Intelligence",
-        "deals": "My Deals"
-      },
-      "filters": {
-        "search": "Search wheat, rice, Punjab...",
-        "allCrops": "All Crops",
-        "allStates": "All States"
-      },
-      "card": {
-        "quantity": "Quantity",
-        "price": "Price",
-        "farmer": "Farmer",
-        "harvest": "Harvest",
-        "callFarmer": "Call Farmer",
-        "grade": "Grade"
-      },
-      "intelligence": {
-        "title": "Market Demand Analysis",
-        "scope": "Market Scope",
-        "config": "Configure AI analysis target",
-        "forecast": "Trend Forecast",
-        "demand": "Demand Level",
-        "vsMsp": "Vs MSP",
-        "avgPrice": "Avg. Market Price",
-        "genBtn": "Generate AI Insights",
-        "analyzing": "Analyzing...",
-        "strategicAnalysis": "AI Strategic Analysis",
-        "mspComparison": "MSP vs Market Price",
-        "brief": "Intelligence Brief"
-      },
-      "contact": {
-        "title": "Contact Farmer",
-        "desc": "Connect with {{name}} directly.",
-        "phone": "Phone Number",
-        "whatsapp": "WhatsApp",
-        "call": "Call Now",
-        "close": "Close"
-      },
-      "demand": {
-        "title": "Post Buying Requirement",
-        "desc": "Farmers matching these criteria will be alerted.",
-        "crop": "Target Crop",
-        "quantity": "Quantity (Quintals)",
-        "price": "Target Price/Qtl",
-        "location": "Preferred Location (Optional)",
-        "postBtn": "Post Demand",
-        "cancel": "Cancel"
-      },
-      "contactFarmer": "Contact Farmer",
-      "saveListing": "Save for later",
-      "errorInsights": "Failed to fetch market insights",
-      "loginRequired": "Login Required",
-      "loginRequiredDesc": "Please login as a buyer to contact farmers.",
-      "fillFields": "Please fill in required fields.",
-      "errorPostDemand": "Failed to post demand.",
-      "recordedNote": "Interactions are recorded in your 'My Deals' tab.",
-      "trader": "Trader",
-      "loading": "Loading live marketplace...",
-      "noListings": "No listings found matching your criteria.",
-      "gradeA": "Grade A",
-      "ready": "Ready",
-      "targetCrop": "Target Crop",
-      "targetState": "Target State",
-      "unknown": "Unknown",
-      "noDeals": "No active deals yet.",
-      "dealLabel": "{{crop}} Deal",
-      "withLabel": "with {{name}}",
-      "toast": {
-        "saved": "Listing saved for later",
-        "unsaved": "Listing removed from saved"
-      }
+    "tabs": {
+      "overview": "Overview & Analytics",
+      "cropLoss": "Crop Loss Compensation",
+      "market": "Market Intelligence"
     },
-    "cropLoss": {
-      "title": "Crop Loss Compensation Claim",
-      "subtitle": "Government of India - Ministry of Agriculture",
-      "sections": {
-        "farmer": "Farmer Details",
-        "crop": "Crop Details",
-        "loss": "Loss Details",
-        "evidence": "Evidence Upload",
-        "compliance": "Advisory Compliance",
-        "declaration": "Final Declaration"
-      },
-      "fields": {
-        "name": "Farmer Name",
-        "mobile": "Mobile Number",
-        "state": "State",
-        "district": "District",
-        "village": "Village",
-        "area": "Total Farm Area (Acres)",
-        "insurance": "PMFBY Insurance Status",
-        "cropName": "Crop Name",
-        "season": "Season",
-        "sowingDate": "Sowing Date",
-        "harvestDate": "Expected Harvest Date",
-        "affectedArea": "Affected Area (Acres)",
-        "cause": "Cause of Loss",
-        "damageDate": "Date Damage Observed",
-        "damagePercent": "Estimated Damage Percentage (%)",
-        "minDamageNote": "Minimum 33% required",
-        "complianceFert": "Applied fertilizers as recommended",
-        "complianceIrri": "Followed irrigation schedule",
-        "compliancePest": "Reported pests early via tool"
-      },
-      "placeholders": {
-        "name": "Full Name",
-        "mobile": "+91...",
-        "insurance": "Select Status",
-        "insYes": "Enrolled (Yes)",
-        "insNo": "Not Enrolled",
-        "selectCrop": "Select Crop",
-        "selectCause": "Select Cause",
-        "village": "Village Name"
-      },
-      "seasons": {
-        "kharif": "Kharif",
-        "rabi": "Rabi",
-        "zaid": "Zaid"
-      },
-      "advisory": {
-        "title": "Confirm your adherence to AgriSphere advisories. This impacts claim approval.",
-        "verifiedNote": "Will be verified against AI usage logs."
-      },
-      "causes": {
-        "flood": "Flood / Heavy Rain",
-        "drought": "Drought",
-        "pest": "Pest Attack",
-        "disease": "Crop Disease",
-        "hailstorm": "Hailstorm",
-        "heatwave": "Heatwave"
-      },
-      "ai": {
-        "title": "AI Assistant Tips",
-        "uploadPhotos": "Please upload photos of affected leaves/stems for AI verification.",
-        "specifyPest": "Mention specific pest name if known (e.g., Pink Bollworm).",
-        "gpsEnable": "Ensure GPS location is enabled while taking photos."
-      },
-      "evidence": {
-        "uploadBtn": "Click to upload photos/video",
-        "note": "Upload at least 2 photos (Close-up & Wide angle). GPS metadata will be extracted."
-      },
-      "declaration": {
-        "check": "I hereby declare that the information provided above is true.",
-        "note": "I understand that any false claim will lead to rejection and legal action."
-      },
-      "submitBtn": "Submit Claim",
-      "success": "Claim submitted successfully!",
-      "error": "Failed to submit claim. Please try again.",
-      "agreeError": "You must agree to the declaration."
+    "charts": {
+      "diseaseTrend": "Disease Detection Trend",
+      "communityIssues": "Community Issues",
+      "prices": "State-wise Avg Prices",
+      "listings": "Live Listings Overview"
     },
-    "farmerDashboard": {
-      "title": "Comprehensive AI Agriculture Dashboard",
-      "subtitle": "Advanced AI-powered agriculture management system combining disease detection, GIS digital twin, and yield prediction for precision farming.",
-      "tabs": {
-        "overview": "Overview",
-        "disease": "AI Disease Detection",
-        "twin": "GIS Digital Twin",
-        "yield": "Yield Prediction",
-        "pest": "Pest Forecast",
-        "marketplace": "Marketplace"
-      },
-      "metrics": {
-        "models": "AI Models",
-        "area": "Farm Area",
-        "detections": "Detection Classes",
-        "accuracy": "Accuracy",
-        "activeModels": "Active Models",
-        "hectares": "Hectares",
-        "types": "Disease/Pest Types",
-        "precision": "AI Precision"
-      },
+    "cases": {
+      "title": "Compensation Case Management",
+      "search": "Search case ID...",
+      "noCases": "No active cases found.",
+      "eligible": "Eligible",
+      "reviewRequired": "Review Required",
+      "verify": "Verify",
+      "reject": "Reject",
+      "approve": "Approve",
       "status": {
-        "active": "Active",
-        "live": "Live",
-        "types": "Types"
-      },
-      "yield": {
-        "title": "Crop Yield Predictions (2025)",
-        "perHectare": "per hectare",
-        "advancedTitle": "Advanced AI Yield Prediction",
-        "modelPerformance": "ML Model Performance"
-      },
-      "twin": {
-        "title": "GIS-Based Smart Farm Digital Twin",
-        "activeZones": "Active Zones",
-        "monitored": "Monitored",
-        "average": "Average",
-        "spatialFeatures": "Spatial Analysis Features",
-        "precisionBenefits": "Precision Agriculture Benefits"
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "underVerification": "Under Verification",
+        "pending": "Approval Pending"
       }
+    },
+    "report": {
+      "generated": "Report Generated",
+      "downloaded": "The report has been downloaded to your device.",
+      "totalVolume": "Total Volume Traded"
+    },
+    "caseActions": {
+      "approved": "Case Approved",
+      "rejected": "Case Rejected",
+      "verified": "Verification Requested",
+      "updated": "Case {{id}} has been updated.",
+      "errorUpdate": "Failed to update case status",
+      "errorFetch": "Failed to fetch government dashboard data"
+    },
+    "labels": {
+      "replies": "Replies",
+      "loss": "Loss",
+      "cause": "Cause",
+      "damage": "Damage",
+      "estLoss": "Est. Loss",
+      "scheme": "Scheme"
+    }
+  },
+  "buyer": {
+    "title": "Verified Buyer Dashboard",
+    "welcome": "Welcome, {{name}}",
+    "subtitle": "Sourcing fresh produce directly from farmers.",
+    "panIndia": "Pan India",
+    "postDemand": "Post Demand",
+    "tabs": {
+      "listings": "Marketplace Feed",
+      "negotiations": "Negotiation Hub",
+      "intelligence": "Market Intelligence",
+      "deals": "My Business Deals"
+    },
+    "filters": {
+      "search": "Search wheat, rice, Punjab...",
+      "allCrops": "All Crops",
+      "allStates": "All States"
+    },
+    "card": {
+      "quantity": "Quantity",
+      "price": "Price",
+      "farmer": "Farmer",
+      "harvest": "Harvest",
+      "callFarmer": "Call Farmer",
+      "grade": "Grade"
+    },
+    "intelligence": {
+      "title": "Market Demand Analysis",
+      "scope": "Market Scope",
+      "config": "Configure AI analysis target",
+      "forecast": "Trend Forecast",
+      "demand": "Demand Level",
+      "vsMsp": "Vs MSP",
+      "avgPrice": "Avg. Market Price",
+      "genBtn": "Generate AI Insights",
+      "analyzing": "Analyzing...",
+      "strategicAnalysis": "AI Strategic Analysis",
+      "mspComparison": "MSP vs Market Price",
+      "brief": "Intelligence Brief",
+      "listen": "Hear Analysis"
+    },
+    "contact": {
+      "title": "Contact Farmer",
+      "desc": "Connect with {{name}} directly.",
+      "phone": "Phone Number",
+      "whatsapp": "WhatsApp",
+      "call": "Call Now",
+      "close": "Close"
+    },
+    "demand": {
+      "title": "Post Buying Requirement",
+      "desc": "Farmers matching these criteria will be alerted.",
+      "crop": "Target Crop",
+      "quantity": "Quantity (Quintals)",
+      "price": "Target Price/Qtl",
+      "location": "Preferred Location (Optional)",
+      "postBtn": "Post Demand",
+      "cancel": "Cancel"
+    },
+    "contactFarmer": "Contact Farmer",
+    "saveListing": "Save for later",
+    "errorInsights": "Failed to fetch market insights",
+    "loginRequired": "Login Required",
+    "loginRequiredDesc": "Please login as a buyer to contact farmers.",
+    "fillFields": "Please fill in required fields.",
+    "errorPostDemand": "Failed to post demand.",
+    "recordedNote": "Interactions are recorded in your 'My Deals' tab.",
+    "trader": "Trader",
+    "loading": "Loading live marketplace...",
+    "noListings": "No listings found matching your criteria.",
+    "gradeA": "Grade A",
+    "ready": "Ready",
+    "targetCrop": "Target Crop",
+    "targetState": "Target State",
+    "unknown": "Unknown",
+    "noDeals": "No active deals yet.",
+    "dealLabel": "{{crop}} Deal",
+    "withLabel": "with {{name}}",
+    "toast": {
+      "saved": "Listing saved for later",
+      "unsaved": "Listing removed from saved"
+    }
+  },
+  "cropLoss": {
+    "title": "Crop Loss Compensation Claim",
+    "subtitle": "Government of India - Ministry of Agriculture",
+    "sections": {
+      "farmer": "Farmer Details",
+      "crop": "Crop Details",
+      "loss": "Loss Details",
+      "evidence": "Evidence Upload",
+      "compliance": "Advisory Compliance",
+      "declaration": "Final Declaration"
+    },
+    "fields": {
+      "name": "Farmer Name",
+      "mobile": "Mobile Number",
+      "state": "State",
+      "district": "District",
+      "village": "Village",
+      "area": "Total Farm Area (Acres)",
+      "insurance": "PMFBY Insurance Status",
+      "cropName": "Crop Name",
+      "season": "Season",
+      "sowingDate": "Sowing Date",
+      "harvestDate": "Expected Harvest Date",
+      "affectedArea": "Affected Area (Acres)",
+      "cause": "Cause of Loss",
+      "damageDate": "Date Damage Observed",
+      "damagePercent": "Estimated Damage Percentage (%)",
+      "minDamageNote": "Minimum 33% required",
+      "complianceFert": "Applied fertilizers as recommended",
+      "complianceIrri": "Followed irrigation schedule",
+      "compliancePest": "Reported pests early via tool"
+    },
+    "placeholders": {
+      "name": "Full Name",
+      "mobile": "+91...",
+      "insurance": "Select Status",
+      "insYes": "Enrolled (Yes)",
+      "insNo": "Not Enrolled",
+      "selectCrop": "Select Crop",
+      "selectCause": "Select Cause",
+      "village": "Village Name"
+    },
+    "seasons": {
+      "kharif": "Kharif",
+      "rabi": "Rabi",
+      "zaid": "Zaid"
+    },
+    "advisory": {
+      "title": "Confirm your adherence to AgriSphere advisories. This impacts claim approval.",
+      "verifiedNote": "Will be verified against AI usage logs."
+    },
+    "causes": {
+      "flood": "Flood / Heavy Rain",
+      "drought": "Drought",
+      "pest": "Pest Attack",
+      "disease": "Crop Disease",
+      "hailstorm": "Hailstorm",
+      "heatwave": "Heatwave"
+    },
+    "ai": {
+      "title": "AI Assistant Tips",
+      "uploadPhotos": "Please upload photos of affected leaves/stems for AI verification.",
+      "specifyPest": "Mention specific pest name if known (e.g., Pink Bollworm).",
+      "gpsEnable": "Ensure GPS location is enabled while taking photos."
+    },
+    "evidence": {
+      "uploadBtn": "Click to upload photos/video",
+      "note": "Upload at least 2 photos (Close-up & Wide angle). GPS metadata will be extracted."
+    },
+    "declaration": {
+      "check": "I hereby declare that the information provided above is true.",
+      "note": "I understand that any false claim will lead to rejection and legal action."
+    },
+    "submitBtn": "Submit Claim",
+    "success": "Claim submitted successfully!",
+    "error": "Failed to submit claim. Please try again.",
+    "agreeError": "You must agree to the declaration."
+  },
+  "farmerDashboard": {
+    "title": "Comprehensive AI Agriculture Dashboard",
+    "subtitle": "Advanced AI-powered agriculture management system combining disease detection, GIS digital twin, and yield prediction for precision farming.",
+    "tabs": {
+      "overview": "Overview",
+      "disease": "AI Disease Detection",
+      "twin": "GIS Digital Twin",
+      "yield": "Yield Prediction",
+      "pest": "Pest Forecast",
+      "marketplace": "Marketplace"
+    },
+    "metrics": {
+      "models": "AI Models",
+      "area": "Farm Area",
+      "detections": "Detection Classes",
+      "accuracy": "Accuracy",
+      "activeModels": "Active Models",
+      "hectares": "Hectares",
+      "types": "Disease/Pest Types",
+      "precision": "AI Precision"
+    },
+    "status": {
+      "active": "Active",
+      "live": "Live",
+      "types": "Types"
+    },
+    "yield": {
+      "title": "Crop Yield Predictions (2025)",
+      "perHectare": "per hectare",
+      "advancedTitle": "Advanced AI Yield Prediction",
+      "modelPerformance": "ML Model Performance"
+    },
+    "twin": {
+      "title": "GIS-Based Smart Farm Digital Twin",
+      "activeZones": "Active Zones",
+      "monitored": "Monitored",
+      "average": "Average",
+      "spatialFeatures": "Spatial Analysis Features",
+      "precisionBenefits": "Precision Agriculture Benefits"
     }
   }
 }

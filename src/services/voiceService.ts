@@ -135,7 +135,7 @@ export const speakText = (text: string, lang: string = "hi-IN", onEnd?: () => vo
                 speakNextChunk();
             };
 
-            utterance.onerror = (e: any) => {
+            utterance.onerror = (e: SpeechSynthesisErrorEvent) => {
                 console.error("Speech chunk error:", e);
                 
                 // If Natural voice fails, try the Local voice immediately from this same chunk

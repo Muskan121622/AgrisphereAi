@@ -121,9 +121,9 @@ def generate_ai_advisory(crop, sowing_date, acres, current_price, state="India")
         # FALLBACK TO GEMINI
         if genai and GEMINI_API_KEY:
             try:
-                print("🔄 Falling back to Gemini Pro...")
+                print("🔄 Falling back to Gemini 1.5 Flash...")
                 genai.configure(api_key=GEMINI_API_KEY)
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 # Gemini isn't strict on JSON mode, so we beg it
                 gemini_resp = model.generate_content(prompt + "\n\nRETURN ONLY RAW JSON. NO MARKDOWN.")
                 text = gemini_resp.text
@@ -542,9 +542,9 @@ def get_market_prices(state, district, market, category="Use best judgement"):
         # FALLBACK TO GEMINI
         if genai and GEMINI_API_KEY:
             try:
-                print("🔄 Falling back to Gemini Pro for Prices...")
+                print("🔄 Falling back to Gemini 1.5 Flash for Prices...")
                 genai.configure(api_key=GEMINI_API_KEY)
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 gemini_resp = model.generate_content(prompt + "\n\nRETURN ONLY RAW JSON. NO MARKDOWN.")
                 text = gemini_resp.text
                 if "```json" in text: text = text.split("```json")[1].split("```")[0]
@@ -569,42 +569,58 @@ def get_buyer_insights(crop, state, district=""):
         from groq import Groq
         client = Groq(api_key=GROQ_API_KEY)
 
-        # Get simulated/real price to ground the AI's analysis
-        price_data = simulate_market_prices(crop)
-        current_price = price_data.get('current_price', 'N/A')
+        # Try to get REAL market prices for grounding
+        real_prices = get_market_prices(state, district, None, crop)
+        price_context = ""
+        current_price = "N/A"
+        
+        if real_prices and len(real_prices) > 0:
+            latest = real_prices[0]
+            current_price = latest.get('modal_price', 'N/A')
+            price_context = f"REAL TIME DATA: Current price in local mandis for {crop} is ₹{current_price}/kg."
+        else:
+            # Fallback to simulation
+            price_data = simulate_market_prices(crop)
+            current_price = price_data.get('current_price', 'N/A')
+            price_context = f"SIMULATED DATA: Estimated price is ₹{current_price}/Quintal."
         
         prompt = f"""
-        You are a Strategic Agricultural Procurement Advisor for a bulk buyer.
-        Provide market intelligence for:
+        You are a Senior Strategic Agricultural Procurement Advisor for a bulk buyer in India.
+        Provide detailed, expert-level market intelligence for:
         Crop: {crop}
         Location: {district}, {state}, India
-        Current Market Price: ₹{current_price}/Quintal
+        {price_context}
+        Date: {datetime.date.today().strftime('%d %B %Y')}
         
-        Analyze current trends and provide 3 strategic insights aimed at a BUYER (trader/retailer).
+        Analyze current trends and provide 3 DETAILED strategic insights aimed at a BUYER (trader/retailer).
         
-        Insights should cover:
-        1. Price Trend (Rising/Falling and why)
-        2. Best Procurement Strategy (Buy now vs Wait)
-        3. Quality/Logistics Advice (e.g., "Sourcing from X district is better due to low moisture")
+        Each insight MUST be 4-5 sentences long and cover:
+        1. Price Trend — Explain clearly WHY prices are rising, falling or stable. Mention specific demand-supply factors, seasonal patterns, arrivals at mandis, and which states or weather events are influencing prices. Give a realistic price outlook for the next 2-4 weeks.
+        2. Procurement Strategy — Give specific, actionable buying advice (e.g., how much to buy, when is the best window, should they negotiate, buy in spot market or contract). Explain the financial rationale and the risk of waiting.
+        3. Quality & Logistics — Name specific source districts/regions in {state} or nearby states (e.g., for Bihar mention Begusarai or Khagaria, for Punjab mention Bathinda, etc.) with better quality or lower moisture produce. Advise on preferred transport modes, storage requirements, and quality certification tips for {crop}.
         
         RETURN JSON Structure:
         {{
-            "analysis_brief": "Short summary of the market situation (max 2 sentences).",
+            "analysis_brief": "2-3 sentence executive summary of the current market situation including price level, trend direction, and overall opportunity for buyers.",
             "demand_indicator": "High" | "Medium" | "Low",
             "price_forecast": "Likely to Rise" | "Stable" | "Likely to Drop",
             "msp_comparison": "Above MSP" | "Below MSP" | "Near MSP",
-            "current_price": {current_price}, 
+            "current_price": "{current_price}",
+            "voice_script": "A detailed spoken briefing for the buyer (150-200 words). Start with the location and crop. Cover: current price context, demand situation, price trend reasoning, procurement recommendation, and quality/logistics tip. Use a professional but conversational tone, as if speaking to a client. End with a clear action recommendation.",
             "insights": [
                 {{
-                    "type": "Trend",
+                    "type": "Price Trend",
+                    "icon": "trending",
                     "text": "..."
                 }},
                 {{
-                    "type": "Strategy",
+                    "type": "Procurement Strategy",
+                    "icon": "strategy",
                     "text": "..."
                 }},
                 {{
-                    "type": "Logistics",
+                    "type": "Quality & Logistics",
+                    "icon": "logistics",
                     "text": "..."
                 }}
             ]
@@ -620,18 +636,17 @@ def get_buyer_insights(crop, state, district=""):
         
         content = completion.choices[0].message.content
         result = json.loads(content)
-        # Ensure price is passed through even if AI misses it
+        # Ensure price is passed through as string/number safely
         result['current_price'] = current_price
         return result
         
     except Exception as e:
         print(f"Error generating buyer insights: {e}")
-        import traceback
-        traceback.print_exc()
         return {
             "analysis_brief": "Unable to generate insights at the moment.",
             "demand_indicator": "Medium",
             "current_price": "N/A",
+            "voice_script": "I apologize, but I am unable to access real-time market intelligence right now.",
             "insights": []
         }
 
@@ -741,9 +756,9 @@ def get_market_trends(state, district, commodities_data):
         # FALLBACK TO GEMINI
         if genai and GEMINI_API_KEY:
             try:
-                print("🔄 Falling back to Gemini Pro for Trends...")
+                print("🔄 Falling back to Gemini 1.5 Flash for Trends...")
                 genai.configure(api_key=GEMINI_API_KEY)
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 gemini_resp = model.generate_content(prompt + "\n\nRETURN ONLY RAW JSON. NO MARKDOWN.")
                 text = gemini_resp.text
                 if "```json" in text: text = text.split("```json")[1].split("```")[0]

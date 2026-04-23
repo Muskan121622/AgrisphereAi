@@ -1,12 +1,34 @@
-import { useState, useRef, useEffect } from 'react';
-import { speakText, stopSpeech } from '@/services/voiceService';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, X, Mic, MicOff, Volume2, Image as ImageIcon, X as XIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { chatWithAI, translateToHindi } from '@/lib/openai';
-import { mockChatWithAI } from '@/lib/mockAI';
+import { useState, useRef, useEffect } from "react";
+import { speakText, stopSpeech } from "@/services/voiceService";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MessageCircle,
+  Send,
+  X,
+  Mic,
+  MicOff,
+  Volume2,
+  Image as ImageIcon,
+  X as XIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Languages } from "lucide-react";
+import { chatWithAI } from "@/lib/openai";
+import { mockChatWithAI } from "@/lib/mockAI";
+import { useTranslation } from "react-i18next";
+import { useAuthStore } from "@/store/authStore";
+import { saveAiChatMessage, getAiChatHistory } from "@/services/firebaseService";
 
 interface Message {
   id: string;
@@ -17,20 +39,29 @@ interface Message {
   imageUrl?: string;
 }
 
+const SUPPORTED_LANGUAGES = [
+  { code: "en-IN", name: "English", i18nCode: "en" },
+  { code: "hi-IN", name: "हिन्दी", i18nCode: "hi" },
+  { code: "mr-IN", name: "मराठी", i18nCode: "mr" },
+  { code: "te-IN", name: "తెలుగు", i18nCode: "te" },
+  { code: "ta-IN", name: "தமிழ்", i18nCode: "ta" },
+  { code: "kn-IN", name: "ಕನ್ನಡ", i18nCode: "kn" },
+  { code: "bn-IN", name: "বাংলা", i18nCode: "bn" },
+];
+
 const AIChat = () => {
+  const { t, i18n } = useTranslation();
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Hello! I am AgriSphere AI. Select your language to start chatting.\nनमस्ते! मैं AgriSphere AI हूं। बात करने के लिए अपनी भाषा चुनें।',
-      isUser: false,
-      timestamp: new Date()
-    }
-  ]);
-  const [inputText, setInputText] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('hi-IN');
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    const currentI18n = i18n.language || localStorage.getItem("i18nextLng") || "hi";
+    const found = SUPPORTED_LANGUAGES.find(l => l.i18nCode.startsWith(currentI18n.split('-')[0]));
+    return found ? found.code : "hi-IN";
+  });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -40,46 +71,139 @@ const AIChat = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognition = useRef<any>(null);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const isActuallyListening = useRef(false);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const loadHistory = async () => {
+        if (user && isOpen && messages.length === 0) {
+            const history = await getAiChatHistory(user.id);
+            if (history.length > 0) {
+                setMessages(history as Message[]);
+            } else {
+                setMessages([{
+                    id: "1",
+                    text: t("aiChat.welcomeMessage"),
+                    isUser: false,
+                    timestamp: new Date(),
+                }]);
+            }
+        }
+    };
+    loadHistory();
+  }, [user, isOpen]);
+
+  useEffect(() => {
+    const currentLang = SUPPORTED_LANGUAGES.find(l => l.i18nCode === i18n.language);
+    if (currentLang && currentLang.code !== selectedLanguage) {
+      setSelectedLanguage(currentLang.code);
+    }
+  }, [i18n.language, selectedLanguage]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
     // Initialize speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      recognition.current = new SpeechRecognition();
-      recognition.current.continuous = false;
-      recognition.current.interimResults = false;
-      recognition.current.lang = selectedLanguage; // Dynamic language listening
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        (window as any).webkitSpeechRecognition ||
+        (window as any).SpeechRecognition;
+      
+      const newRecognition = new SpeechRecognition();
+      newRecognition.continuous = false;
+      newRecognition.interimResults = false;
+      newRecognition.lang = selectedLanguage;
 
-      recognition.current.onresult = (event: any) => {
+      newRecognition.onstart = () => {
+        setIsListening(true);
+        isActuallyListening.current = true;
+      };
+
+      newRecognition.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         setInputText(transcript);
         setIsListening(false);
+        isActuallyListening.current = false;
+      };
 
-        // Stop recognition to prevent continuous listening
-        if (recognition.current) {
-          recognition.current.stop();
+      newRecognition.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+        setIsListening(false);
+        isActuallyListening.current = false;
+        if (event.error !== 'no-speech') {
+           toast({ 
+             title: "Voice Error", 
+             description: `Voice recognition failed: ${event.error}`,
+             variant: "destructive"
+           });
         }
       };
 
-      recognition.current.onerror = () => {
+      newRecognition.onend = () => {
         setIsListening(false);
+        isActuallyListening.current = false;
       };
 
-      recognition.current.onend = () => {
-        setIsListening(false);
-      };
+      recognition.current = newRecognition;
     }
 
-    // Cleanup speech synthesis on unmount
     return () => {
+      if (recognition.current) {
+        try {
+          recognition.current.stop();
+          isActuallyListening.current = false;
+        } catch (e) {
+          // Ignore errors during cleanup
+        }
+      }
       stopSpeech();
     };
-  }, []);
+  }, [selectedLanguage]);
+
+  const toggleListening = () => {
+    if (!recognition.current) {
+      toast({ title: "Not Supported", description: "Voice recognition is not supported in this browser." });
+      return;
+    }
+
+    if (isListening || isActuallyListening.current) {
+      try {
+        recognition.current.stop();
+        setIsListening(false);
+        isActuallyListening.current = false;
+      } catch (e) {
+        console.error("Error stopping recognition:", e);
+      }
+    } else {
+      try {
+        recognition.current.start();
+        setIsListening(true);
+        isActuallyListening.current = true;
+      } catch (e) {
+        console.error("Error starting recognition:", e);
+        // Handle InvalidStateError where it might already be started
+        if (e instanceof Error && e.name === 'InvalidStateError') {
+          setIsListening(true);
+          isActuallyListening.current = true;
+        } else {
+          toast({ 
+            title: "Error", 
+            description: "Failed to start microphone. Please check permissions.",
+            variant: "destructive"
+          });
+        }
+      }
+    }
+  };
+
+  const handleLanguageChange = (code: string) => {
+    setSelectedLanguage(code);
+    const lang = SUPPORTED_LANGUAGES.find(l => l.code === code);
+    if (lang) {
+      i18n.changeLanguage(lang.i18nCode);
+    }
+  };
 
   const handleStopSpeech = () => {
     stopSpeech();
@@ -87,42 +211,24 @@ const AIChat = () => {
     setIsPaused(false);
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
-  };
-
   const handleSendMessage = async () => {
     if (!inputText.trim() && !selectedImage) return;
     if (isLoading) return;
 
-    // Stop logic if we are speaking
     handleStopSpeech();
 
     try {
       let imageUrl = null;
 
-      // Upload image first if selected
+      // Upload image first if selected (keeping local upload for storage, but persistence in history)
       if (selectedImage) {
         const formData = new FormData();
-        formData.append('image', selectedImage);
+        formData.append("image", selectedImage);
 
-        const uploadResponse = await fetch('http://localhost:5000/community/upload-image', {
-          method: 'POST',
-          body: formData
-        });
+        const uploadResponse = await fetch(
+          "http://localhost:5000/community/upload-image",
+          { method: "POST", body: formData }
+        );
 
         const uploadData = await uploadResponse.json();
         imageUrl = uploadData.imageUrl;
@@ -133,81 +239,50 @@ const AIChat = () => {
         text: inputText || "📷 Image",
         isUser: true,
         timestamp: new Date(),
-        imageUrl: imageUrl || undefined
+        imageUrl: imageUrl || undefined,
       };
 
-      setMessages(prev => [...prev, userMessage]);
-      setInputText('');
+      setMessages((prev) => [...prev, userMessage]);
+      if (user) await saveAiChatMessage(user.id, userMessage);
+
+      setInputText("");
       setSelectedImage(null);
       setImagePreview(null);
       setIsLoading(true);
 
       try {
-        // Try OpenAI/Groq first, fallback to mock if it fails
         let aiResponse: string;
-        let hindiTranslation = '';
-
         try {
-          // Pass selected language to get response in that language directly
-          aiResponse = await chatWithAI(inputText || "What can you tell me about this image?", 'general', selectedLanguage);
+          aiResponse = await chatWithAI(
+            inputText || "What can you tell me about this image?",
+            "general",
+            selectedLanguage,
+          );
         } catch (openaiError) {
-          console.log('OpenAI failed, using mock AI:', openaiError);
-          aiResponse = await mockChatWithAI(inputText || "What can you tell me about this image?");
+          aiResponse = await mockChatWithAI(inputText || "Image analysis");
         }
 
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
           text: aiResponse,
-          // No separate 'hindi' property needed as 'text' is already in target language
           isUser: false,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
-        setMessages(prev => [...prev, aiMessage]);
+        setMessages((prev) => [...prev, aiMessage]);
+        if (user) await saveAiChatMessage(user.id, aiMessage);
       } catch (error) {
-        const errorMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: 'Sorry, I encountered an error. Please try again / क्षमा करें, त्रुटि हुई।',
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorMessage]);
+        toast({ title: t('common.error'), description: "AI response failed." });
       } finally {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       setIsLoading(false);
     }
   };
 
-  const startListening = () => {
-    if (recognition.current && !isListening) {
-      handleStopSpeech(); // Stop AI speaking when user starts speaking
-
-      setIsListening(true);
-      try {
-        recognition.current.start();
-      } catch (error) {
-        console.error('Speech recognition start error:', error);
-        setIsListening(false);
-      }
-    }
-  };
-
-  const stopListening = () => {
-    if (recognition.current && isListening) {
-      try {
-        recognition.current.stop();
-      } catch (error) {
-        console.error('Speech recognition stop error:', error);
-      }
-      setIsListening(false);
-    }
-  };
-
   const handleSpeak = (text: string, messageId: string) => {
-    // New speech - cancel any ongoing
     stopSpeech();
     setIsPaused(false);
     setSpeakingMessageId(messageId);
@@ -220,212 +295,77 @@ const AIChat = () => {
 
   return (
     <>
-      {/* Chat Toggle Button */}
-      <motion.div
-        className="fixed bottom-6 right-6 z-50"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 2 }}
-      >
-        <Button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-16 h-16 rounded-full bg-gradient-primary shadow-lg hover:shadow-xl transition-all duration-300"
-        >
+      <motion.div className="fixed bottom-6 right-6 z-50">
+        <Button onClick={() => setIsOpen(!isOpen)} className="w-16 h-16 rounded-full bg-gradient-primary shadow-lg hover:shadow-xl transition-all duration-300">
           {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
         </Button>
       </motion.div>
 
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-24 right-6 w-96 h-[500px] z-50"
-          >
-            <Card className="h-full flex flex-col bg-background/95 backdrop-blur-xl border-2 border-primary/30">
-              {/* Header */}
-              <div className="p-4 border-b border-border/50 bg-gradient-primary/10">
-                <div className="flex items-center justify-between">
+          <motion.div initial={{ opacity: 0, y: 100, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 100, scale: 0.8 }} className="fixed bottom-24 right-6 w-96 h-[500px] z-50">
+            <Card className="h-full flex flex-col bg-background/95 backdrop-blur-xl border-2 border-primary/30 shadow-2xl">
+              <div className="p-4 border-b border-border/50 bg-primary/5 rounded-t-xl flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">🤖</span>
+                    <span className="text-2xl">⚡</span>
                     <div>
-                      <h3 className="font-bold">AgriSphere AI</h3>
-                      <p className="text-xs text-muted-foreground">Agricultural Assistant</p>
+                      <h3 className="font-bold text-sm">{t("aiChat.title")}</h3>
+                      <p className="text-[10px] text-muted-foreground">{t("aiChat.subtitle")}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <select
-                      value={selectedLanguage}
-                      onChange={(e) => setSelectedLanguage(e.target.value)}
-                      className="px-2 py-1 text-xs rounded border border-border bg-background"
-                    >
-                      <option value="en-IN">English (India)</option>
-                      <option value="hi-IN">Hindi (हिंदी)</option>
-                      <option value="as-IN">Assamese (অসমীয়া)</option>
-                      <option value="bn-IN">Bengali (Bangla)</option>
-                      <option value="brx-IN">Bodo</option>
-                      <option value="mni-IN">Manipuri (Meitei)</option>
-                      <option value="kok-IN">Kokborok</option>
-                      <option value="lus-IN">Mizo</option>
-                      <option value="ne-IN">Nepali</option>
-                      <option value="kh-IN">Khasi</option>
-                      <option value="grt-IN">Garo</option>
-                      <option value="nj-IN">Nagamese</option>
-                      <option value="ao-IN">Ao Naga</option>
-                      <option value="ang-IN">Angami Naga</option>
-                    </select>
+                    <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
+                      <SelectTrigger className="w-[105px] h-7 text-[10px] bg-primary/10 border-primary/20 hover:bg-primary/20 transition-all font-medium">
+                        <Languages className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                         {SUPPORTED_LANGUAGES.map((lang) => (
+                           <SelectItem key={lang.code} value={lang.code} className="text-xs">
+                             {lang.name}
+                           </SelectItem>
+                         ))}
+                      </SelectContent>
+                    </Select>
+                    <Badge variant="outline" className="text-[9px] border-primary/30 text-primary hidden md:flex">Cloud History</Badge>
                   </div>
-                </div>
               </div>
 
-              {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[85%] p-3 rounded-lg ${message.isUser
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                        }`}
-                    >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {message.text}
-                      </p>
-                      {message.imageUrl && (
-                        <div className="mt-2">
-                          <img
-                            src={message.imageUrl}
-                            alt="Shared image"
-                            className="rounded-lg max-w-full max-h-48 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => window.open(message.imageUrl, '_blank')}
-                          />
-                        </div>
-                      )}
+                  <div key={message.id} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${message.isUser ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-muted rounded-tl-none"}`}>
+                      {message.imageUrl && <img src={message.imageUrl} alt="Shared" className="rounded-lg mb-2 max-h-40 object-cover" />}
+                      <p className="whitespace-pre-wrap">{message.text}</p>
                       {!message.isUser && (
-                        <div className="flex gap-2 mt-2 border-t border-gray-200/20 pt-2 items-center">
-                          {/* Play/Pause Button */}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleSpeak(message.text, message.id)}
-                            className={`h-6 w-6 p-0 hover:bg-black/10 rounded-full ${speakingMessageId === message.id ? 'text-primary' : ''}`}
-                            title={speakingMessageId === message.id && !isPaused ? "Pause" : "Listen in Hindi"}
-                          >
-                            {speakingMessageId === message.id && !isPaused ? (
-                              <span className="text-xs font-bold">⏸️</span>
-                            ) : (
-                              <Volume2 className="w-4 h-4" />
-                            )}
+                        <div className="flex gap-2 mt-2 border-t border-border/20 pt-2">
+                          <Button size="sm" variant="ghost" onClick={() => handleSpeak(message.text, message.id)} className="h-6 w-6 p-0">
+                            {speakingMessageId === message.id ? "⏸️" : <Volume2 className="w-4 h-4" />}
                           </Button>
-
-                          {/* Stop Button (only visible when speaking this message) */}
-                          {speakingMessageId === message.id && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={handleStopSpeech}
-                              className="h-6 w-6 p-0 hover:bg-red-100 text-red-500 rounded-full"
-                              title="Stop Speaking"
-                            >
-                              <span className="text-xs font-bold">⏹️</span>
-                            </Button>
-                          )}
                         </div>
                       )}
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex justify-start"
-                  >
-                    <div className="bg-muted p-3 rounded-lg">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+                {isLoading && <div className="bg-muted p-3 rounded-lg w-fit animate-pulse text-xs">AI is typing...</div>}
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input */}
-              <div className="p-4 border-t border-border/50">
-                {/* Image Preview */}
-                {imagePreview && (
-                  <div className="mb-3 relative inline-block">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="max-h-24 rounded-lg border-2 border-primary/50"
-                    />
-                    <button
-                      onClick={handleRemoveImage}
-                      className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg"
-                    >
-                      <XIcon className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
+              <div className="p-4 border-t border-border/50 bg-background/50">
                 <div className="flex gap-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageSelect}
-                    className="hidden"
-                    id="ai-chat-image-upload"
-                  />
-                  <label htmlFor="ai-chat-image-upload">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="cursor-pointer"
-                      asChild
-                    >
-                      <div>
-                        <ImageIcon className="w-4 h-4" />
-                      </div>
-                    </Button>
-                  </label>
-                  <Input
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder={selectedLanguage === 'en-IN' ? "Ask your question..." : "Ask in your language..."}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    disabled={isLoading}
-                  />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={isListening ? stopListening : startListening}
-                    className={`transition-all duration-300 ${isListening ? 'bg-red-500 text-white animate-pulse' : ''
-                      }`}
+                  <Input value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder="Ask anything..." onKeyPress={(e) => e.key === "Enter" && handleSendMessage()} />
+                  <Button 
+                    size="sm" 
+                    variant={isListening ? "destructive" : "outline"} 
+                    onClick={toggleListening} 
+                    className={`shrink-0 ${isListening ? "animate-pulse bg-red-500 hover:bg-red-600 border-none shadow-lg shadow-red-500/50" : "hover:bg-primary/10 border-primary/20"}`}
                   >
-                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                    {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-primary" />}
                   </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleSendMessage}
-                    disabled={(!inputText.trim() && !selectedImage) || isLoading}
-                  >
+                  <Button size="sm" onClick={handleSendMessage} disabled={isLoading || (!inputText.trim() && !selectedImage)}>
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  {selectedLanguage === 'en-IN' ? "Speak or type in English" : "Speak or type in your language"}
-                </p>
               </div>
             </Card>
           </motion.div>

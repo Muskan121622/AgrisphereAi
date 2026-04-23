@@ -38,3 +38,4 @@ model_output/
 .env.example
 sklearn_model_output/
 *.pkl
+venv

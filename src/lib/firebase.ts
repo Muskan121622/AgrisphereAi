@@ -1,22 +1,26 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from 'firebase/analytics';
 
-
-
-// Firebase configuration
+// Firebase configuration provided by user
 const firebaseConfig = {
-  apiKey: "AIzaSyBJkpgg7K6yTyii-hBR2tCR0AX21bTQNgw",
-  authDomain: "agrispace-ea219.firebaseapp.com",
-  projectId: "agrispace-ea219",
-  storageBucket: "agrispace-ea219.firebasestorage.app",
-  messagingSenderId: "528915442362",
-  appId: "1:528915442362:web:1c00c4257780e04aea3083",
-  measurementId: "G-WWZSNCRDH0"
+  apiKey: "AIzaSyDtc9xgCZ9u8CDnc6ZpRrhENMgNF4D5LHY",
+  authDomain: "agrisphere-5d56c.firebaseapp.com",
+  projectId: "agrisphere-5d56c",
+  storageBucket: "agrisphere-5d56c.firebasestorage.app",
+  messagingSenderId: "412533049904",
+  appId: "1:412533049904:web:44eca2aec0442b9833fbf5",
+  measurementId: "G-QFE60X5R5L"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-// Initialize Firebase Authentication and get a reference to the service
+// Initialize Firebase Authentication, Firestore, and get references to the services
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+export { app, analytics };
 export default app;

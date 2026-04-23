@@ -4,14 +4,26 @@ import { NewsArticle } from "../../types/advisory";
 import { Calendar, User } from "lucide-react";
 
 import { VoiceExplainButton } from "./VoiceExplainButton";
+import { SupportedNewsLanguage } from "../../services/newsService";
 
 interface NewsCardProps {
     article: NewsArticle;
-    language?: "Hindi" | "English";
+    language?: SupportedNewsLanguage;
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({ article, language = "English" }) => {
-    const formattedDate = new Date(article.publishedAt).toLocaleDateString(language === "Hindi" ? 'hi-IN' : 'en-IN', {
+    const localeMap: Record<string, string> = {
+        "Hindi": "hi-IN",
+        "Marathi": "mr-IN",
+        "Telugu": "te-IN",
+        "Tamil": "ta-IN",
+        "Odia": "or-IN",
+        "Bengali": "bn-IN",
+        "Kannada": "kn-IN",
+        "English": "en-IN"
+    };
+
+    const formattedDate = new Date(article.publishedAt).toLocaleDateString(localeMap[language] || "en-IN", {
         day: 'numeric', month: 'short', year: 'numeric'
     });
 
@@ -46,7 +58,14 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article, language = "English
                     rel="noopener noreferrer"
                     className="text-sm font-semibold text-green-600 hover:underline"
                 >
-                    {language === "Hindi" ? "पूरा लेख पढ़ें" : "Read Full Article"} &rarr;
+                    {language === "Hindi" ? "पूरा लेख पढ़ें" : 
+                     language === "Telugu" ? "పూర్తి కథనం చదవండి" :
+                     language === "Marathi" ? "पूर्ण लेख वाचा" :
+                     language === "Bengali" ? "সম্পূর্ণ নিবন্ধ পড়ুন" :
+                     language === "Kannada" ? "ಪೂರ್ಣ ಲೇಖನವನ್ನು ಓದಿ" :
+                     language === "Tamil" ? "முழு உரையையும் படிக்கவும்" :
+                     language === "Odia" ? "ପୁରା ପଢନ୍ତୁ" :
+                     "Read Full Article"} &rarr;
                 </a>
             </CardFooter>
         </Card>

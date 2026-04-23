@@ -1,17 +1,40 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Droplets, Sprout, CloudRain, Calculator, Leaf, Thermometer, Wind, Volume2, Mic, StopCircle } from "lucide-react";
-import { simplifyTextForFarmer, speakText, stopSpeech } from "@/services/voiceService";
+import {
+  ArrowLeft,
+  Droplets,
+  Sprout,
+  CloudRain,
+  Calculator,
+  Leaf,
+  Thermometer,
+  Wind,
+  Volume2,
+  Mic,
+  StopCircle,
+} from "lucide-react";
+import {
+  simplifyTextForFarmer,
+  speakText,
+  stopSpeech,
+} from "@/services/voiceService";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { useTranslation } from "react-i18next";
+import Navbar from "@/components/Navbar";
 
 const FertilizerRecommendation = () => {
   const { t } = useTranslation();
@@ -33,38 +56,41 @@ const FertilizerRecommendation = () => {
     rainfall: 0,
     stage: "vegetative",
     temperature: 25,
-    soil_type: "clay"
+    soil_type: "clay",
   });
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const getRecommendation = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/recommend-fertilizer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        "http://localhost:5000/recommend-fertilizer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to get recommendation');
+        throw new Error("Failed to get recommendation");
       }
 
       const data = await response.json();
       setResult(data);
       toast({
-        title: t('advisoryHub.success.addedSchemes'),
-        description: t('fertilizer.results.planTitle'),
+        title: t("advisoryHub.success.addedSchemes"),
+        description: t("fertilizer.results.planTitle"),
       });
     } catch (error) {
       toast({
-        title: t('common.error'),
-        description: t('advisoryHub.error.loadSchemes'),
+        title: t("common.error"),
+        description: t("advisoryHub.error.loadSchemes"),
         variant: "destructive",
       });
       console.error(error);
@@ -103,12 +129,11 @@ const FertilizerRecommendation = () => {
       speakText(text, lang === "Hindi" ? "hi-IN" : "en-US", () => {
         setIsSpeaking(false);
       });
-
     } catch (error) {
       toast({
-        title: t('common.voiceError'),
-        description: t('common.voiceError'),
-        variant: "destructive"
+        title: t("common.voiceError"),
+        description: t("common.voiceError"),
+        variant: "destructive",
       });
     } finally {
       setIsExplaining(false);
@@ -116,28 +141,28 @@ const FertilizerRecommendation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden pt-24">
+      <Navbar />
       {/* Background Elements */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
       <div className="fixed top-20 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-float" />
-      <div className="fixed bottom-0 left-0 w-80 h-80 bg-accent/20 rounded-full blur-[100px] animate-float" style={{ animationDelay: "2s" }} />
+      <div
+        className="fixed bottom-0 left-0 w-80 h-80 bg-accent/20 rounded-full blur-[100px] animate-float"
+        style={{ animationDelay: "2s" }}
+      />
 
       <main className="container mx-auto px-4 py-8 relative z-10">
-        <Button
-          variant="ghost"
-          className="mb-6 hover:bg-primary/10"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> {t('disease.backHome')}
-        </Button>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold gradient-text mb-2">{t('fertilizer.title')}</h1>
-          <p className="text-muted-foreground text-lg">{t('fertilizer.subtitle')}</p>
+          <h1 className="text-4xl font-bold gradient-text mb-2">
+            {t("fertilizer.title")}
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            {t("fertilizer.subtitle")}
+          </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -152,67 +177,116 @@ const FertilizerRecommendation = () => {
                 <div className="p-3 rounded-xl bg-primary/20 text-primary">
                   <Calculator className="h-6 w-6" />
                 </div>
-                <h2 className="text-2xl font-semibold">{t('fertilizer.inputTitle')}</h2>
+                <h2 className="text-2xl font-semibold">
+                  {t("fertilizer.inputTitle")}
+                </h2>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <Label className="text-base mb-2 block">{t('fertilizer.cropType')}</Label>
+                  <Label className="text-base mb-2 block">
+                    {t("fertilizer.cropType")}
+                  </Label>
                   <Select
                     value={formData.crop}
                     onValueChange={(val) => handleInputChange("crop", val)}
                   >
                     <SelectTrigger className="bg-background/50">
-                      <SelectValue placeholder={t('fertilizer.selectCrop')} />
+                      <SelectValue placeholder={t("fertilizer.selectCrop")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="rice">{t('common.crops.rice')}</SelectItem>
-                      <SelectItem value="wheat">{t('common.crops.wheat')}</SelectItem>
-                      <SelectItem value="corn">{t('common.crops.maize')}</SelectItem>
-                      <SelectItem value="potato">{t('common.crops.potato')}</SelectItem>
-                      <SelectItem value="cotton">{t('common.crops.cotton')}</SelectItem>
-                      <SelectItem value="sugarcane">{t('common.crops.sugarcane')}</SelectItem>
+                      <SelectItem value="rice">
+                        {t("common.crops.rice")}
+                      </SelectItem>
+                      <SelectItem value="wheat">
+                        {t("common.crops.wheat")}
+                      </SelectItem>
+                      <SelectItem value="corn">
+                        {t("common.crops.maize")}
+                      </SelectItem>
+                      <SelectItem value="potato">
+                        {t("common.crops.potato")}
+                      </SelectItem>
+                      <SelectItem value="cotton">
+                        {t("common.crops.cotton")}
+                      </SelectItem>
+                      <SelectItem value="sugarcane">
+                        {t("common.crops.sugarcane")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label className="mb-2 block">{t('fertilizer.nitrogen')}</Label>
-                    <Select value={formData.soil_n} onValueChange={(val) => handleInputChange("soil_n", val)}>
+                    <Label className="mb-2 block">
+                      {t("fertilizer.nitrogen")}
+                    </Label>
+                    <Select
+                      value={formData.soil_n}
+                      onValueChange={(val) => handleInputChange("soil_n", val)}
+                    >
                       <SelectTrigger className="bg-background/50">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">{t('marketplace.trends.low')}</SelectItem>
-                        <SelectItem value="medium">{t('marketplace.trends.medium')}</SelectItem>
-                        <SelectItem value="high">{t('marketplace.trends.high')}</SelectItem>
+                        <SelectItem value="low">
+                          {t("marketplace.trends.low")}
+                        </SelectItem>
+                        <SelectItem value="medium">
+                          {t("marketplace.trends.medium")}
+                        </SelectItem>
+                        <SelectItem value="high">
+                          {t("marketplace.trends.high")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label className="mb-2 block">{t('fertilizer.phosphorus')}</Label>
-                    <Select value={formData.soil_p} onValueChange={(val) => handleInputChange("soil_p", val)}>
+                    <Label className="mb-2 block">
+                      {t("fertilizer.phosphorus")}
+                    </Label>
+                    <Select
+                      value={formData.soil_p}
+                      onValueChange={(val) => handleInputChange("soil_p", val)}
+                    >
                       <SelectTrigger className="bg-background/50">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">{t('marketplace.trends.low')}</SelectItem>
-                        <SelectItem value="medium">{t('marketplace.trends.medium')}</SelectItem>
-                        <SelectItem value="high">{t('marketplace.trends.high')}</SelectItem>
+                        <SelectItem value="low">
+                          {t("marketplace.trends.low")}
+                        </SelectItem>
+                        <SelectItem value="medium">
+                          {t("marketplace.trends.medium")}
+                        </SelectItem>
+                        <SelectItem value="high">
+                          {t("marketplace.trends.high")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label className="mb-2 block">{t('fertilizer.potassium')}</Label>
-                    <Select value={formData.soil_k} onValueChange={(val) => handleInputChange("soil_k", val)}>
+                    <Label className="mb-2 block">
+                      {t("fertilizer.potassium")}
+                    </Label>
+                    <Select
+                      value={formData.soil_k}
+                      onValueChange={(val) => handleInputChange("soil_k", val)}
+                    >
                       <SelectTrigger className="bg-background/50">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">{t('marketplace.trends.low')}</SelectItem>
-                        <SelectItem value="medium">{t('marketplace.trends.medium')}</SelectItem>
-                        <SelectItem value="high">{t('marketplace.trends.high')}</SelectItem>
+                        <SelectItem value="low">
+                          {t("marketplace.trends.low")}
+                        </SelectItem>
+                        <SelectItem value="medium">
+                          {t("marketplace.trends.medium")}
+                        </SelectItem>
+                        <SelectItem value="high">
+                          {t("marketplace.trends.high")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -222,44 +296,54 @@ const FertilizerRecommendation = () => {
                   <div className="flex justify-between mb-2">
                     <Label className="flex items-center gap-2">
                       <Droplets className="h-4 w-4 text-blue-500" />
-                      {t('fertilizer.moisture')}
+                      {t("fertilizer.moisture")}
                     </Label>
-                    <span className="font-mono text-primary font-bold">{formData.soil_moisture}%</span>
+                    <span className="font-mono text-primary font-bold">
+                      {formData.soil_moisture}%
+                    </span>
                   </div>
                   <Slider
                     value={[formData.soil_moisture]}
-                    onValueChange={(val) => handleInputChange("soil_moisture", val[0])}
+                    onValueChange={(val) =>
+                      handleInputChange("soil_moisture", val[0])
+                    }
                     max={100}
                     step={1}
                     className="py-4"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{t('fertilizer.moistureDry')}</span>
-                    <span>{t('fertilizer.moistureWet')}</span>
+                    <span>{t("fertilizer.moistureDry")}</span>
+                    <span>{t("fertilizer.moistureWet")}</span>
                   </div>
                 </div>
 
                 <div>
                   <Label className="flex items-center gap-2 mb-2">
                     <CloudRain className="h-4 w-4 text-blue-400" />
-                    {t('fertilizer.rainfall')}
+                    {t("fertilizer.rainfall")}
                   </Label>
                   <Input
                     type="number"
                     value={formData.rainfall}
-                    onChange={(e) => handleInputChange("rainfall", Number(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange("rainfall", Number(e.target.value))
+                    }
                     className="bg-background/50"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="mb-2 block">{t('fertilizer.soilPh')}</Label>
+                    <Label className="mb-2 block">
+                      {t("fertilizer.soilPh")}
+                    </Label>
                     <Input
                       type="number"
                       step="0.1"
                       value={formData.soil_ph}
-                      onChange={(e) => handleInputChange("soil_ph", Number(e.target.value))}
+                      onChange={(e) =>
+                        handleInputChange("soil_ph", Number(e.target.value))
+                      }
                       className="bg-background/50"
                       placeholder="e.g. 6.5"
                     />
@@ -267,20 +351,30 @@ const FertilizerRecommendation = () => {
                   <div>
                     <Label className="flex items-center gap-2 mb-2">
                       <Sprout className="h-4 w-4 text-green-500" />
-                      {t('fertilizer.growthStage')}
+                      {t("fertilizer.growthStage")}
                     </Label>
                     <Select
                       value={formData.stage}
                       onValueChange={(val) => handleInputChange("stage", val)}
                     >
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder={t('fertilizer.selectStage')} />
+                        <SelectValue
+                          placeholder={t("fertilizer.selectStage")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="sowing">{t('fertilizer.stages.sowing')}</SelectItem>
-                        <SelectItem value="vegetative">{t('fertilizer.stages.vegetative')}</SelectItem>
-                        <SelectItem value="flowering">{t('fertilizer.stages.flowering')}</SelectItem>
-                        <SelectItem value="harvest">{t('fertilizer.stages.harvest')}</SelectItem>
+                        <SelectItem value="sowing">
+                          {t("fertilizer.stages.sowing")}
+                        </SelectItem>
+                        <SelectItem value="vegetative">
+                          {t("fertilizer.stages.vegetative")}
+                        </SelectItem>
+                        <SelectItem value="flowering">
+                          {t("fertilizer.stages.flowering")}
+                        </SelectItem>
+                        <SelectItem value="harvest">
+                          {t("fertilizer.stages.harvest")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -294,10 +388,10 @@ const FertilizerRecommendation = () => {
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/50 border-t-white"></div>
-                      {t('fertilizer.analyzing')}
+                      {t("fertilizer.analyzing")}
                     </div>
                   ) : (
-                    t('fertilizer.getBtn')
+                    t("fertilizer.getBtn")
                   )}
                 </Button>
               </div>
@@ -324,15 +418,23 @@ const FertilizerRecommendation = () => {
                         <Mic className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-indigo-300">{t('pest.advisorTitle')}</h3>
-                        <p className="text-xs text-muted-foreground">{t('pest.advisorDesc')}</p>
+                        <h3 className="font-semibold text-indigo-300">
+                          {t("pest.advisorTitle")}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {t("pest.advisorDesc")}
+                        </p>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
                         variant={isSpeaking ? "destructive" : "outline"}
-                        className={isSpeaking ? "" : "border-indigo-500/30 hover:bg-indigo-500/10"}
+                        className={
+                          isSpeaking
+                            ? ""
+                            : "border-indigo-500/30 hover:bg-indigo-500/10"
+                        }
                         onClick={() => handleExplain("Hindi")}
                         disabled={isExplaining}
                       >
@@ -343,7 +445,9 @@ const FertilizerRecommendation = () => {
                         ) : (
                           <Volume2 className="h-4 w-4 mr-1" />
                         )}
-                        {isSpeaking ? t('pest.stopBtn') : t('common.languages.hindi')}
+                        {isSpeaking
+                          ? t("pest.stopBtn")
+                          : t("common.languages.hindi")}
                       </Button>
                       <Button
                         size="sm"
@@ -352,7 +456,7 @@ const FertilizerRecommendation = () => {
                         onClick={() => handleExplain("English")}
                         disabled={isExplaining || isSpeaking}
                       >
-                        {t('common.languages.english')}
+                        {t("common.languages.english")}
                       </Button>
                     </div>
                   </div>
@@ -370,8 +474,10 @@ const FertilizerRecommendation = () => {
                 <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
                   <Leaf className="h-12 w-12 opacity-50" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">{t('fertilizer.results.noDataTitle')}</h3>
-                <p>{t('fertilizer.results.noDataDesc')}</p>
+                <h3 className="text-xl font-medium mb-2">
+                  {t("fertilizer.results.noDataTitle")}
+                </h3>
+                <p>{t("fertilizer.results.noDataDesc")}</p>
               </Card>
             ) : (
               <>
@@ -380,7 +486,9 @@ const FertilizerRecommendation = () => {
                   <div className="p-4 bg-green-500/10 border-b border-green-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Leaf className="h-5 w-5 text-green-500" />
-                      <h3 className="font-bold text-lg text-green-500">{t('fertilizer.results.planTitle')}</h3>
+                      <h3 className="font-bold text-lg text-green-500">
+                        {t("fertilizer.results.planTitle")}
+                      </h3>
                     </div>
                     <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full border border-green-500/30">
                       {formData.crop.toUpperCase()}
@@ -389,29 +497,46 @@ const FertilizerRecommendation = () => {
                   <div className="p-6">
                     <div className="grid grid-cols-3 gap-4 text-center mb-4">
                       <div className="p-4 rounded-xl bg-background/50 border border-border/50">
-                        <div className="text-sm text-muted-foreground mb-1">{t('fertilizer.nitrogen')}</div>
-                        <div className="text-2xl font-bold text-primary">{result.fertilizer.nitrogen}</div>
+                        <div className="text-sm text-muted-foreground mb-1">
+                          {t("fertilizer.nitrogen")}
+                        </div>
+                        <div className="text-2xl font-bold text-primary">
+                          {result.fertilizer.nitrogen}
+                        </div>
                       </div>
                       <div className="p-4 rounded-xl bg-background/50 border border-border/50">
-                        <div className="text-sm text-muted-foreground mb-1">{t('fertilizer.phosphorus')}</div>
-                        <div className="text-2xl font-bold text-orange-400">{result.fertilizer.phosphorus}</div>
+                        <div className="text-sm text-muted-foreground mb-1">
+                          {t("fertilizer.phosphorus")}
+                        </div>
+                        <div className="text-2xl font-bold text-orange-400">
+                          {result.fertilizer.phosphorus}
+                        </div>
                       </div>
                       <div className="p-4 rounded-xl bg-background/50 border border-border/50">
-                        <div className="text-sm text-muted-foreground mb-1">{t('fertilizer.potassium')}</div>
-                        <div className="text-2xl font-bold text-yellow-400">{result.fertilizer.potassium}</div>
+                        <div className="text-sm text-muted-foreground mb-1">
+                          {t("fertilizer.potassium")}
+                        </div>
+                        <div className="text-2xl font-bold text-yellow-400">
+                          {result.fertilizer.potassium}
+                        </div>
                       </div>
                     </div>
 
-                    {result.fertilizer.adjustments && result.fertilizer.adjustments.length > 0 && (
-                      <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-xs text-yellow-200">
-                        <strong>{t('fertilizer.results.adjustments')}:</strong>
-                        <ul className="list-disc pl-4 mt-1">
-                          {result.fertilizer.adjustments.map((adj: string, i: number) => (
-                            <li key={i}>{adj}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {result.fertilizer.adjustments &&
+                      result.fertilizer.adjustments.length > 0 && (
+                        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-xs text-yellow-200">
+                          <strong>
+                            {t("fertilizer.results.adjustments")}:
+                          </strong>
+                          <ul className="list-disc pl-4 mt-1">
+                            {result.fertilizer.adjustments.map(
+                              (adj: string, i: number) => (
+                                <li key={i}>{adj}</li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      )}
                   </div>
                 </Card>
 
@@ -423,8 +548,13 @@ const FertilizerRecommendation = () => {
                         <Thermometer className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-red-400 mb-1">{t('fertilizer.results.phAlert')} (pH {result.soil_health.ph_status})</h4>
-                        <p className="text-sm text-muted-foreground">{result.soil_health.recommendation}</p>
+                        <h4 className="font-bold text-red-400 mb-1">
+                          {t("fertilizer.results.phAlert")} (pH{" "}
+                          {result.soil_health.ph_status})
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {result.soil_health.recommendation}
+                        </p>
                       </div>
                     </div>
                   </Card>
@@ -435,26 +565,38 @@ const FertilizerRecommendation = () => {
                   <div className="p-4 bg-blue-500/10 border-b border-blue-500/20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Droplets className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-bold text-lg text-blue-500">{t('fertilizer.results.irrigationTitle')}</h3>
+                      <h3 className="font-bold text-lg text-blue-500">
+                        {t("fertilizer.results.irrigationTitle")}
+                      </h3>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full border ${result.irrigation.status === "Irrigate Immediately"
-                      ? "bg-red-500/20 text-red-400 border-red-500/30"
-                      : "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                      }`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full border ${
+                        result.irrigation.status === "Irrigate Immediately"
+                          ? "bg-red-500/20 text-red-400 border-red-500/30"
+                          : "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                      }`}
+                    >
                       {result.irrigation.status}
                     </span>
                   </div>
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{t('fertilizer.results.waterAmount')}:</span>
-                      <span className="text-xl font-bold">{result.irrigation.water_amount}</span>
+                      <span className="text-muted-foreground">
+                        {t("fertilizer.results.waterAmount")}:
+                      </span>
+                      <span className="text-xl font-bold">
+                        {result.irrigation.water_amount}
+                      </span>
                     </div>
                     <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/10 text-sm">
                       <p className="leading-relaxed">
-                        {t('fertilizer.results.applyWater', { amount: result.irrigation.water_amount })}
-                        {result.irrigation.schedule.next_3_days === "Rain Expected"
-                          ? t('fertilizer.results.rainNote')
-                          : t('fertilizer.results.moistureNote')}
+                        {t("fertilizer.results.applyWater", {
+                          amount: result.irrigation.water_amount,
+                        })}
+                        {result.irrigation.schedule.next_3_days ===
+                        "Rain Expected"
+                          ? t("fertilizer.results.rainNote")
+                          : t("fertilizer.results.moistureNote")}
                       </p>
                     </div>
                   </div>
@@ -467,8 +609,12 @@ const FertilizerRecommendation = () => {
                       <Thermometer className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="text-xs text-muted-foreground">{t('fertilizer.results.temperature')}</div>
-                      <div className="font-semibold">{formData.temperature}°C</div>
+                      <div className="text-xs text-muted-foreground">
+                        {t("fertilizer.results.temperature")}
+                      </div>
+                      <div className="font-semibold">
+                        {formData.temperature}°C
+                      </div>
                     </div>
                   </Card>
                   <Card className="p-4 bg-card/30 flex items-center gap-3">
@@ -476,14 +622,20 @@ const FertilizerRecommendation = () => {
                       <Wind className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="text-xs text-muted-foreground">{t('fertilizer.results.windSpeed')}</div>
-                      <div className="font-semibold">{t('fertilizer.results.normal')}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {t("fertilizer.results.windSpeed")}
+                      </div>
+                      <div className="font-semibold">
+                        {t("fertilizer.results.normal")}
+                      </div>
                     </div>
                   </Card>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-muted-foreground px-1 mt-4">
-                  <span>Source: <strong>{result.source}</strong></span>
+                  <span>
+                    Source: <strong>{result.source}</strong>
+                  </span>
                   <span>{new Date().toLocaleDateString()}</span>
                 </div>
               </>

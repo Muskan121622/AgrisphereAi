@@ -174,7 +174,8 @@ export class GISDigitalTwin {
   async initializeFarm(
     farmName: string,
     owner: string,
-    boundaryCoordinates: GISCoordinate[]
+    boundaryCoordinates: GISCoordinate[],
+    aiIntelligence?: any
   ): Promise<DigitalTwinData> {
     console.log(`Initializing digital twin for ${farmName}...`);
 
@@ -188,11 +189,11 @@ export class GISDigitalTwin {
       location: farmBoundary.centroid,
       totalArea: farmBoundary.area,
       fieldBoundaries: [farmBoundary],
-      soilZones: await this.generateSoilZones(farmBoundary),
-      irrigationZones: await this.generateIrrigationZones(farmBoundary),
-      pestProneAreas: await this.identifyPestProneAreas(farmBoundary),
-      cropGrowthZones: await this.generateCropGrowthZones(farmBoundary),
-      weatherMicroclimates: await this.generateWeatherMicroclimates(farmBoundary),
+      soilZones: await this.generateSoilZones(farmBoundary, aiIntelligence?.soilZones),
+      irrigationZones: await this.generateIrrigationZones(farmBoundary, aiIntelligence?.irrigationZones),
+      pestProneAreas: await this.identifyPestProneAreas(farmBoundary, aiIntelligence?.pestProneAreas),
+      cropGrowthZones: await this.generateCropGrowthZones(farmBoundary, aiIntelligence?.cropGrowthStages),
+      weatherMicroclimates: await this.generateWeatherMicroclimates(farmBoundary, aiIntelligence?.weatherData),
       infrastructure: await this.generateInfrastructure(farmBoundary),
       lastUpdated: new Date()
     };
@@ -223,9 +224,10 @@ export class GISDigitalTwin {
     };
   }
 
-  private async generateSoilZones(boundary: FieldBoundary): Promise<SoilZone[]> {
+  private async generateSoilZones(boundary: FieldBoundary, aiSoils?: any[]): Promise<SoilZone[]> {
     const zones: SoilZone[] = [];
-    const soilTypes: ('clay' | 'sandy' | 'loamy' | 'silt')[] = ['clay', 'sandy', 'loamy', 'silt'];
+    const fallbackSoilTypes: ('clay' | 'sandy' | 'loamy' | 'silt')[] = ['clay', 'sandy', 'loamy', 'silt'];
+    const soilTypesFromAI = aiSoils?.map(s => s.soilType?.toLowerCase() || 'loamy') || [];
 
     // Create a grid-based soil zone mapping
     const bbox = this.getBoundingBox(boundary.coordinates);
@@ -244,8 +246,13 @@ export class GISDigitalTwin {
 
         // Check if cell intersects with farm boundary
         if (this.polygonIntersects(cellCoords, boundary.coordinates)) {
-          const soilType = soilTypes[Math.floor(Math.random() * soilTypes.length)];
-          const soilProperties = this.getSoilProperties(soilType);
+          // Use AI soil types sequentially or fallback to random
+          const soilTypeStr = soilTypesFromAI.length > 0 
+            ? soilTypesFromAI[(i * gridSize + j) % soilTypesFromAI.length]
+            : fallbackSoilTypes[Math.floor(Math.random() * fallbackSoilTypes.length)];
+          
+          const soilType = fallbackSoilTypes.includes(soilTypeStr as any) ? soilTypeStr as any : 'loamy';
+          const soilProperties = this.getSoilProperties(soilType, aiSoils?.[ (i * gridSize + j) % aiSoils.length ]);
 
           zones.push({
             id: `soil-zone-${i}-${j}`,
@@ -262,39 +269,39 @@ export class GISDigitalTwin {
     return zones;
   }
 
-  private getSoilProperties(soilType: string) {
-    const properties = {
+  private getSoilProperties(soilType: string, aiProperties?: any) {
+    const baseProperties = {
       clay: {
-        ph: 6.8 + (Math.random() - 0.5) * 0.8,
-        organicMatter: 3.2 + (Math.random() - 0.5) * 1.0,
+        ph: aiProperties?.ph || 6.8,
+        organicMatter: aiProperties?.organicMatter || 3.2,
         fertility: 'high' as const,
         drainage: 'poor' as const,
-        nutrients: { nitrogen: 45, phosphorus: 35, potassium: 180 }
+        nutrients: aiProperties?.nutrients || { nitrogen: 45, phosphorus: 35, potassium: 180 }
       },
       sandy: {
-        ph: 6.2 + (Math.random() - 0.5) * 0.6,
-        organicMatter: 1.8 + (Math.random() - 0.5) * 0.8,
+        ph: aiProperties?.ph || 6.2,
+        organicMatter: aiProperties?.organicMatter || 1.8,
         fertility: 'low' as const,
         drainage: 'excellent' as const,
-        nutrients: { nitrogen: 25, phosphorus: 15, potassium: 80 }
+        nutrients: aiProperties?.nutrients || { nitrogen: 25, phosphorus: 15, potassium: 80 }
       },
       loamy: {
-        ph: 6.5 + (Math.random() - 0.5) * 0.4,
-        organicMatter: 4.1 + (Math.random() - 0.5) * 1.2,
+        ph: aiProperties?.ph || 6.5,
+        organicMatter: aiProperties?.organicMatter || 4.1,
         fertility: 'high' as const,
         drainage: 'good' as const,
-        nutrients: { nitrogen: 55, phosphorus: 45, potassium: 220 }
+        nutrients: aiProperties?.nutrients || { nitrogen: 55, phosphorus: 45, potassium: 220 }
       },
       silt: {
-        ph: 7.1 + (Math.random() - 0.5) * 0.6,
-        organicMatter: 2.9 + (Math.random() - 0.5) * 0.8,
+        ph: aiProperties?.ph || 7.1,
+        organicMatter: aiProperties?.organicMatter || 2.9,
         fertility: 'medium' as const,
         drainage: 'moderate' as const,
-        nutrients: { nitrogen: 35, phosphorus: 25, potassium: 150 }
+        nutrients: aiProperties?.nutrients || { nitrogen: 35, phosphorus: 25, potassium: 150 }
       }
     };
 
-    return properties[soilType as keyof typeof properties];
+    return baseProperties[soilType as keyof typeof baseProperties] || baseProperties.loamy;
   }
 
   private getSoilRecommendations(soilType: string, properties: any): string[] {
@@ -328,27 +335,28 @@ export class GISDigitalTwin {
     return recommendations[soilType as keyof typeof recommendations] || [];
   }
 
-  private async generateIrrigationZones(boundary: FieldBoundary): Promise<IrrigationZone[]> {
+  private async generateIrrigationZones(boundary: FieldBoundary, aiIrrigation?: any[]): Promise<IrrigationZone[]> {
     const zones: IrrigationZone[] = [];
     const irrigationTypes: ('drip' | 'sprinkler' | 'pivot')[] = ['drip', 'sprinkler', 'pivot'];
 
-    // Divide farm into irrigation zones based on topography and crop requirements
-    const numZones = Math.min(6, Math.max(3, Math.floor(boundary.area / 2))); // 3-6 zones
+    // If AI provided zones, use them, otherwise divide boundary
+    const numZones = aiIrrigation?.length || Math.min(6, Math.max(3, Math.floor(boundary.area / 2)));
     const zoneCoords = this.divideIntoZones(boundary.coordinates, numZones);
 
     zoneCoords.forEach((coords, index) => {
-      const irrigationType = irrigationTypes[index % irrigationTypes.length];
-      const efficiency = this.getIrrigationEfficiency(irrigationType);
+      const aiZ = aiIrrigation?.[index];
+      const irrigationType = aiZ?.type?.toLowerCase() || irrigationTypes[index % irrigationTypes.length];
+      const efficiency = aiZ?.efficiency || this.getIrrigationEfficiency(irrigationType);
 
       zones.push({
         id: `irrigation-zone-${index + 1}`,
         name: `${irrigationType.charAt(0).toUpperCase() + irrigationType.slice(1)} Zone ${index + 1}`,
         coordinates: coords,
-        type: irrigationType,
+        type: irrigationType as any,
         efficiency,
         waterRequirement: this.calculateWaterRequirement(coords, irrigationType),
         schedule: this.generateIrrigationSchedule(irrigationType),
-        status: Math.random() > 0.1 ? 'active' : 'maintenance' // 90% active
+        status: aiZ?.status || 'active'
       });
     });
 
@@ -399,35 +407,30 @@ export class GISDigitalTwin {
     return schedules[type as keyof typeof schedules] || schedules.sprinkler;
   }
 
-  private async identifyPestProneAreas(boundary: FieldBoundary): Promise<PestProneArea[]> {
+  private async identifyPestProneAreas(boundary: FieldBoundary, aiPests?: any[]): Promise<PestProneArea[]> {
     const areas: PestProneArea[] = [];
-    const pests = [
-      'aphids', 'caterpillars', 'beetles', 'mites', 'thrips', 'whiteflies',
-      'cutworms', 'armyworms', 'bollworms', 'stem borers'
-    ];
+    
+    // Use AI pests if available, otherwise fallback to empty (realism)
+    const pestsToMap = aiPests || [];
 
-    // Generate 3-5 pest-prone areas based on environmental factors
-    const numAreas = Math.floor(Math.random() * 3) + 3;
-
-    for (let i = 0; i < numAreas; i++) {
-      const pestType = pests[Math.floor(Math.random() * pests.length)];
-      const riskLevel = ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high';
-
-      // Create circular pest-prone areas
-      const center = this.getRandomPointInPolygon(boundary.coordinates);
-      const radius = 50 + Math.random() * 100; // 50-150 meters
-      const areaCoords = this.createCircularArea(center, radius);
+    for (let index = 0; index < pestsToMap.length; index++) {
+      const pest = pestsToMap[index];
+      // Create a risk polygon around a portion of the field
+      const center = boundary.coordinates[index % boundary.coordinates.length];
+      const radius = 50 + (Math.random() * 100); // meters
+      
+      const riskPolygon = this.createCircularArea(center, radius);
 
       areas.push({
-        id: `pest-area-${i + 1}`,
-        name: `${pestType.charAt(0).toUpperCase() + pestType.slice(1)} Risk Zone ${i + 1}`,
-        coordinates: areaCoords,
-        pestType,
-        riskLevel,
-        lastInfestation: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000), // Last 90 days
-        preventiveMeasures: this.getPestPreventiveMeasures(pestType),
-        monitoringSchedule: this.getPestMonitoringSchedule(riskLevel),
-        treatmentHistory: this.generateTreatmentHistory(pestType)
+        id: `pest-area-${index}`,
+        name: `${pest.pestType || 'Unknown Pest'} Risk Zone`,
+        pestType: pest.pestType || 'Unknown Pest',
+        riskLevel: (pest.riskLevel?.toLowerCase() || 'medium') as any,
+        coordinates: riskPolygon,
+        lastInfestation: new Date(),
+        preventiveMeasures: pest.preventiveMeasures || ['Monitor field'],
+        monitoringSchedule: 'Daily visual inspection',
+        treatmentHistory: []
       });
     }
 
@@ -467,45 +470,23 @@ export class GISDigitalTwin {
     return treatments.slice(0, Math.floor(Math.random() * 3) + 1);
   }
 
-  private async generateCropGrowthZones(boundary: FieldBoundary): Promise<CropGrowthZone[]> {
+  private async generateCropGrowthZones(boundary: FieldBoundary, aiCrops?: any[]): Promise<CropGrowthZone[]> {
     const zones: CropGrowthZone[] = [];
+    
+    // If AI provided crops, map them to quadrants
+    const cropsToMap = aiCrops || [];
+    const numCrops = cropsToMap.length || 1;
+    const cropCoordsList = this.divideIntoZones(boundary.coordinates, numCrops);
 
-    // Determine season based on current date
-    const currentMonth = new Date().getMonth(); // 0-11
-    const isKharif = currentMonth >= 5 && currentMonth <= 10; // Jun(5) to Nov(10)
+    for (let index = 0; index < cropCoordsList.length; index++) {
+      const coords = cropCoordsList[index];
+      const aiC = cropsToMap[index % cropsToMap.length];
+      const cropType = aiC?.cropType || 'Common Crop';
+      const duration = 120; // Default duration
+      const health = aiC?.health || 85;
 
-    // Define crops by season for Northeast India region
-    const kharifCrops = [
-      { type: 'rice', variety: 'Chak-Hao (Black Rice)', duration: 160 },
-      { type: 'rice', variety: 'Ranjit', duration: 155 },
-      { type: 'maize', variety: 'RCM-76', duration: 110 },
-      { type: 'soybean', variety: 'JS-335', duration: 95 }
-    ];
-
-    const rabiCrops = [
-      { type: 'mustard', variety: 'M-27', duration: 90 },
-      { type: 'potato', variety: 'Kufri Megha', duration: 100 },
-      { type: 'vegetables', variety: 'Cabbage/Cauliflower', duration: 85 },
-      { type: 'wheat', variety: 'Sonalika', duration: 120 } // Less common but possible
-    ];
-
-    // Select crops based on current season possibilities
-    // If we are in Rabi (e.g., Feb), we should see Rabi crops planted ~1-3 months ago
-    const seasonalCrops = isKharif ? kharifCrops : rabiCrops;
-
-    // Divide farm into crop zones
-    const numZones = Math.min(4, Math.max(2, Math.floor(boundary.area / 3)));
-    const zoneCoords = this.divideIntoZones(boundary.coordinates, numZones);
-
-    // Process zones sequentially to allow async API calls
-    for (let index = 0; index < zoneCoords.length; index++) {
-      const coords = zoneCoords[index];
-      const crop = seasonalCrops[index % seasonalCrops.length];
-
-      // Calculate realistic planting date
-      const daysAgo = Math.random() * (crop.duration * 0.6) + 20;
-      const plantingDate = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
-      const expectedHarvest = new Date(plantingDate.getTime() + crop.duration * 24 * 60 * 60 * 1000);
+      const plantingDate = aiC?.plantingDate ? new Date(aiC.plantingDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const expectedHarvest = new Date(plantingDate.getTime() + duration * 24 * 60 * 60 * 1000);
 
       const stressFactors = this.identifyStressFactors(coords);
 
@@ -513,14 +494,13 @@ export class GISDigitalTwin {
       // REAL SATELLITE DATA INTEGRATION
       // ---------------------------------------------------------
       let ndvi = 0.4 + Math.random() * 0.45; // Default Simulation
-      let health = 75 + Math.random() * 25;
+      let realHealth = health;
       let isRealData = false;
 
       try {
-        console.log(`Fetching real satellite data for Zone ${index + 1}...`);
+        console.log(`Fetching real satellite data for ${cropType} Zone...`);
 
-        // Prepare coordinates for API (needs to be closed ring for Agromonitoring)
-        // Ensure closed: last point = first point
+        // Prepare coordinates for API
         const apiCoords = coords.map(c => [c.lng, c.lat]);
         if (apiCoords[0][0] !== apiCoords[apiCoords.length - 1][0] || apiCoords[0][1] !== apiCoords[apiCoords.length - 1][1]) {
           apiCoords.push(apiCoords[0]);
@@ -535,35 +515,26 @@ export class GISDigitalTwin {
         if (response.ok) {
           const data = await response.json();
           if (data.ndvi) {
-            console.log(`✅ Real NDVI Data received:`, data);
             ndvi = data.ndvi;
-            // Recalculate health based on Real NDVI
-            // NDVI 0.2-0.4 (Low), 0.4-0.6 (Medium), 0.6-0.8 (High), >0.8 (Excellent)
-            health = Math.min(100, Math.max(0, (ndvi * 100) + 10)); // Rough conversion
+            realHealth = Math.min(100, Math.max(0, (ndvi * 100) + 10));
             isRealData = true;
           }
-        } else {
-          console.warn("Satellite API failed, using simulation.");
         }
       } catch (err) {
-        console.warn("Network error fetching satellite data, using simulation.");
+        console.warn("Satellite API fetch failed during zone mapping.");
       }
-
-      // Adjust yield based on stress & health
-      let yieldFactor = (health / 100);
-      if (stressFactors.includes('Water stress')) yieldFactor -= 0.1;
 
       zones.push({
         id: `crop-zone-${index + 1}`,
-        name: `${crop.type.charAt(0).toUpperCase() + crop.type.slice(1)} Zone ${index + 1} ${isRealData ? '(Satellite Verified)' : ''}`,
+        name: `${cropType.charAt(0).toUpperCase() + cropType.slice(1)} Zone ${index + 1} ${isRealData ? '(Satellite Verified)' : ''}`,
         coordinates: coords,
-        cropType: crop.type,
-        variety: crop.variety,
-        stage: this.getCurrentGrowthStage(plantingDate, crop.duration),
+        cropType: cropType,
+        variety: aiC?.variety || 'Standard',
+        stage: (aiC?.stage?.toLowerCase() || 'vegetative') as any,
         plantingDate,
         expectedHarvest,
-        health: health,
-        yieldPrediction: Math.round(this.predictYield(crop.type, coords) * yieldFactor),
+        health: realHealth,
+        yieldPrediction: Math.round(this.predictYield(cropType, coords) * (realHealth / 100)),
         ndvi: ndvi,
         stressFactors: isRealData && ndvi < 0.4 ? [...stressFactors, 'Vegetation Stress (Satellite)'] : stressFactors
       });
@@ -571,6 +542,7 @@ export class GISDigitalTwin {
 
     return zones;
   }
+
 
   private getCurrentGrowthStage(plantingDate: Date, duration: number): 'seedling' | 'vegetative' | 'flowering' | 'fruiting' | 'harvest' | 'fallow' {
     const daysSincePlanting = (Date.now() - plantingDate.getTime()) / (1000 * 60 * 60 * 24);
@@ -632,11 +604,11 @@ export class GISDigitalTwin {
     return stressFactors;
   }
 
-  private async generateWeatherMicroclimates(boundary: FieldBoundary): Promise<WeatherMicroclimate[]> {
+  private async generateWeatherMicroclimates(boundary: FieldBoundary, aiWeather?: any): Promise<WeatherMicroclimate[]> {
     const microclimates: WeatherMicroclimate[] = [];
 
     // Create 2-4 weather monitoring points across the farm
-    const numPoints = Math.min(4, Math.max(2, Math.floor(boundary.area / 5)));
+    const numPoints = 2; // Keep it simple
 
     for (let i = 0; i < numPoints; i++) {
       const location = this.getRandomPointInPolygon(boundary.coordinates);
@@ -646,22 +618,22 @@ export class GISDigitalTwin {
         name: `Weather Station ${i + 1}`,
         coordinates: location,
         temperature: {
-          current: 25 + Math.random() * 10, // 25-35°C
-          min: 18 + Math.random() * 5, // 18-23°C
-          max: 30 + Math.random() * 8, // 30-38°C
-          average: 26 + Math.random() * 6 // 26-32°C
+          current: aiWeather?.temperature || (25 + Math.random() * 10),
+          min: (aiWeather?.temperature || 25) - 5,
+          max: (aiWeather?.temperature || 25) + 5,
+          average: aiWeather?.temperature || 27
         },
-        humidity: 60 + Math.random() * 30, // 60-90%
+        humidity: aiWeather?.humidity || 65,
         rainfall: {
-          current: Math.random() * 10, // 0-10mm
-          weekly: Math.random() * 50, // 0-50mm
-          monthly: Math.random() * 200 // 0-200mm
+          current: aiWeather?.rainfall || 0,
+          weekly: (aiWeather?.rainfall || 0) * 5,
+          monthly: (aiWeather?.rainfall || 0) * 15
         },
-        windSpeed: 5 + Math.random() * 15, // 5-20 km/h
-        windDirection: Math.random() * 360, // 0-360 degrees
-        solarRadiation: 15 + Math.random() * 10, // 15-25 MJ/m²/day
-        evapotranspiration: 4 + Math.random() * 3, // 4-7 mm/day
-        frostRisk: ['none', 'low', 'medium'][Math.floor(Math.random() * 3)] as 'none' | 'low' | 'medium'
+        windSpeed: aiWeather?.windSpeed || 5,
+        windDirection: 180,
+        solarRadiation: 20,
+        evapotranspiration: 5,
+        frostRisk: 'none'
       });
     }
 

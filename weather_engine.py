@@ -293,3 +293,25 @@ def get_location_details(lat, lon):
     except Exception as e:
         print(f"Reverse geocode error: {e}")
         return None
+
+def get_ip_location():
+    """
+    Get location details based on the public IP address.
+    """
+    try:
+        print("Weather: Attempting IP-based location lookup...")
+        # Using ip-api.com (free for non-commercial)
+        response = requests.get("http://ip-api.com/json/", timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("status") == "success":
+                print(f"Weather: IP-based lookup success: {data.get('city')}, {data.get('regionName')}")
+                return {
+                    "city": data.get("city"),
+                    "state": data.get("regionName"),
+                    "country": data.get("country")
+                }
+    except Exception as e:
+        print(f"Error in IP-based location lookup: {e}")
+    return None
+

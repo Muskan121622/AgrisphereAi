@@ -1,10 +1,17 @@
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Camera, Upload, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { analyzeImage } from '@/lib/openai';
-import { getMockDiseaseAnalysis } from '@/lib/mockAI';
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import {
+  Camera,
+  Upload,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { analyzeImage } from "@/lib/openai";
+import { getMockDiseaseAnalysis } from "@/lib/mockAI";
+import { useTranslation } from "react-i18next";
 
 interface AnalysisResult {
   disease?: string;
@@ -14,7 +21,12 @@ interface AnalysisResult {
   confidence?: number;
 }
 
-const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' | 'soil' | 'pest' }) => {
+const ImageAnalysis = ({
+  analysisType = "disease",
+}: {
+  analysisType?: "disease" | "soil" | "pest";
+}) => {
+  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -43,9 +55,9 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
     try {
       // Try OpenAI first, fallback to mock if it fails
       try {
-        const base64 = selectedImage.split(',')[1];
+        const base64 = selectedImage.split(",")[1];
         const analysisResult = await analyzeImage(base64, analysisType);
-        
+
         // Try to parse JSON response
         try {
           const parsed = JSON.parse(analysisResult);
@@ -55,15 +67,20 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
           setResult({ disease: analysisResult, confidence: 85 });
         }
       } catch (openaiError) {
-        console.log('OpenAI Vision failed, using mock analysis:', openaiError);
+        console.log("OpenAI Vision failed, using mock analysis:", openaiError);
         // Use mock analysis for demo
-        const mockResult = getMockDiseaseAnalysis('crop_disease');
+        const mockResult = getMockDiseaseAnalysis("crop_disease");
         setResult(mockResult);
       }
     } catch (err) {
-      setError('Failed to analyze image. Using demo analysis.');
+      setError(
+        t(
+          "imageAnalysis.analysisFailed",
+          "Failed to analyze image. Using demo analysis.",
+        ),
+      );
       // Even if everything fails, show demo result
-      const mockResult = getMockDiseaseAnalysis('default');
+      const mockResult = getMockDiseaseAnalysis("default");
       setResult(mockResult);
     } finally {
       setIsAnalyzing(false);
@@ -71,17 +88,21 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
   };
 
   const getSeverityColor = (severity: number) => {
-    if (severity <= 3) return 'text-green-500';
-    if (severity <= 6) return 'text-yellow-500';
-    return 'text-red-500';
+    if (severity <= 3) return "text-green-500";
+    if (severity <= 6) return "text-yellow-500";
+    return "text-red-500";
   };
 
   const getAnalysisTitle = () => {
     switch (analysisType) {
-      case 'disease': return 'Disease Detection';
-      case 'soil': return 'Soil Analysis';
-      case 'pest': return 'Pest Identification';
-      default: return 'Image Analysis';
+      case "disease":
+        return t("imageAnalysis.diseaseDetection", "Disease Detection");
+      case "soil":
+        return t("imageAnalysis.soilAnalysis", "Soil Analysis");
+      case "pest":
+        return t("imageAnalysis.pestIdentification", "Pest Identification");
+      default:
+        return t("imageAnalysis.title", "Image Analysis");
     }
   };
 
@@ -101,7 +122,7 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
           onChange={handleImageUpload}
           className="hidden"
         />
-        
+
         <div className="flex gap-2">
           <Button
             onClick={() => fileInputRef.current?.click()}
@@ -109,9 +130,9 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
             className="flex-1"
           >
             <Upload className="w-4 h-4 mr-2" />
-            Upload Image
+            {t("imageAnalysis.uploadImage", "Upload Image")}
           </Button>
-          
+
           {selectedImage && (
             <Button
               onClick={analyzeSelectedImage}
@@ -123,7 +144,7 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
               ) : (
                 <Camera className="w-4 h-4 mr-2" />
               )}
-              Analyze
+              {t("imageAnalysis.analyze", "Analyze")}
             </Button>
           )}
         </div>
@@ -153,37 +174,61 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
             <div className="bg-muted/50 p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <h4 className="font-semibold">Analysis Complete</h4>
+                <h4 className="font-semibold">
+                  {t("imageAnalysis.analysisComplete", "Analysis Complete")}
+                </h4>
               </div>
-              
+
               {result.disease && (
                 <div className="space-y-2">
-                  <p><strong>Identified Issue:</strong> {result.disease}</p>
-                  
+                  <p>
+                    <strong>
+                      {t("imageAnalysis.identifiedIssue", "Identified Issue")}:
+                    </strong>{" "}
+                    {result.disease}
+                  </p>
+
                   {result.severity && (
                     <p>
-                      <strong>Severity:</strong> 
-                      <span className={`ml-2 font-bold ${getSeverityColor(result.severity)}`}>
+                      <strong>
+                        {t("imageAnalysis.severity", "Severity")}:
+                      </strong>
+                      <span
+                        className={`ml-2 font-bold ${getSeverityColor(result.severity)}`}
+                      >
                         {result.severity}/10
                       </span>
                     </p>
                   )}
-                  
+
                   {result.confidence && (
-                    <p><strong>Confidence:</strong> {result.confidence}%</p>
+                    <p>
+                      <strong>
+                        {t("imageAnalysis.confidence", "Confidence")}:
+                      </strong>{" "}
+                      {result.confidence}%
+                    </p>
                   )}
-                  
+
                   {result.treatment && (
                     <div className="mt-3">
-                      <strong>Treatment:</strong>
-                      <p className="text-sm text-muted-foreground mt-1">{result.treatment}</p>
+                      <strong>
+                        {t("imageAnalysis.treatment", "Treatment")}:
+                      </strong>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {result.treatment}
+                      </p>
                     </div>
                   )}
-                  
+
                   {result.prevention && (
                     <div className="mt-3">
-                      <strong>Prevention:</strong>
-                      <p className="text-sm text-muted-foreground mt-1">{result.prevention}</p>
+                      <strong>
+                        {t("imageAnalysis.prevention", "Prevention")}:
+                      </strong>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {result.prevention}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -208,7 +253,13 @@ const ImageAnalysis = ({ analysisType = 'disease' }: { analysisType?: 'disease' 
 
         {/* Demo Note */}
         <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <p><strong>Note:</strong> This is a demo using OpenAI's vision model. For production, you would use specialized agricultural AI models trained on crop disease datasets.</p>
+          <p>
+            <strong>{t("imageAnalysis.note", "Note")}:</strong>{" "}
+            {t(
+              "imageAnalysis.demoNote",
+              "This is a demo using OpenAI's vision model. For production, you would use specialized agricultural AI models trained on crop disease datasets.",
+            )}
+          </p>
         </div>
       </div>
     </Card>

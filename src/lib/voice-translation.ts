@@ -57,7 +57,22 @@ export const translateToHindi = (text: string): string => {
         "flowering": "phool aane ki",
         "fruiting": "phal aane ki",
         "harvesting": "katne ki",
-        "active": "sakriya (active)"
+        "active": "sakriya (active)",
+        "Satellite": "satellite (upagrah)",
+        "AI-Estimated": "AI dwara anumanit",
+        "NDVI": "NDVI (fasal swasthya)",
+        "Vegetation": "vanspati",
+        "Hectares": "hectare",
+        "Hectare": "hectare",
+        "Your farm spans": "Aapka khet hai",
+        "identified": "pehchane gaye hain",
+        "identified by AI": "AI dwara pehchane gaye hain",
+        "Soil Health Scan": "Mitti ki swasthya jaanch",
+        "Pest Risk Zones": "Keedon ke khatre wale kshetra",
+        "Crop health score is": "Fasal swasthya score hai",
+        "percent": "pratishat",
+        "Real-time": "live",
+        "Monitoring": "nigraani (monitoring)"
     };
 
     let translatedText = text;

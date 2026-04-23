@@ -1,0 +1,45 @@
+﻿python : Traceback (most 
+recent call last):
+At line:1 char:1
++ python -c "import 
+traceback; exec(open('soil
+_engine.py').read()); r = 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (T  
+  raceback (most recent   
+  call last)::String)     
+[], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  File "<string>", line 
+1, in <module>
+    import traceback; exec
+(open('soil_engine.py').re
+ad()); r = 
+fetch_soil_data(24.799, 
+93.907)
+                          
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~^^
+  File "C:\Users\muska_ak5
+dqij\AppData\Local\Program
+s\Python\Python314\Lib\enc
+odings\cp1252.py", line 
+23, in decode
+    return codecs.charmap_
+decode(input,self.errors,d
+ecoding_table)[0]
+           ~~~~~~~~~~~~~~~
+~~~~~~^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+UnicodeDecodeError: 
+'charmap' codec can't 
+decode byte 0x8d in 
+position 5674: character 
+maps to <undefined>

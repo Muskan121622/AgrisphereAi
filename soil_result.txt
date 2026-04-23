@@ -1,0 +1,32 @@
+{
+  "source": "ISRIC SoilGrids v2.0 (250m resolution)",
+  "coordinates": {
+    "lat": 24.799,
+    "lon": 93.907
+  },
+  "soilType": "loamy",
+  "ph": null,
+  "organicMatter": 0.5,
+  "fertility": "low",
+  "drainage": "good",
+  "nutrients": {
+    "nitrogen": 19.5,
+    "phosphorus": 10.5,
+    "potassium": 80.0
+  },
+  "texture": {
+    "clay_pct": 20.0,
+    "sand_pct": 40.0,
+    "silt_pct": 40.0
+  },
+  "raw": {
+    "nitrogen_cgkg": 0,
+    "cec_mmolkg": 0,
+    "soc_dgkg": 0,
+    "bulk_density": null
+  },
+  "recommendations": [
+    "Low fertility. Apply FYM (10-15 tonnes/ha) + balanced NPK fertilizer.",
+    "Consider green manuring with dhaincha or sunhemp before main crop."
+  ]
+}

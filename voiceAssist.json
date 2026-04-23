@@ -1,0 +1,109 @@
+{
+  "hero": {
+    "title": "Voice Assistant for Farmers",
+    "desc": "Speak naturally in Hindi or your local language. Get instant AI-powered agricultural advice with voice responses designed for rural farmers.",
+    "startBtn": "Start Speaking",
+    "chooseLangBtn": "Choose Language"
+  },
+  "features": {
+    "sectionTitle": "Voice Assistant Features",
+    "f1": {
+      "title": "Hindi Voice Recognition",
+      "desc": "Speak naturally in Hindi and get instant responses",
+      "example": "Gehun mein rog a gaya hai, kya karein?",
+      "response": "Wheat disease detected. Apply fungicide spray."
+    },
+    "f2": {
+      "title": "Local Language Support",
+      "desc": "Support for regional languages across India"
+    },
+    "f3": {
+      "title": "Audio Responses",
+      "desc": "Get detailed audio responses in your preferred language",
+      "item1": "Clear pronunciation",
+      "item2": "Slow/Fast speed",
+      "item3": "Repeat option",
+      "item4": "Save audio"
+    },
+    "f4": {
+      "title": "Offline Voice Commands",
+      "desc": "Basic voice commands work even without internet",
+      "item1": "Weather check",
+      "item2": "Crop calendar",
+      "item3": "Basic diagnosis",
+      "item4": "Emergency help"
+    }
+  },
+  "examples": {
+    "sectionTitle": "Real Conversation Examples",
+    "solutionPrefix": "Solution",
+    "e1": {
+      "farmer": "Tomato mein patte peelay ho rahe hain",
+      "farmerTrans": "Tomato leaves are turning yellow",
+      "ai": "यह नाइट्रोजन की कमी हो सकती है। यूरिया का छिड़काव करें।",
+      "aiTrans": "This could be nitrogen deficiency. Apply urea spray.",
+      "solution": "Apply 2kg urea per acre with water spray"
+    },
+    "e2": {
+      "farmer": "Kya aaj pani dena chahiye?",
+      "farmerTrans": "Should I water today?",
+      "ai": "मिट्टी में नमी 40% है। 2 दिन बाद पानी दें।",
+      "aiTrans": "Soil moisture is 40%. Water after 2 days.",
+      "solution": "Wait 2 days, then apply 25mm irrigation"
+    },
+    "e3": {
+      "farmer": "Fasal kab kaatni chahiye?",
+      "farmerTrans": "When should I harvest the crop?",
+      "ai": "आपकी गेहूं 15 दिन में तैयार होगी। दाने सुनहरे होने का इंतज़ार करें।",
+      "aiTrans": "Your wheat will be ready in 15 days. Wait for golden grains.",
+      "solution": "Harvest when moisture content is 12-14%"
+    }
+  },
+  "demo": {
+    "sectionTitle": "Try Voice Assistant Live"
+  },
+  "langs": {
+    "sectionTitle": "Supported Languages",
+    "hindi": "Hindi (हिंदी)",
+    "english": "English (India)",
+    "fullSupport": "Full Support"
+  },
+  "howItWorks": {
+    "sectionTitle": "How Voice Assistant Works",
+    "s1": {
+      "title": "Speak Question",
+      "desc": "Ask in Hindi or local language"
+    },
+    "s2": {
+      "title": "AI Processing",
+      "desc": "Voice recognition & understanding"
+    },
+    "s3": {
+      "title": "Generate Response",
+      "desc": "AI creates personalized answer"
+    },
+    "s4": {
+      "title": "Audio Reply",
+      "desc": "Hear response in your language"
+    }
+  },
+  "benefits": {
+    "sectionTitle": "Voice Assistant Benefits",
+    "b1": {
+      "title": "Easy to Use",
+      "desc": "No typing required, just speak"
+    },
+    "b2": {
+      "title": "Rural Friendly",
+      "desc": "Works for illiterate farmers"
+    },
+    "b3": {
+      "title": "Instant Help",
+      "desc": "Get answers in seconds"
+    },
+    "b4": {
+      "title": "Local Language",
+      "desc": "Understand & respond in Hindi"
+    }
+  }
+}

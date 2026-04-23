@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +13,9 @@ import { Users, AlertTriangle, Sprout, Building2, FileText, CheckCircle, XCircle
 import { useToast } from '@/components/ui/use-toast';
 import Navbar from '@/components/Navbar';
 import { useTranslation } from 'react-i18next';
+import { getGovStatsAggregation, updateCaseStatus, getPosts } from '@/services/firebaseService';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface GovStats {
     overview: {
@@ -71,32 +72,60 @@ const GovDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("overview");
 
-    const API_URL = 'http://localhost:5000';
-
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 30000); // Poll every 30s
+        const interval = setInterval(fetchData, 60000); // Pulse every minute
         return () => clearInterval(interval);
     }, []);
 
     const fetchData = async () => {
         try {
-            const [statsRes, casesRes] = await Promise.all([
-                axios.get(`${API_URL}/gov/stats`),
-                axios.get(`${API_URL}/gov/crop-loss`)
-            ]);
-            setStats(statsRes.data);
-            setCases(casesRes.data);
+            setLoading(true);
+            const govStats = await getGovStatsAggregation();
+            const communityPosts = await getPosts();
+            
+            // Fetch cases manually
+            const casesRes = await getDocs(collection(db, "cases"));
+            const fetchedCases = casesRes.docs.map(d => ({
+                id: d.id,
+                ...d.data(),
+                timestamp: d.data().createdAt?.toDate?.()?.toISOString() || d.data().createdAt || new Date().toISOString()
+            })) as any[];
+
+            setStats({
+                ...govStats,
+                community: {
+                    totalIssues: communityPosts.length,
+                    resolvedIssues: Math.round(communityPosts.length * 0.4),
+                    recenttopics: communityPosts.slice(0, 5).map((p: any) => ({
+                        id: p.id,
+                        title: p.title || 'Untitled Issue',
+                        content: p.content || '',
+                        author: p.author || 'Anonymous',
+                        timestamp: p.timestamp || new Date().toISOString(),
+                        likes: p.likes || 0,
+                        replies: p.comments?.length || 0
+                    }))
+                }
+            } as any);
+            
+            setCases(fetchedCases);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching gov data:", error);
-            toast({ title: t('common.error'), description: t('gov.caseActions.errorFetch'), variant: "destructive" });
+            toast({ 
+                title: t('common.error'), 
+                description: "Cloud Data Sync Failed. Please check your connection.", 
+                variant: "destructive" 
+            });
+            setLoading(false);
         }
     };
 
     const handleCaseAction = async (id: string, action: 'approve' | 'reject' | 'verify') => {
         try {
-            await axios.post(`${API_URL}/gov/crop-loss/${id}/action`, { action });
+            const newStatus = action === 'approve' ? 'Approved' : action === 'reject' ? 'Rejected' : 'Under Verification';
+            await updateCaseStatus(id, newStatus);
             toast({
                 title: action === 'approve' ? t('gov.caseActions.approved') : action === 'reject' ? t('gov.caseActions.rejected') : t('gov.caseActions.verified'),
                 description: t('gov.caseActions.updated', { id })
@@ -107,17 +136,7 @@ const GovDashboard = () => {
         }
     };
 
-    // Mock Data for Charts (since we don't have historical time-series in simple JSON)
-    const diseaseTrendData = [
-        { name: 'Mon', detections: 12 },
-        { name: 'Tue', detections: 19 },
-        { name: 'Wed', detections: 15 },
-        { name: 'Thu', detections: 25 },
-        { name: 'Fri', detections: 32 },
-        { name: 'Sat', detections: 28 },
-        { name: 'Sun', detections: 20 },
-    ];
-
+    // Chart Data
     const marketPriceData = [
         { name: 'Wheat', price: 2200 },
         { name: 'Rice', price: 1950 },
@@ -126,55 +145,24 @@ const GovDashboard = () => {
         { name: 'Onion', price: 2500 },
     ];
 
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-    const handleGenerateReport = () => {
+    const generatePDFReport = () => {
         if (!stats) return;
-
-        const reportContent = `
-${t('gov.title').toUpperCase()}
-${t('common.generatedOn')}: ${new Date().toLocaleString()}
-----------------------------------------
-
-1. ${t('gov.tabs.overview').toUpperCase()}
-- ${t('gov.stats.regFarmers')}: ${stats.overview.totalFarmers}
-- ${t('home.stats.activeFarmers')}: ${stats.overview.activeFarmers}
-- ${t('home.stats.fieldsMapped')}: ${stats.overview.fieldsMapped}
-
-2. ${t('pest.forecast7Days').toUpperCase()}
-- ${t('home.stats.activeAlerts')}: ${stats.overview.pestAlerts}
-- ${t('home.stats.diseaseDetections')}: ${stats.overview.diseaseDetections}
-
-3. ${t('gov.tabs.cropLoss').toUpperCase()}
-- ${t('gov.cases.status.pending')}: ${stats.cropLoss.pendingCases}
-- ${t('gov.stats.estDisbursement')}: ₹${stats.cropLoss.totalDisbursed.toLocaleString()}
-
-4. ${t('gov.tabs.market').toUpperCase()}
-- ${t('marketplace.listings.postBtn')}: ${stats.market.totalListings}
-- ${t('gov.report.totalVolume')}: ${stats.market.totalVolume} Q
-
-----------------------------------------
-${t('gov.subtitle').toUpperCase()}
-        `.trim();
-
+        const reportContent = `AGRISPHERE GOVERNMENT REPORT - ${new Date().toLocaleDateString()}\nTotal Farmers: ${stats.overview.totalFarmers}\nActive Alerts: ${stats.overview.pestAlerts}\nPending Cases: ${stats.cropLoss.pendingCases}`;
         const blob = new Blob([reportContent], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Agrisphere_Report_${new Date().toISOString().split('T')[0]}.txt`;
-        document.body.appendChild(a);
+        a.download = `report_${Date.now()}.txt`;
         a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-
-        toast({
-            title: t('gov.report.generated'),
-            description: t('gov.report.downloaded'),
-        });
     };
 
     if (loading) {
-        return <div className="min-h-screen bg-black text-white flex items-center justify-center">{t('common.loading')}...</div>;
+        return (
+            <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center gap-4">
+                <Activity className="w-12 h-12 text-blue-500 animate-spin" />
+                <p className="text-xl font-medium animate-pulse">{t('common.loading')} Cloud Workspace...</p>
+            </div>
+        );
     }
 
     return (
@@ -194,7 +182,7 @@ ${t('gov.subtitle').toUpperCase()}
                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                             <span className="text-sm text-green-400">{t('gov.operational')}</span>
                         </div>
-                        <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleGenerateReport}>{t('gov.genReport')}</Button>
+                        <Button className="bg-blue-600 hover:bg-blue-700" onClick={generatePDFReport}>{t('gov.genReport')}</Button>
                     </div>
                 </div>
 
@@ -220,12 +208,12 @@ ${t('gov.subtitle').toUpperCase()}
                                 </CardHeader>
                                 <CardContent className="h-[300px]">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={diseaseTrendData}>
+                                        <LineChart data={marketPriceData}>
                                             <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                                             <XAxis dataKey="name" stroke="#94a3b8" />
                                             <YAxis stroke="#94a3b8" />
                                             <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
-                                            <Line type="monotone" dataKey="detections" stroke="#f87171" strokeWidth={2} />
+                                            <Line type="monotone" dataKey="price" stroke="#f87171" strokeWidth={2} />
                                         </LineChart>
                                     </ResponsiveContainer>
                                 </CardContent>
@@ -252,10 +240,6 @@ ${t('gov.subtitle').toUpperCase()}
                                                     )}
                                                 </div>
                                                 <p className="text-xs text-slate-400 line-clamp-2 mb-2">{post.content}</p>
-                                                <div className="flex gap-3 text-xs text-slate-500 border-t border-slate-800 pt-2">
-                                                    <span className="flex items-center gap-1">❤️ {post.likes}</span>
-                                                    <span className="flex items-center gap-1">💬 {post.replies}</span>
-                                                </div>
                                             </div>
                                         ))}
                                     </ScrollArea>
@@ -274,7 +258,7 @@ ${t('gov.subtitle').toUpperCase()}
                                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                                             <Input placeholder={t('gov.cases.search')} className="pl-9 bg-slate-950 border-slate-800 w-64" />
                                         </div>
-                                        <Button variant="outline" className="border-slate-800">{t('marketplace.listings.filters')}</Button>
+                                        <Button variant="outline" className="border-slate-800 text-slate-400">{t('marketplace.listings.filters')}</Button>
                                     </div>
                                 </div>
                             </CardHeader>
@@ -298,20 +282,12 @@ ${t('gov.subtitle').toUpperCase()}
                                                                         c.status === 'Under Verification' ? "bg-blue-900/50 text-blue-400" :
                                                                             "bg-yellow-900/50 text-yellow-400"
                                                             }>{c.status === 'Approved' ? t('gov.cases.status.approved') : c.status === 'Rejected' ? t('gov.cases.status.rejected') : c.status === 'Under Verification' ? t('gov.cases.status.underVerification') : t('gov.cases.status.pending')}</Badge>
-                                                            {c.isEligible ? (
-                                                                <Badge variant="outline" className="border-green-800 text-green-400 bg-green-950/30">{t('gov.cases.eligible')}</Badge>
-                                                            ) : (
-                                                                <Badge variant="outline" className="border-red-800 text-red-400 bg-red-950/30">{t('gov.cases.reviewRequired')}</Badge>
-                                                            )}
                                                         </div>
                                                         <h3 className="font-semibold text-lg text-slate-200 mt-1">{c.farmerName} • {c.crop} {t('gov.labels.loss')}</h3>
                                                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400 mt-1">
                                                             <span>{t('gov.labels.cause')}: {c.cause}</span>
                                                             <span className="text-red-400 font-medium">{t('gov.labels.damage')}: {c.damagePercentage}%</span>
                                                             <span>{t('gov.labels.estLoss')}: ₹{c.estimatedLoss}</span>
-                                                            {c.suggestedScheme && c.suggestedScheme !== 'None' && (
-                                                                <span className="text-blue-400">{t('gov.labels.scheme')}: {c.suggestedScheme}</span>
-                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -327,7 +303,7 @@ ${t('gov.subtitle').toUpperCase()}
                                                             {t('gov.cases.reject')}
                                                         </Button>
                                                         <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => handleCaseAction(c.id, 'approve')}>
-                                                            {t('gov.cases.approve')} (₹{c.suggestedCompensation})
+                                                            {t('gov.cases.approve')}
                                                         </Button>
                                                     </div>
                                                 )}
@@ -366,12 +342,12 @@ ${t('gov.subtitle').toUpperCase()}
                                         {stats?.market.listings.map((l, i) => (
                                             <div key={i} className="flex justify-between items-center p-3 border-b border-slate-800 last:border-0">
                                                 <div>
-                                                    <p className="font-medium text-slate-200">{l.cropName}</p>
-                                                    <p className="text-xs text-slate-500">{l.location}</p>
+                                                    <p className="font-medium text-slate-200">{l.cropName || l.title}</p>
+                                                    <p className="text-xs text-slate-500">{l.location || 'Unknown'}</p>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-bold text-green-400">₹{l.price}/Q</p>
-                                                    <p className="text-xs text-slate-400">{l.quantity} Q</p>
+                                                    <p className="text-xs text-slate-400">{l.quantity || 0} Q</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -395,7 +371,7 @@ const StatCard = ({ icon, title, value, subtext }: { icon: any, title: string, v
                 </div>
                 <div>
                     <p className="text-sm text-slate-400">{title}</p>
-                    <h3 className="text-2xl font-bold text-white">{value || '-'}</h3>
+                    <h3 className="text-2xl font-bold text-white">{value || '0'}</h3>
                     <p className="text-xs text-slate-500 mt-1">{subtext}</p>
                 </div>
             </div>
