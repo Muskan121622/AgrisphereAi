@@ -22,8 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-dataset/
-data/
 enhanced_dataset/
 enhanced_model_output/
 high_accuracy_model/
