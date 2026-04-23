@@ -469,9 +469,63 @@ def verify_plant_with_groq(image_path):
                 
         return True, f"Verification skipped (All vision models failed: {last_error})" # Fail open
 
+def analyze_disease_with_ai(image_path):
+    """
+    Use Groq Vision as a powerful fallback for disease detection.
+    """
+    try:
+        from groq import Groq
+        api_key = os.getenv("GROQ_API_KEY") or os.getenv("VITE_GROQ_CHATBOT_API_KEY")
+        if not api_key:
+            return None
+            
+        client = Groq(api_key=api_key)
+        base64_image = encode_image(image_path)
+        
+        prompt = """
+        Analyze this agricultural image for plant diseases. 
+        Provide a detailed analysis in valid JSON format only:
+        {
+          "disease": "Specific Name of Disease or 'Healthy'",
+          "confidence": 0.0 to 1.0,
+          "severity": "Low/Medium/High",
+          "treatment": "Actionable treatment advice",
+          "affectedPart": "Leaves/Stem/Root/Fruit",
+          "symptoms": "Description of visible symptoms",
+          "preventiveMeasures": "How to prevent this in future",
+          "economicImpact": "Brief description of impact"
+        }
+        """
+
+        models = ["llama-3.2-11b-vision-preview", "llama-3.2-90b-vision-preview"]
+        for model in models:
+            try:
+                print(f"Attempting AI Disease Analysis with {model}...")
+                completion = client.chat.completions.create(
+                    model=model,
+                    messages=[{
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                        ]
+                    }],
+                    temperature=0.2,
+                    max_tokens=800,
+                    response_format={"type": "json_object"}
+                )
+                res_content = completion.choices[0].message.content
+                print("AI Disease Analysis completed.")
+                return json.loads(res_content)
+            except Exception as e:
+                print(f"AI Vision error with {model}: {e}")
+                continue
+        return None
     except Exception as e:
-        print(f"Plant verification critical error: {e}")
-        return True, f"Verification skipped (Critical Error: {str(e)})" # Fail open on error
+        print(f"Final AI analysis crash: {e}")
+        return None
+
+
 
 try:
     import xgboost as xgb
@@ -587,6 +641,12 @@ def predict_disease_archive4(image_path, model_path="archive4_model_output/model
     try:
         if not os.path.exists(model_path) or not os.path.exists(labels_path):
             return None, None
+            
+        # SAFETY CHECK: Don't try to load massive models on small servers
+        file_size = os.path.getsize(model_path)
+        if file_size > 250 * 1024 * 1024: # 250 MB Limit for Render Free tier
+            print(f"⚠️ Model file {model_path} is too large ({file_size} bytes). Skipping to prevent crash.")
+            return None, None
 
         import tensorflow as tf
         
@@ -620,6 +680,14 @@ def predict_disease(image_path, model_path="sklearn_model_output/model.pkl", lab
     Predict plant disease from image using enhanced feature extraction
     """
     try:
+        if not os.path.exists(model_path) or not os.path.exists(labels_path):
+            return None, None
+            
+        # SAFETY CHECK for joblib models
+        file_size = os.path.getsize(model_path)
+        if file_size > 300 * 1024 * 1024: 
+            print(f"⚠️ Sklearn model {model_path} is too large ({file_size} bytes). Skipping.")
+            return None, None
         IMG_SIZE = 128  # Must match training size
         
         # Open and resize image
@@ -1152,28 +1220,39 @@ def detect_disease():
                     }
                     return jsonify(result)
             
-            # Fallback to sklearn model
-            predicted_class, confidence = predict_disease(
-                temp_path,
-                model_path='sklearn_model_output/model.pkl',
-                labels_path='sklearn_model_output/labels.json'
-            )
+            # Fallback to local sklearn model if Archive4 failed or not available
+            if not result:
+                # predict_disease already has a size check now
+                predicted_class, confidence = predict_disease(
+                    temp_path,
+                    model_path='sklearn_model_output/model.pkl',
+                    labels_path='sklearn_model_output/labels.json'
+                )
+                
+                if predicted_class:
+                    # Map predictions to the expected format for frontend
+                    result = {
+                        'disease': predicted_class,
+                        'confidence': float(confidence),
+                        'severity': 'high' if confidence > 0.8 else 'medium' if confidence > 0.6 else 'low',
+                        'treatment': get_treatment_recommendation(predicted_class),
+                        'affectedPart': get_affected_part(predicted_class),
+                        'symptoms': get_symptoms(predicted_class),
+                        'preventiveMeasures': get_preventive_measures(predicted_class),
+                        'economicImpact': get_economic_impact(predicted_class),
+                        'model': 'sklearn'
+                    }
 
-            if predicted_class is None:
-                return jsonify({'error': 'Failed to process image'}), 500
+            # FINAL FALLBACK: AI VISION ANALYSIS
+            if not result:
+                print("Using AI Vision Fallback for Disease Detection...")
+                ai_result = analyze_disease_with_ai(temp_path)
+                if ai_result:
+                    ai_result['model'] = 'vision_ai'
+                    result = ai_result
 
-            # Map predictions to the expected format for frontend
-            result = {
-                'disease': predicted_class,
-                'confidence': float(confidence),
-                'severity': 'high' if confidence > 0.8 else 'medium' if confidence > 0.6 else 'low',
-                'treatment': get_treatment_recommendation(predicted_class),
-                'affectedPart': get_affected_part(predicted_class),
-                'symptoms': get_symptoms(predicted_class),
-                'preventiveMeasures': get_preventive_measures(predicted_class),
-                'economicImpact': get_economic_impact(predicted_class),
-                'model': 'sklearn'
-            }
+            if not result:
+                return jsonify({'error': 'All detection models failed to load (too large) or process. Please try a different image.'}), 500
 
             return jsonify(result)
 
