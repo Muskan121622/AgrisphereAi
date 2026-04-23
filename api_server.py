@@ -473,7 +473,10 @@ def verify_plant_with_groq(image_path):
         print(f"Plant verification critical error: {e}")
         return True, f"Verification skipped (Critical Error: {str(e)})" # Fail open on error
 
-import xgboost as xgb
+try:
+    import xgboost as xgb
+except ImportError:
+    xgb = None
 
 # Lazy loading for OPTIMIZED yield models
 optimized_models = {}
@@ -482,6 +485,10 @@ optimized_models_loaded = False
 def load_optimized_models():
     """Lazy load optimized XGBoost models"""
     global optimized_models, optimized_models_loaded
+    
+    if not xgb:
+        print("XGBoost not installed. Optimized models cannot be loaded.")
+        return False
     
     # If already loaded and has models, return
     if optimized_models_loaded and optimized_models:
@@ -579,6 +586,8 @@ def predict_disease_archive4(image_path, model_path="archive4_model_output/model
     """Predict plant disease using Archive4 TensorFlow model"""
     try:
         import tensorflow as tf
+    except ImportError:
+        return {"error": "TensorFlow not installed on server"}, 503
         
         # Load model and labels
         model = tf.keras.models.load_model(model_path)
