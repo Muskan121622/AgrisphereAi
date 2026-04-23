@@ -585,9 +585,10 @@ def load_yield_models():
 def predict_disease_archive4(image_path, model_path="archive4_model_output/model.h5", labels_path="archive4_model_output/labels.json"):
     """Predict plant disease using Archive4 TensorFlow model"""
     try:
+        if not os.path.exists(model_path) or not os.path.exists(labels_path):
+            return None, None
+
         import tensorflow as tf
-    except ImportError:
-        return {"error": "TensorFlow not installed on server"}, 503
         
         # Load model and labels
         model = tf.keras.models.load_model(model_path)
@@ -1112,6 +1113,7 @@ def health_check():
 @app.route('/detect-disease', methods=['POST'])
 def detect_disease():
     try:
+        result = None
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
 
