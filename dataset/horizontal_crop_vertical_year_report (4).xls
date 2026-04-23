@@ -1,0 +1,5997 @@
+ <table border="2px" id="apyreport" class="table table-hover table-bordered text-center">
+
+      <thead>
+        <!--tr>
+          <th rowspan="3">S.No.</th>
+          <th rowspan="3">State</th>
+          <th rowspan="3">District</th>
+          <th rowspan="3">Year</th>
+          <pre>Array
+(
+    [95] => Array
+        (
+            [crop_name] => Arecanut
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [38] => Array
+        (
+            [crop_name] => Black pepper
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [50] => Array
+        (
+            [crop_name] => Cashewnut
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [39] => Array
+        (
+            [crop_name] => Dry chillies
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [45] => Array
+        (
+            [crop_name] => Potato
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [62] => Array
+        (
+            [crop_name] => Sugarcane
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [41] => Array
+        (
+            [crop_name] => Turmeric
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [5] => Array
+        (
+            [crop_name] => Maize
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [43] => Array
+        (
+            [crop_name] => Coriander
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+    [49] => Array
+        (
+            [crop_name] => Onion
+            [session] => Array
+                (
+                    [Y] => Array
+                        (
+                            [session_id] => Y
+                            [session_name] => Whole Year
+                        )
+
+                )
+
+        )
+
+)
+</pre>          <th colspan="3" class="text-center">Arecanut</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Black pepper</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Cashewnut</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Dry chillies</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Potato</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Sugarcane</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Turmeric</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Maize</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Coriander</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                  <th colspan="3" class="text-center">Onion</th>
+
+                              <tr>
+                
+              <th colspan="3">Whole Year</th>
+                            </tr>
+                          <tr>
+                <th>A</th>
+                <th>P</th>
+                <th>Y</th>
+              </tr>
+
+
+            
+
+            
+
+                </tr-->
+        <!-- tr>
+          <th colspan="3">Season 1</th>
+          <th colspan="3">Season 2</th>
+        </tr>
+        <tr scope="">
+          <th scope="colgroup">A</th>
+          <th scope="colgroup">P</th>
+          <th scope="colgroup">Y</th>
+
+          <th scope="colgroup">A</th>
+          <th scope="colgroup">P</th>
+          <th scope="colgroup">Y</th>
+        </tr -->
+		<tr>
+			<!-- th rowspan="3">S.No.</th -->
+			<th rowspan="3">State</th>
+			<th rowspan="3">District</th>
+			<th rowspan="3">Year</th>
+							<th colspan="3">Arecanut</th><th colspan="3">Black pepper</th><th colspan="3">Cashewnut</th><th colspan="3">Dry chillies</th><th colspan="3">Potato</th><th colspan="3">Sugarcane</th><th colspan="3">Turmeric</th><th colspan="3">Maize</th><th colspan="3">Coriander</th><th colspan="3">Onion</th>					  </tr>
+		  <tr>
+							<th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th><th colspan="3">Whole Year</th>						</tr>
+			<tr>
+							<th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th><th count="1">Area (Hectare)</th><th count="1">Production (Tonnes)</th><th count="1">Yield (Tonne/Hectare)</th>						</tr>
+      </thead>
+
+      <tbody>
+        
+        <tr>
+          <!-- td rowspan="120">1</td -->
+          <td rowspan="120">1. Meghalaya</td>
+          <td rowspan="12">1. East garo hills</td>
+
+          <td>2010 - 2011</td>
+                    <td>1,250.00</td>
+          <td>1,412.00</td>
+          <td>
+            1.13          </td>
+                  <td>62.00</td>
+          <td>23.00</td>
+          <td>
+            0.37          </td>
+                  <td>293.00</td>
+          <td>289.00</td>
+          <td>
+            0.99          </td>
+                  <td>348.00</td>
+          <td>205.00</td>
+          <td>
+            0.59          </td>
+                  <td>130.00</td>
+          <td>1,008.00</td>
+          <td>
+            7.75          </td>
+                  <td>24.00</td>
+          <td>66.00</td>
+          <td>
+            2.75          </td>
+                  <td>98.00</td>
+          <td>543.00</td>
+          <td>
+            5.54          </td>
+                  <td></td>
+          <td></td>
+          <td>
+                      </td>
+                  <td></td>
+          <td></td>
+          <td>
+                      </td>
+                  <td></td>
+          <td></td>
+          <td>
+                      </td>
+        
+
+        </tr>
+        
+
+          
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2011 - 2012</td>
+                            <td>2,061.00</td>
+              <td>2,362.00</td>
+              <td>
+                1.15              </td>
+                          <td>65.00</td>
+              <td>25.00</td>
+              <td>
+                0.38              </td>
+                          <td>296.00</td>
+              <td>293.00</td>
+              <td>
+                0.99              </td>
+                          <td>379.00</td>
+              <td>224.00</td>
+              <td>
+                0.59              </td>
+                          <td>132.00</td>
+              <td>1,025.00</td>
+              <td>
+                7.77              </td>
+                          <td>25.00</td>
+              <td>69.00</td>
+              <td>
+                2.76              </td>
+                          <td>99.00</td>
+              <td>549.00</td>
+              <td>
+                5.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2012 - 2013</td>
+                            <td>2,142.00</td>
+              <td>2,539.00</td>
+              <td>
+                1.19              </td>
+                          <td>68.00</td>
+              <td>33.00</td>
+              <td>
+                0.49              </td>
+                          <td>308.00</td>
+              <td>314.00</td>
+              <td>
+                1.02              </td>
+                          <td>407.00</td>
+              <td>252.00</td>
+              <td>
+                0.62              </td>
+                          <td>135.00</td>
+              <td>1,069.00</td>
+              <td>
+                7.92              </td>
+                          <td>34.00</td>
+              <td>101.00</td>
+              <td>
+                2.97              </td>
+                          <td>109.00</td>
+              <td>665.00</td>
+              <td>
+                6.10              </td>
+                          <td>1,084.00</td>
+              <td>1,987.00</td>
+              <td>
+                1.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2013 - 2014</td>
+                            <td>1,261.00</td>
+              <td>1,506.00</td>
+              <td>
+                1.19              </td>
+                          <td>42.00</td>
+              <td>20.00</td>
+              <td>
+                0.48              </td>
+                          <td>205.00</td>
+              <td>218.00</td>
+              <td>
+                1.06              </td>
+                          <td>316.00</td>
+              <td>212.00</td>
+              <td>
+                0.67              </td>
+                          <td>80.00</td>
+              <td>646.00</td>
+              <td>
+                8.08              </td>
+                          <td>21.00</td>
+              <td>62.00</td>
+              <td>
+                2.95              </td>
+                          <td>74.00</td>
+              <td>480.00</td>
+              <td>
+                6.49              </td>
+                          <td>792.00</td>
+              <td>1,489.00</td>
+              <td>
+                1.88              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2014 - 2015</td>
+                            <td>1,268.00</td>
+              <td>1,568.00</td>
+              <td>
+                1.24              </td>
+                          <td>43.00</td>
+              <td>21.00</td>
+              <td>
+                0.49              </td>
+                          <td>208.00</td>
+              <td>225.00</td>
+              <td>
+                1.08              </td>
+                          <td>321.00</td>
+              <td>231.00</td>
+              <td>
+                0.72              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>22.00</td>
+              <td>64.00</td>
+              <td>
+                2.91              </td>
+                          <td>78.00</td>
+              <td>512.00</td>
+              <td>
+                6.56              </td>
+                          <td>793.00</td>
+              <td>1,534.00</td>
+              <td>
+                1.93              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>324.00</td>
+              <td>249.00</td>
+              <td>
+                0.77              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>24.00</td>
+              <td>71.00</td>
+              <td>
+                2.96              </td>
+                          <td>81.00</td>
+              <td>548.00</td>
+              <td>
+                6.77              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>325.00</td>
+              <td>255.00</td>
+              <td>
+                0.78              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>24.00</td>
+              <td>71.00</td>
+              <td>
+                2.96              </td>
+                          <td>75.00</td>
+              <td>416.00</td>
+              <td>
+                5.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>327.00</td>
+              <td>257.00</td>
+              <td>
+                0.79              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>24.00</td>
+              <td>71.00</td>
+              <td>
+                2.96              </td>
+                          <td>76.00</td>
+              <td>422.00</td>
+              <td>
+                5.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>9.00</td>
+              <td>22.00</td>
+              <td>
+                2.44              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>328.00</td>
+              <td>258.00</td>
+              <td>
+                0.79              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>25.00</td>
+              <td>74.00</td>
+              <td>
+                2.96              </td>
+                          <td>77.00</td>
+              <td>428.00</td>
+              <td>
+                5.56              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>9.00</td>
+              <td>22.00</td>
+              <td>
+                2.44              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>329.00</td>
+              <td>259.00</td>
+              <td>
+                0.79              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>26.00</td>
+              <td>77.00</td>
+              <td>
+                2.96              </td>
+                          <td>78.00</td>
+              <td>434.00</td>
+              <td>
+                5.56              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>9.00</td>
+              <td>22.00</td>
+              <td>
+                2.44              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>330.00</td>
+              <td>260.00</td>
+              <td>
+                0.79              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>27.00</td>
+              <td>80.00</td>
+              <td>
+                2.96              </td>
+                          <td>79.00</td>
+              <td>440.00</td>
+              <td>
+                5.57              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>9.00</td>
+              <td>22.00</td>
+              <td>
+                2.44              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East garo hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>28.00</td>
+              <td>83.00</td>
+              <td>
+                2.96              </td>
+                          <td>107.00</td>
+              <td>588.00</td>
+              <td>
+                5.50              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>171.00</td>
+              <td>
+                8.14              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">2. East jaintia hills</td>
+                      <td>2010 - 2011</td>
+                        <td>1,706.00</td>
+            <td>2,462.00</td>
+            <td>
+              1.44            </td>
+                      <td>34.00</td>
+            <td>16.00</td>
+            <td>
+              0.47            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>49.00</td>
+            <td>39.00</td>
+            <td>
+              0.80            </td>
+                      <td>187.00</td>
+            <td>898.00</td>
+            <td>
+              4.80            </td>
+                      <td>7.00</td>
+            <td>5.00</td>
+            <td>
+              0.71            </td>
+                      <td>1,118.00</td>
+            <td>5,909.00</td>
+            <td>
+              5.29            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2011 - 2012</td>
+                            <td>1,708.00</td>
+              <td>2,492.00</td>
+              <td>
+                1.46              </td>
+                          <td>35.00</td>
+              <td>18.00</td>
+              <td>
+                0.51              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>50.00</td>
+              <td>40.00</td>
+              <td>
+                0.80              </td>
+                          <td>203.00</td>
+              <td>985.00</td>
+              <td>
+                4.85              </td>
+                          <td>8.00</td>
+              <td>7.00</td>
+              <td>
+                0.88              </td>
+                          <td>1,138.00</td>
+              <td>6,037.00</td>
+              <td>
+                5.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2012 - 2013</td>
+                            <td>1,775.00</td>
+              <td>2,667.00</td>
+              <td>
+                1.50              </td>
+                          <td>37.00</td>
+              <td>25.00</td>
+              <td>
+                0.68              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>54.00</td>
+              <td>46.00</td>
+              <td>
+                0.85              </td>
+                          <td>207.00</td>
+              <td>1,029.00</td>
+              <td>
+                4.97              </td>
+                          <td>11.00</td>
+              <td>11.00</td>
+              <td>
+                1.00              </td>
+                          <td>1,257.00</td>
+              <td>7,381.00</td>
+              <td>
+                5.87              </td>
+                          <td>3,199.00</td>
+              <td>5,743.00</td>
+              <td>
+                1.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2013 - 2014</td>
+                            <td>256.00</td>
+              <td>303.00</td>
+              <td>
+                1.18              </td>
+                          <td>32.00</td>
+              <td>22.00</td>
+              <td>
+                0.69              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>18.00</td>
+              <td>16.00</td>
+              <td>
+                0.89              </td>
+                          <td>38.00</td>
+              <td>215.00</td>
+              <td>
+                5.66              </td>
+                          <td>5.00</td>
+              <td>4.00</td>
+              <td>
+                0.80              </td>
+                          <td>41.00</td>
+              <td>225.00</td>
+              <td>
+                5.49              </td>
+                          <td>350.00</td>
+              <td>755.00</td>
+              <td>
+                2.16              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2014 - 2015</td>
+                            <td>257.00</td>
+              <td>301.00</td>
+              <td>
+                1.17              </td>
+                          <td>33.00</td>
+              <td>23.00</td>
+              <td>
+                0.70              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>19.00</td>
+              <td>18.00</td>
+              <td>
+                0.95              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>5.00</td>
+              <td>4.00</td>
+              <td>
+                0.80              </td>
+                          <td>47.00</td>
+              <td>266.00</td>
+              <td>
+                5.66              </td>
+                          <td>350.00</td>
+              <td>776.00</td>
+              <td>
+                2.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>20.00</td>
+              <td>21.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>53.00</td>
+              <td>309.00</td>
+              <td>
+                5.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>56.00</td>
+              <td>325.00</td>
+              <td>
+                5.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>57.00</td>
+              <td>331.00</td>
+              <td>
+                5.81              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>5.00</td>
+              <td>20.00</td>
+              <td>
+                4.00              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>58.00</td>
+              <td>337.00</td>
+              <td>
+                5.81              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>24.00</td>
+              <td>
+                4.00              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>59.00</td>
+              <td>343.00</td>
+              <td>
+                5.81              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>24.00</td>
+              <td>
+                4.00              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>60.00</td>
+              <td>349.00</td>
+              <td>
+                5.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>24.00</td>
+              <td>
+                4.00              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East jaintia hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>5.00</td>
+              <td>
+                0.83              </td>
+                          <td>73.00</td>
+              <td>366.00</td>
+              <td>
+                5.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">3. East khasi hills</td>
+                      <td>2010 - 2011</td>
+                        <td>4,516.00</td>
+            <td>4,729.00</td>
+            <td>
+              1.05            </td>
+                      <td>165.00</td>
+            <td>103.00</td>
+            <td>
+              0.62            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>111.00</td>
+            <td>232.00</td>
+            <td>
+              2.09            </td>
+                      <td>11,271.00</td>
+            <td>110,659.00</td>
+            <td>
+              9.82            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>89.00</td>
+            <td>441.00</td>
+            <td>
+              4.96            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2011 - 2012</td>
+                            <td>4,521.00</td>
+              <td>4,824.00</td>
+              <td>
+                1.07              </td>
+                          <td>172.00</td>
+              <td>112.00</td>
+              <td>
+                0.65              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>116.00</td>
+              <td>244.00</td>
+              <td>
+                2.10              </td>
+                          <td>11,273.00</td>
+              <td>110,971.00</td>
+              <td>
+                9.84              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>90.00</td>
+              <td>457.00</td>
+              <td>
+                5.08              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2012 - 2013</td>
+                            <td>4,699.00</td>
+              <td>5,172.00</td>
+              <td>
+                1.10              </td>
+                          <td>179.00</td>
+              <td>151.00</td>
+              <td>
+                0.84              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>124.00</td>
+              <td>275.00</td>
+              <td>
+                2.22              </td>
+                          <td>11,543.00</td>
+              <td>115,851.00</td>
+              <td>
+                10.04              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>100.00</td>
+              <td>550.00</td>
+              <td>
+                5.50              </td>
+                          <td>2,091.00</td>
+              <td>6,578.00</td>
+              <td>
+                3.15              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2013 - 2014</td>
+                            <td>4,879.00</td>
+              <td>5,564.00</td>
+              <td>
+                1.14              </td>
+                          <td>182.00</td>
+              <td>154.00</td>
+              <td>
+                0.85              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>134.00</td>
+              <td>309.00</td>
+              <td>
+                2.31              </td>
+                          <td>11,740.00</td>
+              <td>121,787.00</td>
+              <td>
+                10.37              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>113.00</td>
+              <td>642.00</td>
+              <td>
+                5.68              </td>
+                          <td>2,092.00</td>
+              <td>6,735.00</td>
+              <td>
+                3.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2014 - 2015</td>
+                            <td>4,886.00</td>
+              <td>5,788.00</td>
+              <td>
+                1.18              </td>
+                          <td>183.00</td>
+              <td>158.00</td>
+              <td>
+                0.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>139.00</td>
+              <td>336.00</td>
+              <td>
+                2.42              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>115.00</td>
+              <td>667.00</td>
+              <td>
+                5.80              </td>
+                          <td>2,093.00</td>
+              <td>6,924.00</td>
+              <td>
+                3.31              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>145.00</td>
+              <td>359.00</td>
+              <td>
+                2.48              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>121.00</td>
+              <td>708.00</td>
+              <td>
+                5.85              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>146.00</td>
+              <td>408.00</td>
+              <td>
+                2.79              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>133.00</td>
+              <td>716.00</td>
+              <td>
+                5.38              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>148.00</td>
+              <td>414.00</td>
+              <td>
+                2.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>135.00</td>
+              <td>727.00</td>
+              <td>
+                5.39              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>45.00</td>
+              <td>111.00</td>
+              <td>
+                2.47              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>149.00</td>
+              <td>417.00</td>
+              <td>
+                2.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>136.00</td>
+              <td>733.00</td>
+              <td>
+                5.39              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>45.00</td>
+              <td>111.00</td>
+              <td>
+                2.47              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>150.00</td>
+              <td>420.00</td>
+              <td>
+                2.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>137.00</td>
+              <td>739.00</td>
+              <td>
+                5.39              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>45.00</td>
+              <td>111.00</td>
+              <td>
+                2.47              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>151.00</td>
+              <td>423.00</td>
+              <td>
+                2.80              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>138.00</td>
+              <td>746.00</td>
+              <td>
+                5.41              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>45.00</td>
+              <td>111.00</td>
+              <td>
+                2.47              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">East khasi hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>139.00</td>
+              <td>751.00</td>
+              <td>
+                5.40              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>64.00</td>
+              <td>681.00</td>
+              <td>
+                10.64              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="9">4. North garo hills</td>
+                      <td>2013 - 2014</td>
+                        <td>963.00</td>
+            <td>1,229.00</td>
+            <td>
+              1.28            </td>
+                      <td>27.00</td>
+            <td>14.00</td>
+            <td>
+              0.52            </td>
+                      <td>115.00</td>
+            <td>120.00</td>
+            <td>
+              1.04            </td>
+                      <td>123.00</td>
+            <td>70.00</td>
+            <td>
+              0.57            </td>
+                      <td>58.00</td>
+            <td>476.00</td>
+            <td>
+              8.21            </td>
+                      <td>17.00</td>
+            <td>52.00</td>
+            <td>
+              3.06            </td>
+                      <td>48.00</td>
+            <td>300.00</td>
+            <td>
+              6.25            </td>
+                      <td>293.00</td>
+            <td>544.00</td>
+            <td>
+              1.86            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2014 - 2015</td>
+                            <td>967.00</td>
+              <td>1,251.00</td>
+              <td>
+                1.29              </td>
+                          <td>27.00</td>
+              <td>15.00</td>
+              <td>
+                0.56              </td>
+                          <td>116.00</td>
+              <td>125.00</td>
+              <td>
+                1.08              </td>
+                          <td>124.00</td>
+              <td>73.00</td>
+              <td>
+                0.59              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>18.00</td>
+              <td>56.00</td>
+              <td>
+                3.11              </td>
+                          <td>49.00</td>
+              <td>309.00</td>
+              <td>
+                6.31              </td>
+                          <td>293.00</td>
+              <td>554.00</td>
+              <td>
+                1.89              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>128.00</td>
+              <td>82.00</td>
+              <td>
+                0.64              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>19.00</td>
+              <td>57.00</td>
+              <td>
+                3.00              </td>
+                          <td>53.00</td>
+              <td>345.00</td>
+              <td>
+                6.51              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>129.00</td>
+              <td>97.00</td>
+              <td>
+                0.75              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>20.00</td>
+              <td>58.00</td>
+              <td>
+                2.90              </td>
+                          <td>48.00</td>
+              <td>265.00</td>
+              <td>
+                5.52              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>131.00</td>
+              <td>99.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>20.00</td>
+              <td>58.00</td>
+              <td>
+                2.90              </td>
+                          <td>51.00</td>
+              <td>282.00</td>
+              <td>
+                5.53              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>154.00</td>
+              <td>
+                3.58              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>132.00</td>
+              <td>100.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>61.00</td>
+              <td>
+                2.90              </td>
+                          <td>52.00</td>
+              <td>288.00</td>
+              <td>
+                5.54              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>154.00</td>
+              <td>
+                3.58              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>133.00</td>
+              <td>101.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>22.00</td>
+              <td>64.00</td>
+              <td>
+                2.91              </td>
+                          <td>53.00</td>
+              <td>294.00</td>
+              <td>
+                5.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>154.00</td>
+              <td>
+                3.58              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>134.00</td>
+              <td>102.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>67.00</td>
+              <td>
+                2.91              </td>
+                          <td>54.00</td>
+              <td>300.00</td>
+              <td>
+                5.56              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>154.00</td>
+              <td>
+                3.58              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">North garo hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>24.00</td>
+              <td>70.00</td>
+              <td>
+                2.92              </td>
+                          <td>57.00</td>
+              <td>318.00</td>
+              <td>
+                5.58              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>79.00</td>
+              <td>669.00</td>
+              <td>
+                8.47              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">5. Ri bhoi</td>
+                      <td>2010 - 2011</td>
+                        <td>142.00</td>
+            <td>87.00</td>
+            <td>
+              0.61            </td>
+                      <td>144.00</td>
+            <td>85.00</td>
+            <td>
+              0.59            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>90.00</td>
+            <td>138.00</td>
+            <td>
+              1.53            </td>
+                      <td>26.00</td>
+            <td>149.00</td>
+            <td>
+              5.73            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>87.00</td>
+            <td>558.00</td>
+            <td>
+              6.41            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2011 - 2012</td>
+                            <td>151.00</td>
+              <td>93.00</td>
+              <td>
+                0.62              </td>
+                          <td>147.00</td>
+              <td>87.00</td>
+              <td>
+                0.59              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>93.00</td>
+              <td>144.00</td>
+              <td>
+                1.55              </td>
+                          <td>28.00</td>
+              <td>168.00</td>
+              <td>
+                6.00              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>121.00</td>
+              <td>782.00</td>
+              <td>
+                6.46              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2012 - 2013</td>
+                            <td>164.00</td>
+              <td>102.00</td>
+              <td>
+                0.62              </td>
+                          <td>153.00</td>
+              <td>118.00</td>
+              <td>
+                0.77              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>100.00</td>
+              <td>163.00</td>
+              <td>
+                1.63              </td>
+                          <td>29.00</td>
+              <td>175.00</td>
+              <td>
+                6.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>133.00</td>
+              <td>944.00</td>
+              <td>
+                7.10              </td>
+                          <td>1,583.00</td>
+              <td>4,766.00</td>
+              <td>
+                3.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2013 - 2014</td>
+                            <td>170.00</td>
+              <td>110.00</td>
+              <td>
+                0.65              </td>
+                          <td>156.00</td>
+              <td>121.00</td>
+              <td>
+                0.78              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>108.00</td>
+              <td>183.00</td>
+              <td>
+                1.69              </td>
+                          <td>30.00</td>
+              <td>182.00</td>
+              <td>
+                6.07              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>148.00</td>
+              <td>1,106.00</td>
+              <td>
+                7.47              </td>
+                          <td>1,584.00</td>
+              <td>4,877.00</td>
+              <td>
+                3.08              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2014 - 2015</td>
+                            <td>176.00</td>
+              <td>123.00</td>
+              <td>
+                0.70              </td>
+                          <td>160.00</td>
+              <td>125.00</td>
+              <td>
+                0.78              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>111.00</td>
+              <td>195.00</td>
+              <td>
+                1.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>152.00</td>
+              <td>1,181.00</td>
+              <td>
+                7.77              </td>
+                          <td>1,585.00</td>
+              <td>5,010.00</td>
+              <td>
+                3.16              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>115.00</td>
+              <td>219.00</td>
+              <td>
+                1.90              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>160.00</td>
+              <td>1,282.00</td>
+              <td>
+                8.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>116.00</td>
+              <td>236.00</td>
+              <td>
+                2.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>178.00</td>
+              <td>1,426.00</td>
+              <td>
+                8.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>117.00</td>
+              <td>238.00</td>
+              <td>
+                2.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>180.00</td>
+              <td>1,443.00</td>
+              <td>
+                8.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>118.00</td>
+              <td>240.00</td>
+              <td>
+                2.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>181.00</td>
+              <td>1,451.00</td>
+              <td>
+                8.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>119.00</td>
+              <td>242.00</td>
+              <td>
+                2.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>182.00</td>
+              <td>1,460.00</td>
+              <td>
+                8.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>120.00</td>
+              <td>224.00</td>
+              <td>
+                1.87              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>183.00</td>
+              <td>1,468.00</td>
+              <td>
+                8.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">Ri bhoi</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>184.00</td>
+              <td>1,476.00</td>
+              <td>
+                8.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>79.00</td>
+              <td>908.00</td>
+              <td>
+                11.49              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">6. South garo hills</td>
+                      <td>2010 - 2011</td>
+                        <td>326.00</td>
+            <td>446.00</td>
+            <td>
+              1.37            </td>
+                      <td>45.00</td>
+            <td>22.00</td>
+            <td>
+              0.49            </td>
+                      <td>3,692.00</td>
+            <td>3,581.00</td>
+            <td>
+              0.97            </td>
+                      <td>261.00</td>
+            <td>160.00</td>
+            <td>
+              0.61            </td>
+                      <td>60.00</td>
+            <td>426.00</td>
+            <td>
+              7.10            </td>
+                      <td>6.00</td>
+            <td>18.00</td>
+            <td>
+              3.00            </td>
+                      <td>76.00</td>
+            <td>383.00</td>
+            <td>
+              5.04            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2011 - 2012</td>
+                            <td>332.00</td>
+              <td>475.00</td>
+              <td>
+                1.43              </td>
+                          <td>46.00</td>
+              <td>23.00</td>
+              <td>
+                0.50              </td>
+                          <td>3,692.00</td>
+              <td>3,607.00</td>
+              <td>
+                0.98              </td>
+                          <td>263.00</td>
+              <td>163.00</td>
+              <td>
+                0.62              </td>
+                          <td>63.00</td>
+              <td>449.00</td>
+              <td>
+                7.13              </td>
+                          <td>7.00</td>
+              <td>22.00</td>
+              <td>
+                3.14              </td>
+                          <td>79.00</td>
+              <td>399.00</td>
+              <td>
+                5.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2012 - 2013</td>
+                            <td>344.00</td>
+              <td>507.00</td>
+              <td>
+                1.47              </td>
+                          <td>48.00</td>
+              <td>31.00</td>
+              <td>
+                0.65              </td>
+                          <td>3,840.00</td>
+              <td>3,847.00</td>
+              <td>
+                1.00              </td>
+                          <td>282.00</td>
+              <td>183.00</td>
+              <td>
+                0.65              </td>
+                          <td>64.00</td>
+              <td>464.00</td>
+              <td>
+                7.25              </td>
+                          <td>8.00</td>
+              <td>28.00</td>
+              <td>
+                3.50              </td>
+                          <td>87.00</td>
+              <td>492.00</td>
+              <td>
+                5.66              </td>
+                          <td>999.00</td>
+              <td>1,648.00</td>
+              <td>
+                1.65              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2013 - 2014</td>
+                            <td>357.00</td>
+              <td>543.00</td>
+              <td>
+                1.52              </td>
+                          <td>49.00</td>
+              <td>32.00</td>
+              <td>
+                0.65              </td>
+                          <td>3,991.00</td>
+              <td>4,117.00</td>
+              <td>
+                1.03              </td>
+                          <td>304.00</td>
+              <td>205.00</td>
+              <td>
+                0.67              </td>
+                          <td>65.00</td>
+              <td>482.00</td>
+              <td>
+                7.42              </td>
+                          <td>9.00</td>
+              <td>32.00</td>
+              <td>
+                3.56              </td>
+                          <td>97.00</td>
+              <td>584.00</td>
+              <td>
+                6.02              </td>
+                          <td>1,000.00</td>
+              <td>1,685.00</td>
+              <td>
+                1.69              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2014 - 2015</td>
+                            <td>380.00</td>
+              <td>684.00</td>
+              <td>
+                1.80              </td>
+                          <td>50.00</td>
+              <td>33.00</td>
+              <td>
+                0.66              </td>
+                          <td>4,007.00</td>
+              <td>4,193.00</td>
+              <td>
+                1.05              </td>
+                          <td>308.00</td>
+              <td>214.00</td>
+              <td>
+                0.69              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>10.00</td>
+              <td>37.00</td>
+              <td>
+                3.70              </td>
+                          <td>101.00</td>
+              <td>617.00</td>
+              <td>
+                6.11              </td>
+                          <td>1,001.00</td>
+              <td>1,730.00</td>
+              <td>
+                1.73              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>312.00</td>
+              <td>228.00</td>
+              <td>
+                0.73              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>10.00</td>
+              <td>38.00</td>
+              <td>
+                3.80              </td>
+                          <td>107.00</td>
+              <td>668.00</td>
+              <td>
+                6.24              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>313.00</td>
+              <td>238.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>119.00</td>
+              <td>742.00</td>
+              <td>
+                6.24              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>315.00</td>
+              <td>240.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>121.00</td>
+              <td>755.00</td>
+              <td>
+                6.24              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>64.00</td>
+              <td>607.00</td>
+              <td>
+                9.48              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>316.00</td>
+              <td>241.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>122.00</td>
+              <td>762.00</td>
+              <td>
+                6.25              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>65.00</td>
+              <td>617.00</td>
+              <td>
+                9.49              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>317.00</td>
+              <td>242.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>123.00</td>
+              <td>769.00</td>
+              <td>
+                6.25              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>66.00</td>
+              <td>627.00</td>
+              <td>
+                9.50              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>318.00</td>
+              <td>243.00</td>
+              <td>
+                0.76              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>124.00</td>
+              <td>776.00</td>
+              <td>
+                6.26              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>67.00</td>
+              <td>637.00</td>
+              <td>
+                9.51              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South garo hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>39.00</td>
+              <td>
+                3.55              </td>
+                          <td>185.00</td>
+              <td>1,396.00</td>
+              <td>
+                7.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>89.00</td>
+              <td>824.00</td>
+              <td>
+                9.26              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="9">7. South west garo hills</td>
+                      <td>2013 - 2014</td>
+                        <td>1,373.00</td>
+            <td>2,650.00</td>
+            <td>
+              1.93            </td>
+                      <td>58.00</td>
+            <td>33.00</td>
+            <td>
+              0.57            </td>
+                      <td>1,482.00</td>
+            <td>3,758.00</td>
+            <td>
+              2.54            </td>
+                      <td>173.00</td>
+            <td>121.00</td>
+            <td>
+              0.70            </td>
+                      <td>225.00</td>
+            <td>2,048.00</td>
+            <td>
+              9.10            </td>
+                      <td>11.00</td>
+            <td>40.00</td>
+            <td>
+              3.64            </td>
+                      <td>117.00</td>
+            <td>693.00</td>
+            <td>
+              5.92            </td>
+                      <td>1,489.00</td>
+            <td>3,533.00</td>
+            <td>
+              2.37            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2014 - 2015</td>
+                            <td>1,385.00</td>
+              <td>2,682.00</td>
+              <td>
+                1.94              </td>
+                          <td>59.00</td>
+              <td>34.00</td>
+              <td>
+                0.58              </td>
+                          <td>1,493.00</td>
+              <td>3,798.00</td>
+              <td>
+                2.54              </td>
+                          <td>178.00</td>
+              <td>131.00</td>
+              <td>
+                0.74              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>12.00</td>
+              <td>43.00</td>
+              <td>
+                3.58              </td>
+                          <td>126.00</td>
+              <td>748.00</td>
+              <td>
+                5.94              </td>
+                          <td>1,489.00</td>
+              <td>3,575.00</td>
+              <td>
+                2.40              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>187.00</td>
+              <td>146.00</td>
+              <td>
+                0.78              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>12.00</td>
+              <td>44.00</td>
+              <td>
+                3.67              </td>
+                          <td>131.00</td>
+              <td>796.00</td>
+              <td>
+                6.08              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>188.00</td>
+              <td>155.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>13.00</td>
+              <td>45.00</td>
+              <td>
+                3.46              </td>
+                          <td>131.00</td>
+              <td>838.00</td>
+              <td>
+                6.40              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>190.00</td>
+              <td>157.00</td>
+              <td>
+                0.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>13.00</td>
+              <td>45.00</td>
+              <td>
+                3.46              </td>
+                          <td>133.00</td>
+              <td>851.00</td>
+              <td>
+                6.40              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>41.00</td>
+              <td>119.00</td>
+              <td>
+                2.90              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>191.00</td>
+              <td>158.00</td>
+              <td>
+                0.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>15.00</td>
+              <td>52.00</td>
+              <td>
+                3.47              </td>
+                          <td>134.00</td>
+              <td>858.00</td>
+              <td>
+                6.40              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>42.00</td>
+              <td>122.00</td>
+              <td>
+                2.90              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>192.00</td>
+              <td>159.00</td>
+              <td>
+                0.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>15.00</td>
+              <td>52.00</td>
+              <td>
+                3.47              </td>
+                          <td>135.00</td>
+              <td>865.00</td>
+              <td>
+                6.41              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>125.00</td>
+              <td>
+                2.91              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>193.00</td>
+              <td>160.00</td>
+              <td>
+                0.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>15.00</td>
+              <td>52.00</td>
+              <td>
+                3.47              </td>
+                          <td>136.00</td>
+              <td>872.00</td>
+              <td>
+                6.41              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>128.00</td>
+              <td>
+                2.91              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west garo hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>15.00</td>
+              <td>52.00</td>
+              <td>
+                3.47              </td>
+                          <td>141.00</td>
+              <td>905.00</td>
+              <td>
+                6.42              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>39.00</td>
+              <td>324.00</td>
+              <td>
+                8.31              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="9">8. South west khasi hills</td>
+                      <td>2013 - 2014</td>
+                        <td>556.00</td>
+            <td>568.00</td>
+            <td>
+              1.02            </td>
+                      <td>84.00</td>
+            <td>72.00</td>
+            <td>
+              0.86            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>20.00</td>
+            <td>23.00</td>
+            <td>
+              1.15            </td>
+                      <td>2,000.00</td>
+            <td>25,521.00</td>
+            <td>
+              12.76            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>48.00</td>
+            <td>211.00</td>
+            <td>
+              4.40            </td>
+                      <td>1,362.00</td>
+            <td>2,211.00</td>
+            <td>
+              1.62            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2014 - 2015</td>
+                            <td>573.00</td>
+              <td>602.00</td>
+              <td>
+                1.05              </td>
+                          <td>85.00</td>
+              <td>74.00</td>
+              <td>
+                0.87              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>21.00</td>
+              <td>25.00</td>
+              <td>
+                1.19              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>48.00</td>
+              <td>213.00</td>
+              <td>
+                4.44              </td>
+                          <td>1,362.00</td>
+              <td>2,247.00</td>
+              <td>
+                1.65              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>22.00</td>
+              <td>27.00</td>
+              <td>
+                1.23              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>51.00</td>
+              <td>231.00</td>
+              <td>
+                4.53              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>30.00</td>
+              <td>
+                1.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>63.00</td>
+              <td>285.00</td>
+              <td>
+                4.52              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>30.00</td>
+              <td>
+                1.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>63.00</td>
+              <td>285.00</td>
+              <td>
+                4.52              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>20.00</td>
+              <td>
+                2.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>30.00</td>
+              <td>
+                1.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>63.00</td>
+              <td>285.00</td>
+              <td>
+                4.52              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>20.00</td>
+              <td>
+                2.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>30.00</td>
+              <td>
+                1.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>64.00</td>
+              <td>290.00</td>
+              <td>
+                4.53              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>20.00</td>
+              <td>
+                2.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>23.00</td>
+              <td>30.00</td>
+              <td>
+                1.30              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>65.00</td>
+              <td>295.00</td>
+              <td>
+                4.54              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>20.00</td>
+              <td>
+                2.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">South west khasi hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>66.00</td>
+              <td>300.00</td>
+              <td>
+                4.55              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>12.00</td>
+              <td>96.00</td>
+              <td>
+                8.00              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">9. West garo hills</td>
+                      <td>2010 - 2011</td>
+                        <td>5,447.00</td>
+            <td>10,200.00</td>
+            <td>
+              1.87            </td>
+                      <td>337.00</td>
+            <td>150.00</td>
+            <td>
+              0.45            </td>
+                      <td>4,665.00</td>
+            <td>11,544.00</td>
+            <td>
+              2.47            </td>
+                      <td>942.00</td>
+            <td>596.00</td>
+            <td>
+              0.63            </td>
+                      <td>538.00</td>
+            <td>4,182.00</td>
+            <td>
+              7.77            </td>
+                      <td>25.00</td>
+            <td>78.00</td>
+            <td>
+              3.12            </td>
+                      <td>390.00</td>
+            <td>1,949.00</td>
+            <td>
+              5.00            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2011 - 2012</td>
+                            <td>5,448.00</td>
+              <td>10,308.00</td>
+              <td>
+                1.89              </td>
+                          <td>341.00</td>
+              <td>159.00</td>
+              <td>
+                0.47              </td>
+                          <td>4,709.00</td>
+              <td>11,820.00</td>
+              <td>
+                2.51              </td>
+                          <td>943.00</td>
+              <td>611.00</td>
+              <td>
+                0.65              </td>
+                          <td>543.00</td>
+              <td>4,248.00</td>
+              <td>
+                7.82              </td>
+                          <td>27.00</td>
+              <td>85.00</td>
+              <td>
+                3.15              </td>
+                          <td>392.00</td>
+              <td>1,962.00</td>
+              <td>
+                5.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2012 - 2013</td>
+                            <td>5,662.00</td>
+              <td>11,052.00</td>
+              <td>
+                1.95              </td>
+                          <td>355.00</td>
+              <td>214.00</td>
+              <td>
+                0.60              </td>
+                          <td>4,899.00</td>
+              <td>12,603.00</td>
+              <td>
+                2.57              </td>
+                          <td>1,013.00</td>
+              <td>687.00</td>
+              <td>
+                0.68              </td>
+                          <td>555.00</td>
+              <td>4,430.00</td>
+              <td>
+                7.98              </td>
+                          <td>34.00</td>
+              <td>119.00</td>
+              <td>
+                3.50              </td>
+                          <td>433.00</td>
+              <td>2,403.00</td>
+              <td>
+                5.55              </td>
+                          <td>4,623.00</td>
+              <td>10,323.00</td>
+              <td>
+                2.23              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2013 - 2014</td>
+                            <td>4,505.00</td>
+              <td>9,245.00</td>
+              <td>
+                2.05              </td>
+                          <td>303.00</td>
+              <td>186.00</td>
+              <td>
+                0.61              </td>
+                          <td>3,609.00</td>
+              <td>9,726.00</td>
+              <td>
+                2.69              </td>
+                          <td>920.00</td>
+              <td>649.00</td>
+              <td>
+                0.71              </td>
+                          <td>339.00</td>
+              <td>2,613.00</td>
+              <td>
+                7.71              </td>
+                          <td>26.00</td>
+              <td>93.00</td>
+              <td>
+                3.58              </td>
+                          <td>366.00</td>
+              <td>2,144.00</td>
+              <td>
+                5.86              </td>
+                          <td>3,136.00</td>
+              <td>7,039.00</td>
+              <td>
+                2.24              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2014 - 2015</td>
+                            <td>4,514.00</td>
+              <td>9,312.00</td>
+              <td>
+                2.06              </td>
+                          <td>304.00</td>
+              <td>192.00</td>
+              <td>
+                0.63              </td>
+                          <td>3,625.00</td>
+              <td>9,781.00</td>
+              <td>
+                2.70              </td>
+                          <td>929.00</td>
+              <td>668.00</td>
+              <td>
+                0.72              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>28.00</td>
+              <td>99.00</td>
+              <td>
+                3.54              </td>
+                          <td>373.00</td>
+              <td>2,192.00</td>
+              <td>
+                5.88              </td>
+                          <td>3,139.00</td>
+              <td>7,296.00</td>
+              <td>
+                2.32              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>952.00</td>
+              <td>707.00</td>
+              <td>
+                0.74              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>28.00</td>
+              <td>101.00</td>
+              <td>
+                3.61              </td>
+                          <td>381.00</td>
+              <td>2,324.00</td>
+              <td>
+                6.10              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>953.00</td>
+              <td>780.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>29.00</td>
+              <td>103.00</td>
+              <td>
+                3.55              </td>
+                          <td>401.00</td>
+              <td>2,446.00</td>
+              <td>
+                6.10              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>955.00</td>
+              <td>784.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>29.00</td>
+              <td>103.00</td>
+              <td>
+                3.55              </td>
+                          <td>403.00</td>
+              <td>2,459.00</td>
+              <td>
+                6.10              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>204.00</td>
+              <td>614.00</td>
+              <td>
+                3.01              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>956.00</td>
+              <td>785.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>29.00</td>
+              <td>103.00</td>
+              <td>
+                3.55              </td>
+                          <td>404.00</td>
+              <td>2,466.00</td>
+              <td>
+                6.10              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>205.00</td>
+              <td>619.00</td>
+              <td>
+                3.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>957.00</td>
+              <td>787.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>107.00</td>
+              <td>
+                3.57              </td>
+                          <td>405.00</td>
+              <td>2,473.00</td>
+              <td>
+                6.11              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>206.00</td>
+              <td>623.00</td>
+              <td>
+                3.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>958.00</td>
+              <td>788.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>107.00</td>
+              <td>
+                3.57              </td>
+                          <td>406.00</td>
+              <td>2,480.00</td>
+              <td>
+                6.11              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>207.00</td>
+              <td>627.00</td>
+              <td>
+                3.03              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West garo hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>107.00</td>
+              <td>
+                3.57              </td>
+                          <td>407.00</td>
+              <td>2,487.00</td>
+              <td>
+                6.11              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>124.00</td>
+              <td>1,157.00</td>
+              <td>
+                9.33              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="9">10. West jaintia hills</td>
+                      <td>2013 - 2014</td>
+                        <td>1,589.00</td>
+            <td>2,565.00</td>
+            <td>
+              1.61            </td>
+                      <td>6.00</td>
+            <td>4.00</td>
+            <td>
+              0.67            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>40.00</td>
+            <td>36.00</td>
+            <td>
+              0.90            </td>
+                      <td>172.00</td>
+            <td>858.00</td>
+            <td>
+              4.99            </td>
+                      <td>7.00</td>
+            <td>8.00</td>
+            <td>
+              1.14            </td>
+                      <td>1,362.00</td>
+            <td>8,487.00</td>
+            <td>
+              6.23            </td>
+                      <td>2,851.00</td>
+            <td>5,126.00</td>
+            <td>
+              1.80            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2014 - 2015</td>
+                            <td>1,570.00</td>
+              <td>2,517.00</td>
+              <td>
+                1.60              </td>
+                          <td>7.00</td>
+              <td>6.00</td>
+              <td>
+                0.86              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>41.00</td>
+              <td>39.00</td>
+              <td>
+                0.95              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>6.00</td>
+              <td>7.00</td>
+              <td>
+                1.17              </td>
+                          <td>1,375.00</td>
+              <td>8,697.00</td>
+              <td>
+                6.33              </td>
+                          <td>2,853.00</td>
+              <td>5,271.00</td>
+              <td>
+                1.85              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>45.00</td>
+              <td>
+                1.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,384.00</td>
+              <td>8,826.00</td>
+              <td>
+                6.38              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>56.00</td>
+              <td>
+                1.14              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,378.00</td>
+              <td>8,666.00</td>
+              <td>
+                6.29              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>56.00</td>
+              <td>
+                1.14              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,380.00</td>
+              <td>8,681.00</td>
+              <td>
+                6.29              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>81.00</td>
+              <td>
+                2.70              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>56.00</td>
+              <td>
+                1.14              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,381.00</td>
+              <td>8,688.00</td>
+              <td>
+                6.29              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>81.00</td>
+              <td>
+                2.70              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>56.00</td>
+              <td>
+                1.14              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,694.00</td>
+              <td>10,686.00</td>
+              <td>
+                6.31              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>81.00</td>
+              <td>
+                2.70              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>56.00</td>
+              <td>
+                1.14              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>1,711.00</td>
+              <td>10,810.00</td>
+              <td>
+                6.32              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>30.00</td>
+              <td>81.00</td>
+              <td>
+                2.70              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West jaintia hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>7.00</td>
+              <td>9.00</td>
+              <td>
+                1.29              </td>
+                          <td>2,190.00</td>
+              <td>14,163.00</td>
+              <td>
+                6.47              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>34.00</td>
+              <td>99.00</td>
+              <td>
+                2.91              </td>
+            
+
+            </tr>
+                          <tr>
+                        <td rowspan="12">11. West khasi hills</td>
+                      <td>2010 - 2011</td>
+                        <td>1,224.00</td>
+            <td>1,165.00</td>
+            <td>
+              0.95            </td>
+                      <td>102.00</td>
+            <td>66.00</td>
+            <td>
+              0.65            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td>47.00</td>
+            <td>45.00</td>
+            <td>
+              0.96            </td>
+                      <td>5,473.00</td>
+            <td>47,325.00</td>
+            <td>
+              8.65            </td>
+                      <td>6.00</td>
+            <td>13.00</td>
+            <td>
+              2.17            </td>
+                      <td>70.00</td>
+            <td>275.00</td>
+            <td>
+              3.93            </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+                      <td></td>
+            <td></td>
+            <td>
+                          </td>
+          
+
+          </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2011 - 2012</td>
+                            <td>1,227.00</td>
+              <td>1,197.00</td>
+              <td>
+                0.98              </td>
+                          <td>105.00</td>
+              <td>69.00</td>
+              <td>
+                0.66              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>49.00</td>
+              <td>48.00</td>
+              <td>
+                0.98              </td>
+                          <td>5,475.00</td>
+              <td>47,824.00</td>
+              <td>
+                8.73              </td>
+                          <td>7.00</td>
+              <td>16.00</td>
+              <td>
+                2.29              </td>
+                          <td>81.00</td>
+              <td>326.00</td>
+              <td>
+                4.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2012 - 2013</td>
+                            <td>1,276.00</td>
+              <td>1,292.00</td>
+              <td>
+                1.01              </td>
+                          <td>110.00</td>
+              <td>93.00</td>
+              <td>
+                0.85              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>53.00</td>
+              <td>53.00</td>
+              <td>
+                1.00              </td>
+                          <td>5,606.00</td>
+              <td>49,937.00</td>
+              <td>
+                8.91              </td>
+                          <td>8.00</td>
+              <td>21.00</td>
+              <td>
+                2.63              </td>
+                          <td>89.00</td>
+              <td>396.00</td>
+              <td>
+                4.45              </td>
+                          <td>4,436.00</td>
+              <td>7,687.00</td>
+              <td>
+                1.73              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2013 - 2014</td>
+                            <td>769.00</td>
+              <td>831.00</td>
+              <td>
+                1.08              </td>
+                          <td>28.00</td>
+              <td>23.00</td>
+              <td>
+                0.82              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>37.00</td>
+              <td>36.00</td>
+              <td>
+                0.97              </td>
+                          <td>3,702.00</td>
+              <td>26,985.00</td>
+              <td>
+                7.29              </td>
+                          <td>9.00</td>
+              <td>24.00</td>
+              <td>
+                2.67              </td>
+                          <td>51.00</td>
+              <td>254.00</td>
+              <td>
+                4.98              </td>
+                          <td>3,076.00</td>
+              <td>5,661.00</td>
+              <td>
+                1.84              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2014 - 2015</td>
+                            <td>771.00</td>
+              <td>897.00</td>
+              <td>
+                1.16              </td>
+                          <td>29.00</td>
+              <td>24.00</td>
+              <td>
+                0.83              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>41.00</td>
+              <td>40.00</td>
+              <td>
+                0.98              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>10.00</td>
+              <td>28.00</td>
+              <td>
+                2.80              </td>
+                          <td>52.00</td>
+              <td>269.00</td>
+              <td>
+                5.17              </td>
+                          <td>3,079.00</td>
+              <td>5,847.00</td>
+              <td>
+                1.90              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2015 - 2016</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>43.00</td>
+              <td>44.00</td>
+              <td>
+                1.02              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>55.00</td>
+              <td>287.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2016 - 2017</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>46.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>50.00</td>
+              <td>261.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2017 - 2018</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>46.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>50.00</td>
+              <td>261.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>33.00</td>
+              <td>130.00</td>
+              <td>
+                3.94              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2018 - 2019</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>46.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>50.00</td>
+              <td>261.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>34.00</td>
+              <td>134.00</td>
+              <td>
+                3.94              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2019 - 2020</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>46.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>50.00</td>
+              <td>261.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>35.00</td>
+              <td>138.00</td>
+              <td>
+                3.94              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2020 - 2021</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>44.00</td>
+              <td>46.00</td>
+              <td>
+                1.05              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>11.00</td>
+              <td>31.00</td>
+              <td>
+                2.82              </td>
+                          <td>50.00</td>
+              <td>261.00</td>
+              <td>
+                5.22              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>36.00</td>
+              <td>142.00</td>
+              <td>
+                3.94              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+            
+
+            </tr>
+                      <tr>
+
+              <!-- td rowspan="">West khasi hills</td -->
+              <td>2022 - 2023</td>
+                            <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>60.00</td>
+              <td>332.00</td>
+              <td>
+                5.53              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td></td>
+              <td></td>
+              <td>
+                              </td>
+                          <td>45.00</td>
+              <td>352.00</td>
+              <td>
+                7.82              </td>
+            
+
+            </tr>
+                      
+      </tbody>
+      </table>

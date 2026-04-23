@@ -3,7 +3,7 @@ import axios from "axios";
 import { NewsArticle } from "../types/advisory";
 
 const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-const BASE_URL = "https://newsapi.org/v2/everything";
+const BASE_URL = `${API_BASE_URL}/api/news`;
 
 export type SupportedNewsLanguage = "Hindi" | "English" | "Marathi" | "Telugu" | "Tamil" | "Odia" | "Bengali" | "Kannada";
 
@@ -88,7 +88,7 @@ export const fetchFarmingNews = async (language: SupportedNewsLanguage = "Englis
     if (language !== "English") {
         try {
             const langCode = localLangMap[language] || "hi";
-            const API_SERVER_URL = import.meta.env.VITE_API_URL || '${API_BASE_URL}';
+            const API_SERVER_URL = API_BASE_URL;
             const response = await axios.get(`${API_SERVER_URL}/api/regional-news`, {
                 params: { lang: langCode }
             });
@@ -109,21 +109,16 @@ export const fetchFarmingNews = async (language: SupportedNewsLanguage = "Englis
         }
     }
 
-    // Default NewsAPI explicitly for English or on Fallback
-    if (!NEWS_API_KEY) {
-        console.error("News API Key is missing!");
-        return [];
-    }
-
+    // Default NewsAPI via Proxy strictly for English or on Fallback
     try {
         const response = await axios.get(BASE_URL, {
             params: {
                 q: getQueryForLanguage(language),
                 sortBy: "publishedAt",
                 language: "en",   // NewsAPI free tier only has reliable English content
-                apiKey: NEWS_API_KEY,
                 pageSize: 40,     // Fetch extra — post-filter may reduce count
                 page: page,
+                // apiKey is now handled by backend proxy securely
             },
         });
 
@@ -149,11 +144,10 @@ export const fetchFarmingNews = async (language: SupportedNewsLanguage = "Englis
                 }));
         }
 
-        console.warn("NewsAPI returned non-ok status:", response.data);
+        console.warn("News Proxy returned non-ok status:", response.data);
         return [];
     } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error("Error fetching news from proxy:", error);
         return [];
     }
 };
-

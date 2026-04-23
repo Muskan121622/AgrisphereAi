@@ -1,0 +1,24 @@
+--- Checking crop_yield.csv ---
+Columns: ['Crop', 'Crop_Year', 'Season', 'State', 'Area', 'Production', 'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Yield']
+
+Total records for Meghalaya: 649
+Sample Meghalaya records:
+            Crop  Crop_Year       Season      State    Area  Production  Annual_Rainfall  Fertilizer  Pesticide      Yield
+62      Arecanut       1997  Whole Year   Meghalaya  9569.0       12116           3818.2   910681.73    2966.39   1.245714
+63     Arhar/Tur       1997  Kharif       Meghalaya   865.0         683           3818.2    82322.05     268.15   0.806667
+64        Banana       1997  Whole Year   Meghalaya  5239.0       63011           3818.2   498595.63    1624.09  11.207143
+65   Castor seed       1997  Rabi         Meghalaya    30.0          15           3818.2     2855.10       9.30   0.490000
+66  Cotton(lint)       1997  Kharif       Meghalaya  7544.0        5590           3818.2   717962.48    2338.64   0.796667
+
+--- Checking RainfallData2019.xlsx ---
+Columns: ['                                                                                                        GOVERNMENT OF MEGHALAYA', 'Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4', 'Unnamed: 5', 'Unnamed: 6', 'Unnamed: 7', 'Unnamed: 8', 'Unnamed: 9', 'Unnamed: 10', 'Unnamed: 11', 'Unnamed: 12', 'Unnamed: 13', 'Unnamed: 14', 'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18', 'Unnamed: 19', 'Unnamed: 20', 'Unnamed: 21', 'Unnamed: 22', 'Unnamed: 23', 'Unnamed: 24', 'Unnamed: 25', 'Unnamed: 26', 'Unnamed: 27']
+First 5 rows:
+                                                                                                            GOVERNMENT OF MEGHALAYA                          Unnamed: 1 Unnamed: 2 Unnamed: 3 Unnamed: 4 Unnamed: 5 Unnamed: 6 Unnamed: 7 Unnamed: 8 Unnamed: 9 Unnamed: 10 Unnamed: 11 Unnamed: 12 Unnamed: 13 Unnamed: 14 Unnamed: 15 Unnamed: 16 Unnamed: 17 Unnamed: 18 Unnamed: 19 Unnamed: 20 Unnamed: 21 Unnamed: 22 Unnamed: 23 Unnamed: 24 Unnamed: 25 Unnamed: 26 Unnamed: 27
+0                                                                                                        DIRECTORATE OF AGRICULTURE                                 NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
+1                                                                            STATION WISE ACTUAL MONTHLY RAINFALL IN MM DURING 2019                                 NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
+2                                                                                                                               SL.                        AWS STATIONS        NaN        JAN        R.D        FEB        R.D        MAR        R.D        APR         R.D         MAY         R.D         JUN         R.D         JUL         R.D         AUG         R.D        SEPT         R.D         OCT         R.D        NOV          R.D         DEC         R.D       TOTAL
+3                                                                                                                                NO                                 NaN        NaN       (MM)        NaN       (MM)        NaN       (MM)        NaN       (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN        (MM)         NaN    RAINFALL
+4                                                                                                                                 1                                   2          3          4          5          6          7          8          9         10          11          12          13          14          15          16          17          18          19          20          21          22          23          24          25          26          27          28
+
+--- Checking horizontal_crop_vertical_year_report (4).xls ---
+Error reading report xls: Excel file format cannot be determined, you must specify an engine manually.

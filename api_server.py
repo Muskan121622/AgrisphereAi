@@ -3082,6 +3082,30 @@ def get_regional_news():
         print(f"Regional News RSS Error: {e}")
         return jsonify({'error': str(e), 'status': 'error'}), 500
 
+@app.route('/api/news', methods=['GET'])
+def get_news_proxy():
+    """
+    Proxy NewsAPI requests to bypass domain restrictions on free tier in production.
+    """
+    try:
+        query = request.args.get('q', '(agriculture OR farming OR "crop yield")')
+        language = request.args.get('language', 'en')
+        page_size = request.args.get('pageSize', '20')
+        sort_by = request.args.get('sortBy', 'publishedAt')
+        
+        api_key = os.environ.get("VITE_NEWS_API_KEY") or os.environ.get("NEWS_API_KEY")
+        if not api_key:
+             return jsonify({'status': 'error', 'message': 'News API Key not configured on server'}), 500
+             
+        url = f"https://newsapi.org/v2/everything?q={query}&language={language}&pageSize={page_size}&sortBy={sort_by}&apiKey={api_key}"
+        
+        import requests
+        response = requests.get(url)
+        return jsonify(response.json())
+    except Exception as e:
+        print(f"News Proxy Error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 if __name__ == '__main__':
     init_db()
     print("\n" + "="*50)

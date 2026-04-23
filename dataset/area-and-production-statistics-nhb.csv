@@ -1,0 +1,43 @@
+"id","year","state_name","state_code","crop_category","area","production"
+0,"2018-19","Meghalaya","17","Fruits",35750.0,331670000000.0
+1,"2017-18","Meghalaya","17","Fruits",32810.0,316510000000.0
+2,"2016-17","Meghalaya","17","Fruits",37370.0,426860000000.0
+3,"2015-16","Meghalaya","17","Fruits",36590.0,395400000000.0
+4,"2014-15","Meghalaya","17","Fruits",36330.0,377250000000.0
+5,"2013-14","Meghalaya","17","Fruits",35300.0,348000000000.0
+6,"2018-19","Meghalaya","17","Vegetables",49020.0,514750000000.0
+7,"2017-18","Meghalaya","17","Vegetables",49110.0,519670000000.0
+8,"2016-17","Meghalaya","17","Vegetables",49500.0,523420000000.0
+9,"2015-16","Meghalaya","17","Vegetables",47500.0,494880000000.0
+10,"2014-15","Meghalaya","17","Vegetables",44600.0,534000000000.0
+11,"2013-14","Meghalaya","17","Vegetables",43600.0,515340000000.0
+12,"2018-19","Meghalaya","17","Plantation Crops",26140.0,30860000000.0
+13,"2017-18","Meghalaya","17","Plantation Crops",25510.0,31110000000.0
+14,"2016-17","Meghalaya","17","Plantation Crops",25520.0,32960000000.0
+15,"2015-16","Meghalaya","17","Plantation Crops",25370.0,31200000000.0
+16,"2014-15","Meghalaya","17","Plantation Crops",25610.0,29180000000.0
+17,"2013-14","Meghalaya","17","Plantation Crops",25610.0,29400000000.0
+18,"2018-19","Meghalaya","17","Aromatic Crops",0.0,0.0
+19,"2017-18","Meghalaya","17","Aromatic Crops",0.0,0.0
+20,"2016-17","Meghalaya","17","Aromatic Crops",0.0,0.0
+21,"2015-16","Meghalaya","17","Aromatic Crops",0.0,0.0
+22,"2014-15","Meghalaya","17","Aromatic Crops",0.0,0.0
+23,"2013-14","Meghalaya","17","Aromatic Crops",0.0,0.0
+24,"2018-19","Meghalaya","17","Spices",15440.0,74260000000.0
+25,"2017-18","Meghalaya","17","Spices",18670.0,91990000000.0
+26,"2016-17","Meghalaya","17","Spices",18610.0,92160000000.0
+27,"2015-16","Meghalaya","17","Spices",18370.0,90260000000.0
+28,"2014-15","Meghalaya","17","Spices",17500.0,83880000000.0
+29,"2013-14","Meghalaya","17","Spices",17500.0,83880000000.0
+30,"2018-19","Meghalaya","17","Honey",0.0,280000000.0
+31,"2017-18","Meghalaya","17","Honey",0.0,250000000.0
+32,"2016-17","Meghalaya","17","Honey",0.0,200000000.0
+33,"2015-16","Meghalaya","17","Honey",0.0,200000000.0
+34,"2014-15","Meghalaya","17","Honey",0.0,150000000.0
+35,"2013-14","Meghalaya","17","Honey",0.0,0.0
+36,"2018-19","Meghalaya","17","Flowers",10.0,2360000000.0
+37,"2017-18","Meghalaya","17","Flowers",10.0,2550000000.0
+38,"2016-17","Meghalaya","17","Flowers",10.0,0.0
+39,"2015-16","Meghalaya","17","Flowers",60.0,0.0
+40,"2014-15","Meghalaya","17","Flowers",60.0,1830000000.0
+41,"2013-14","Meghalaya","17","Flowers",50.0,1230000000.0

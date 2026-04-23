@@ -1,0 +1,5 @@
+--- Text Search in horizontal_crop_vertical_year_report (4).xls ---
+File size: 173488 characters
+XXX 'District' FOUND in text XXX
+'Shillong' NOT found
+'Khasi' NOT found

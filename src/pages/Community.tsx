@@ -119,7 +119,7 @@ const Community = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || "${API_BASE_URL}";
+  const API_URL = API_BASE_URL;
 
   const handleUserSelect = async (u: UserProfile) => {
     setSelectedRecipient(u);
@@ -127,7 +127,7 @@ const Community = () => {
     try {
       await axios.post(`${API_URL}/community/read-chat`, {
         sender: senderName,
-        recipient: user?.name
+        recipient: user?.name || user?.username || "Farmer"
       });
       setUnreadCounts(prev => ({ ...prev, [senderName]: 0 }));
     } catch(e) {

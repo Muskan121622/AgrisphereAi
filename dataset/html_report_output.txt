@@ -1,0 +1,2 @@
+--- Reading horizontal_crop_vertical_year_report (4).xls as HTML ---
+Error reading HTML: Missing optional dependency 'lxml'.  Use pip or conda to install lxml.
