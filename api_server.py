@@ -468,6 +468,9 @@ def verify_plant_with_groq(image_path):
                 continue
                 
         return True, f"Verification skipped (All vision models failed: {last_error})" # Fail open
+    except Exception as e:
+        print(f"Plant verification critical error: {e}")
+        return True, f"Verification skipped (Critical Error: {str(e)})" # Fail open on error
 
 def analyze_disease_with_ai(image_path):
     """
