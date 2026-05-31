@@ -94,7 +94,7 @@ const BuyerDashboard = () => {
     const { t, i18n } = useTranslation();
     const { user } = useAuthStore();
     const { toast } = useToast();
-    const API_URL = '${API_BASE_URL}'; // Keep for AI inference
+    const API_URL = API_BASE_URL; 
 
     const [activeTab, setActiveTab] = useState("marketplace");
     const [listings, setListings] = useState<Listing[]>([]);
