@@ -62,8 +62,13 @@ export const useAuthStore = create<AuthState>()(
           );
           const firebaseUser = userCredential.user;
           
-          // Fetch additional profile data from Firestore
-          const profileData = await getUserProfile(firebaseUser.uid);
+          // Fetch additional profile data from Firestore (gracefully handle permission errors)
+          let profileData = null;
+          try {
+            profileData = await getUserProfile(firebaseUser.uid);
+          } catch (e) {
+            console.warn("Could not fetch user profile from Firestore, using auth defaults", e);
+          }
 
           const user: User = {
             id: firebaseUser.uid,
