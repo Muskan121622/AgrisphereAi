@@ -121,6 +121,18 @@ const Community = () => {
 
   const API_URL = API_BASE_URL;
 
+  // Helper to fix broken localhost URLs from the database or backend
+  const formatMediaUrl = (url: string) => {
+    if (!url) return "";
+    if (url.includes("localhost:5000")) {
+      return url.replace("http://localhost:5000", API_URL);
+    }
+    if (url.startsWith("/uploads")) {
+      return `${API_URL}${url}`;
+    }
+    return url;
+  };
+
   const handleUserSelect = async (u: UserProfile) => {
     setSelectedRecipient(u);
     const senderName = u.name || u.username || "";
@@ -522,8 +534,8 @@ const Community = () => {
                               
                               {msg.imageUrl && (
                                 <div className="mt-2 group relative">
-                                  <img src={msg.imageUrl} alt="Shared" className="rounded-2xl max-h-60 w-full object-cover shadow-lg border border-white/5" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl cursor-pointer" onClick={() => window.open(msg.imageUrl)}>
+                                  <img src={formatMediaUrl(msg.imageUrl)} alt="Shared" className="rounded-2xl max-h-60 w-full object-cover shadow-lg border border-white/5" />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl cursor-pointer" onClick={() => window.open(formatMediaUrl(msg.imageUrl))}>
                                     <ImageIcon className="w-6 h-6 text-white" />
                                   </div>
                                 </div>
@@ -535,7 +547,7 @@ const Community = () => {
                                     <Volume2 className="w-3 h-3 text-white/50" />
                                     <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Voice Note</span>
                                   </div>
-                                  <audio src={msg.audioUrl} controls className="h-8 w-full invert brightness-200" />
+                                  <audio src={formatMediaUrl(msg.audioUrl)} controls className="h-8 w-full invert brightness-200" />
                                 </div>
                               )}
                             </div>
