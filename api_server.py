@@ -2021,7 +2021,7 @@ def upload_chat_image():
         file.save(file_path)
         
         # Return URL path (relative to server)
-        image_url = f"http://localhost:5000/uploads/chat_images/{unique_filename}"
+        image_url = f"{request.host_url}uploads/chat_images/{unique_filename}"
         
         return jsonify({
             'success': True,
@@ -2059,7 +2059,7 @@ def upload_chat_audio():
         file.save(file_path)
         
         # Return URL path (relative to server)
-        audio_url = f"http://localhost:5000/uploads/chat_audio/{unique_filename}"
+        audio_url = f"{request.host_url}uploads/chat_audio/{unique_filename}"
         
         return jsonify({
             'success': True,
@@ -3192,15 +3192,16 @@ def get_news_proxy():
 
 if __name__ == '__main__':
     init_db()
-    print("\n" + "="*50)
-    print("AgriSphere AI API Server Starting...")
-    print("="*50)
-    print("Server will be available at: http://localhost:5000")
-    print("Health check: http://localhost:5000/health")
-    print("Regional news: GET /api/regional-news?lang=hi")
-    print("="*50 + "\n")
     # Use dynamic PORT for cloud deployment (Render, Railway, etc.)
     port = int(os.environ.get("PORT", 5000))
     is_debug = os.environ.get("FLASK_ENV", "development") != "production"
+
+    print("\n" + "="*50)
+    print("AgriSphere AI API Server Starting...")
+    print("="*50)
+    print(f"Server will be available at: http://localhost:{port}")
+    print(f"Health check: http://localhost:{port}/health")
+    print(f"Regional news: GET /api/regional-news?lang=hi")
+    print("="*50 + "\n")
     app.run(host='0.0.0.0', port=port, debug=is_debug, threaded=True)
 

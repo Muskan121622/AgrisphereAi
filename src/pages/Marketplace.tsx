@@ -91,6 +91,7 @@ import { useNotificationStore } from "@/store/notificationStore";
 import { useTranslation } from "react-i18next";
 import {
   getListings,
+  getListingsStream,
   createListing,
   getNegotiations,
   createNegotiation,
@@ -1035,13 +1036,9 @@ const Marketplace = () => {
     }
   };
 
-  const fetchListings = async () => {
-    try {
-      const cloudListings = await getListings();
-      setListings(cloudListings);
-    } catch (err) {
-      console.error("Failed to fetch listings from Firestore", err);
-    }
+  const fetchListings = () => {
+    // Kept for manual triggers if needed, but primarily using stream now.
+    // getListingsStream handles the real-time updates.
   };
 
   const fetchNegotiations = async () => {
@@ -1178,11 +1175,11 @@ const Marketplace = () => {
 
   const filteredListings = listings
     .filter((l) => {
-      const matchesSearch = l.cropName
+      const matchesSearch = (l.cropName || "")
         .toLowerCase()
-        .includes(filters.search.toLowerCase());
+        .includes((filters.search || "").toLowerCase());
       const matchesState = filters.state
-        ? l.location.toLowerCase().includes(filters.state.toLowerCase())
+        ? (l.location || "").toLowerCase().includes(filters.state.toLowerCase())
         : true;
       return matchesSearch && matchesState;
     })
@@ -1430,9 +1427,15 @@ const Marketplace = () => {
   };
 
   useEffect(() => {
-    fetchListings();
+    const unsubListings = getListingsStream((cloudListings) => {
+      setListings(cloudListings);
+    });
     fetchDemands();
     fetchNegotiations();
+    
+    return () => {
+      unsubListings();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

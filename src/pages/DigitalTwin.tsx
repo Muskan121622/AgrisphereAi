@@ -168,7 +168,7 @@ const DigitalTwin = () => {
       let aiData = null;
       try {
         const response = await fetch(
-          "${API_BASE_URL}/generate-digital-twin",
+          `${API_BASE_URL}/generate-digital-twin`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

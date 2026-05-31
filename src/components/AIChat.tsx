@@ -227,7 +227,7 @@ const AIChat = () => {
         formData.append("image", selectedImage);
 
         const uploadResponse = await fetch(
-          "${API_BASE_URL}/community/upload-image",
+          `${API_BASE_URL}/community/upload-image`,
           { method: "POST", body: formData }
         );
 

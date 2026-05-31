@@ -68,7 +68,7 @@ const FertilizerRecommendation = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "${API_BASE_URL}/recommend-fertilizer",
+        `${API_BASE_URL}/recommend-fertilizer`,
         {
           method: "POST",
           headers: {

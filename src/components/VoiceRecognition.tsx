@@ -93,7 +93,7 @@ const VoiceRecognition = () => {
           const languageName = langObj ? langObj.name : selectedLanguage;
 
           // Use improved voice assistant backend
-          const response = await fetch("${API_BASE_URL}/voice-query", {
+          const response = await fetch(`${API_BASE_URL}/voice-query`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -471,7 +471,7 @@ const VoiceRecognition = () => {
                     try {
                       // Use improved voice assistant backend
                       const response = await fetch(
-                        "${API_BASE_URL}/voice-query",
+                        `${API_BASE_URL}/voice-query`,
                         {
                           method: "POST",
                           headers: {

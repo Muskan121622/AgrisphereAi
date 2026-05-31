@@ -232,6 +232,20 @@ export const getListings = async (category?: string) => {
   }
 };
 
+export const getListingsStream = (callback: (listings: any[]) => void, category?: string) => {
+  let q;
+  if (category) {
+    q = query(collection(db, "marketplace"), where("category", "==", category), orderBy("createdAt", "desc"));
+  } else {
+    q = query(collection(db, "marketplace"), orderBy("createdAt", "desc"));
+  }
+  return onSnapshot(q, (snapshot) => {
+    callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  }, (error) => {
+    console.error("Error in getListingsStream:", error);
+  });
+};
+
 /**
  * NEGOTIATIONS
  */

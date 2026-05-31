@@ -62,7 +62,7 @@ const YieldPrediction = () => {
     setFormData((prev) => ({ ...prev, crop: value }));
   };
 
-  const API_URL = import.meta.env.VITE_API_URL || "${API_BASE_URL}";
+  const API_URL = API_BASE_URL;
 
   const handlePredict = async (e: React.FormEvent) => {
     e.preventDefault();

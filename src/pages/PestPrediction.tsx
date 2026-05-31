@@ -105,7 +105,7 @@ const PestPrediction = () => {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("${API_BASE_URL}/predict-pest", {
+      const response = await axios.post(`${API_BASE_URL}/predict-pest`, {
         crop,
         temp,
         humidity,
