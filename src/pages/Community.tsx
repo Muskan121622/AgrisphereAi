@@ -201,16 +201,26 @@ const Community = () => {
       // Filter for active farmers (active in last 15 mins)
       const now = new Date().getTime();
       const fifteenMins = 15 * 60 * 1000;
-      const active = allUsers.filter(u => {
+      let active = allUsers.filter(u => {
         const lastActive = (u as any).updatedAt?.seconds ? (u as any).updatedAt.seconds * 1000 : 0;
         return (now - lastActive) < fifteenMins;
       });
+
+      if (user?.id) {
+         if (!active.find(u => u.id === user.id)) {
+            const me = allUsers.find(u => u.id === user.id) || { id: user.id, name: user.name || "Farmer", reputation: 0, photoUrl: user.avatar };
+            active = [me as UserProfile, ...active];
+         }
+      }
       setActiveUsers(active);
 
-      // Trending: Sort by reputation or activity (mocking score for now based on reputation field)
-      const trending = [...allUsers]
+      // Trending: Sort by reputation or activity
+      let trending = [...allUsers]
         .sort((a, b) => (b.reputation || 0) - (a.reputation || 0))
         .slice(0, 5);
+      if (trending.length === 0 && user?.id) {
+         trending = [{ id: user.id, name: user.name || "Farmer", reputation: 0, photoUrl: user.avatar } as UserProfile];
+      }
       setTrendingFarmers(trending);
 
       // Get current user's full profile for stats
